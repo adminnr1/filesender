@@ -7,4 +7,4 @@
 // 
 // 
 ?>
-Ik accepteer de algemene voorwaarden voor het gebruik van deze dienst
+Ik ga akkoord met de huisregels wanneer ik deze dienst gebruik. 
