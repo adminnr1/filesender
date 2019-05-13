@@ -11,12 +11,12 @@ subject: vertaal e-mail voettekst, gedeeld door alle talen
 
 {alternative:plain}
 
-Translate this e-mail: {raw:translatableemail.link}
+Translate this email: {raw:translatableemail.link}
 
 {alternative:html}
 
 <table style="width:808"><tr><td>
 <p>
-    Translate this e-mail:</br> <a href="{translatableemail.link}">{translatableemail.link}</a>
+    Translate this email:</br> <a href="{translatableemail.link}">{translatableemail.link}</a>
 </p>
 </tr></td></table>
