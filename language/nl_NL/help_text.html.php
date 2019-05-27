@@ -95,23 +95,18 @@ Als u tussentijds het bestand <b><i>gewijzigd</i></b> heeft, hernoem het dan eer
 
 <h3>Uploads tot {size:cfg:max_legacy_file_size} per bestand zonder HTML5</h3>
 <ul class="fa-ul">
-    <li><i class="fa-li fa fa-caret-right"></i>FileSender zal een waarschuwing tonen wanneer je een te groot bestand probeert te versturen. </li>
+    <li><i class="fa-li fa fa-caret-right"></i>{cfg:site_name} zal een waarschuwing tonen wanneer je een te groot bestand probeert te versturen. </li>
     <li><i class="fa-li fa fa-caret-right"></i>Het hervatten van een onderbroken upload wordt niet ondersteund als de browser geen HTML5 ondersteund.</li>
-</ul>
-
-<h3>Downloads van willekeurig welke grootte</h4>
-<ul class="fa-ul">
-        <li><i class="fa-li fa fa-caret-right"></i>Hiervoor heeft u alleen een moderne browser nodig; u hoeft zich geen zorgen te maken over HTML5 - dit is alleen van belang bij uploads, voor downloads is niets speciaals vereist.</li>
 </ul>
 
 <h3>Instellingen van deze dienst</h3>
 <ul class="fa-ul">
-    <li><i class="fa-li fa fa-caret-right"></i><strong>Maximum aantal e-mail-ontvangers: </strong>Tot {cfg:max_email_recipients} e-mailadressen gescheiden door een komma of puntkomma</li>
+    <li><i class="fa-li fa fa-caret-right"></i><strong>Maximum aantal e-mail-ontvangers: </strong>{cfg:max_email_recipients} e-mailadressen (maximaal) gescheiden door een komma of puntkomma</li>
     <li><i class="fa-li fa fa-caret-right"></i><strong>Maximum aantal bestanden per upload: </strong> {cfg:max_transfer_files}</li>
     <li><i class="fa-li fa fa-caret-right"></i><strong>Maximum bestandsgrootte per upload: </strong>{size:cfg:max_transfer_size}</li>
     <li><i class="fa-li fa fa-caret-right"></i><strong>Maximum bestandsgrootte per bestand voor browsers die geen HTML5 ondersteunen: </strong>{size:cfg:max_legacy_file_size}</li>
-    <li><i class="fa-li fa fa-caret-right"></i><strong>Maximale geldigheidsduur van bestanden: </strong> {cfg:max_transfer_days_valid} dagen</li>
-    <li><i class="fa-li fa fa-caret-right"></i><strong>Maximale geldigheidsduur van uitnodigingen: </strong> {fg:max_guest_days_valid} dagen</li>
+    <li><i class="fa-li fa fa-caret-right"></i><strong>Geldigheidsduur van bestanden: </strong> {cfg:default_transfer_days_valid} (max. {cfg:max_transfer_days_valid}) dagen</li>
+    <li><i class="fa-li fa fa-caret-right"></i><strong>Geldigheidsduur van uitnodigingen: </strong> {cfg:default_guest_days_valid} (max. {cfg:max_guest_days_valid}) dagen</li>
 </ul>
 
 <h3>Technische details</h3>

@@ -88,7 +88,7 @@
 
 <h3>Uploads up to {size:cfg:max_legacy_file_size} per file without HTML5</h3>
 <ul class="fa-ul">
-    <li><i class="fa-li fa fa-caret-right"></i>FileSender will warn you should you try to upload a file that is too big for this method.</li>
+    <li><i class="fa-li fa fa-caret-right"></i>{cfg:site_name} will warn you should you try to upload a file that is too big for this method.</li>
     <li><i class="fa-li fa fa-caret-right"></i>Resuming uploads is not supported with this method.</li>
 </ul>
 
