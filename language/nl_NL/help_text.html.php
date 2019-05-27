@@ -7,6 +7,67 @@
 // 
 // 
 ?>
+<h3>Welkom bij {cfg:site_name}</h3>
+
+<p>
+    FileSender is a web based application that allows authenticated
+    users to securely and easily send arbitrarily large files to other
+    users. Users without an account can be sent a guest upload voucher by an
+    authenticated user. FileSender is developed to the requirements of
+    the higher education and research community.
+</p>
+
+<h4>Gastgebruikers</h4>
+
+<p>
+    If you have been sent a guest voucher from this site you have been
+    invited to upload files one or more times. The simplest way to do
+    that is using the information contained in the invitation email.
+    When uploading as guest, be sure to verify that any links in the
+    guest invitation email are to a FileSender that is running on a
+    research facility you trust. If you are not expecting a guest link
+    from a facility you know then the email might not be legitimate.
+</p>
+<p>
+    The user who invited you to this system might have done so
+    allowing you to upload files and get a link to allow other folks
+    to download those files. If you can not get a link then you will
+    have to provide email address(es) of the people who you wish to
+    invite to download the uploaded files. 
+</p>
+
+<h4>Geauthenticeerde gebruikers</h4>
+
+<p>
+    If this installation of FileSender is on your research facility
+    the login button on the top right of the page should let you login
+    using standard institutional account. If you are unsure
+    about what login credentials to use to access this FileSender then
+    please contact your local IT support.
+</p>
+
+<p>
+    As an authenticated user you should be able to upload files one or
+    more times and either have FileSender email the recipients after
+    your upload completes or provide you with a link to allow file
+    download. You should also be able to invite other researchers to
+    the system to upload one or more files as a guest. 
+</p>
+
+<h3>Mogelijke download grootte beperkingen</h3>
+<p>
+    Any modern browser will download files of any size from the site.
+    Nothing special is required for downloads.
+</p>
+
+<h3>Mogelijke upload grootte beperkingen</h3>
+
+<p>
+    If your browser supports HTML5 then you should be able to upload
+    files of any size up to {size:cfg:max_transfer_size}. Current versions of Firefox and Chrome on
+    Windows, Mac OS X and Linux are known to have HTML5 support.
+</p>
+
 <h3>Inloggen</h3> 
 <ul class="fa-ul">
     <li><i class="fa-li fa fa-caret-right"></i>U kunt inloggen door middel van uw bestaande instellings-logingegevens; kies daartoe uw instellingsnaam uit de lijst van Identity Providers. Als uw instelling niet voorkomt in de lijst of u heeft problemen met het inloggen, neemt u dan alstublieft contact op met uw instellings-helpdesk.</li>
