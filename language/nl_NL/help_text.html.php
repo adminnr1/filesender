@@ -10,7 +10,7 @@
 <h3>Welkom bij {cfg:site_name}</h3>
 
 <p>
-    FileSender is a web based application that allows authenticated
+    {cfg:site_name} is a web based application that allows authenticated
     users to securely and easily send arbitrarily large files to other
     users. Users without an account can be sent a guest upload voucher by an
     authenticated user. FileSender is developed to the requirements of
@@ -102,9 +102,8 @@ Als u tussentijds het bestand <b><i>gewijzigd</i></b> heeft, hernoem het dan eer
 
 <h3>Instellingen van deze dienst</h3>
 <ul class="fa-ul">
-    <li><i class="fa-li fa fa-caret-right"></i><strong>
-      Maximum aantal e-mail-ontvangers:</strong> Tot {cfg:max_email_recipients} e-mailadressen gescheiden door een komma of puntkomma</li>
-    <li><i class="fa-li fa fa-caret-right"><strong>Maximum aantal bestanden per upload:</strong> {cfg:max_transfer_files}</li>
+    <li><i class="fa-li fa fa-caret-right"></i><strong>Maximum aantal e-mail-ontvangers: </strong>Tot {cfg:max_email_recipients} e-mailadressen gescheiden door een komma of puntkomma</li>
+    <li><i class="fa-li fa fa-caret-right"></i><strong>Maximum aantal bestanden per upload: </strong> {cfg:max_transfer_files}</li>
     <li><i class="fa-li fa fa-caret-right"></i><strong>Maximum bestandsgrootte per upload: </strong>{size:cfg:max_transfer_size}</li>
     <li><i class="fa-li fa fa-caret-right"></i><strong>Maximum bestandsgrootte per bestand voor browsers die geen HTML5 ondersteunen: </strong>{size:cfg:max_legacy_file_size}</li>
     <li><i class="fa-li fa fa-caret-right"></i><strong>Maximale geldigheidsduur van bestanden: </strong> {cfg:max_transfer_days_valid} dagen</li>
