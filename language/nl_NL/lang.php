@@ -303,7 +303,7 @@ $lang['privacy_page_guests_expired_lifetime'] = 'Aantal dagen tot een gastaccoun
 $lang['privacy_page_max_transfer_days_valid'] = 'Maximum aantal dagen tot een transfer verloopt.';
 $lang['privacy_page_translatable_emails_lifetime'] = 'Aantal dagen dat naar gebruikers gestuurde e-mails blijven bewaard.';
 $lang['profile_page_text_linking_to_admin_page'] = 'U heeft toestemming om de <a href="{cfg:site_url}/?s=admin">admin pagina</a> te bezoeken.';
-$lang['profile_page_text_linking_to_privacy_page'] = 'FileSender respecteert uw privacy. Bekijk <a href="{cfg:site_url}/?s=privacy">hier</a> hoe lang informatie wordt bewaard op deze FileSender installatie';
+$lang['profile_page_text_linking_to_privacy_page'] = '{cfg:site_name} respecteert uw privacy. Bekijk <a href="{cfg:site_url}/?s=privacy">hier</a> hoe lang informatie wordt bewaard op deze FileSender installatie';
 $lang['quota_usage'] = '{size:used} van {size:total} in gebruik, {size:available} resterend';
 $lang['reader_not_supported'] = 'U gebruikt een oudere browser zonder ondersteuning voor HTML5.<br /><br />Slepen en plaatsen om bestanden te selecteren is daarom niet beschikbaar.<br /><br />U kunt bestanden uploaden van maximaal {size} groot.';
 $lang['reason'] = 'Reden';

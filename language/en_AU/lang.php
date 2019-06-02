@@ -297,7 +297,7 @@ $lang['privacy_page_guests_expired_lifetime'] = 'Once a guest has expired they a
 $lang['privacy_page_max_transfer_days_valid'] = 'Maximum number of days until a transfer expires.';
 $lang['privacy_page_translatable_emails_lifetime'] = 'Number of days emails sent to a user will be retained.';
 $lang['profile_page_text_linking_to_admin_page'] = 'You are allowed to visit the <a href="{cfg:site_url}/?s=admin">admin page</a>.';
-$lang['profile_page_text_linking_to_privacy_page'] = 'FileSender values your privacy. Please <a href="{cfg:site_url}/?s=privacy">click to see</a> how long information is retained by this installation';
+$lang['profile_page_text_linking_to_privacy_page'] = '{cfg:site_name} values your privacy. Please <a href="{cfg:site_url}/?s=privacy">click to see</a> how long information is retained by this installation';
 $lang['quota_usage'] = '{size:used} out of {size:total} used, {size:available} remaining';
 $lang['reader_not_supported'] = 'You are using an older browser without support for HTML5.<br /><br />Drag & drop for selecting files is not available.<br /><br />You can upload files up to {size}.';
 $lang['reason'] = 'Reason';
