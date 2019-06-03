@@ -122,9 +122,9 @@
     
     ?>
     
-  <h2>Python CLI Client</h2>
-  <a href="clidownload.php" target="_blank">Download Python CLI Client</a>
-
+    // <h2>Python CLI Client</h2>
+    // <a href="clidownload.php" target="_blank">Download Python CLI Client</a>
+  
     <h2>Actions</h2>
 
         {tr:user_profile_delete_about_description_text}
