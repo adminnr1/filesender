@@ -46,13 +46,13 @@ foreach (Guest::allOptions() as $name => $dfn) {
 
                         <div class="recipients"></div>
 
-                        <input id="to" name="to" type="email" multiple title="{tr:email_separator_msg}" value="" placeholder="{tr:enter_to_email}" />
+                        <input id="to" name="to" type="email" multiple title="{tr:email_separator_msg}" value="" placeholder="{tr:enter_to_email}" size="58" />
                     </div>
 
                     <div class="fieldcontainer">
                         <label for="subject">{tr:subject} ({tr:optional}) :</label>
 
-                        <input id="subject" name="subject" type="text"/>
+                        <input id="subject" name="subject" type="text" size="58"/>
                     </div>
 
                     <div class="fieldcontainer">
