@@ -122,8 +122,8 @@
     
     ?>
     
-    <!- <h2>Python CLI Client</h2>
-    <a href="clidownload.php" target="_blank">Download Python CLI Client</a> ->
+    <!-- <h2>Python CLI Client</h2> -->
+    <!-- <a href="clidownload.php" target="_blank">Download Python CLI Client</a> -->
   
     <h2>Actions</h2>
 
