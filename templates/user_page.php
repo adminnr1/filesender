@@ -122,8 +122,8 @@
     
     ?>
     
-    <h2>Python CLI Client</h2>
-    <a href="clidownload.php" target="_blank">{tr:download} Python CLI Client</a>
+    <!-- <h2>Python CLI Client</h2>
+    <a href="clidownload.php" target="_blank">{tr:download} Python CLI Client</a> -->
   
     <h2>{tr:actions}</h2>
 
