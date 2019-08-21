@@ -65,7 +65,7 @@
 <p>
     If your browser supports HTML5 then you should be able to upload
     files of any size up to {size:cfg:max_transfer_size}. Current versions of Firefox and Chrome on
-    Windows, Mac OS X and Linux are known to have HTML5 support.
+    Windows, Mac OS and Linux are known to have HTML5 support.
 </p>
 
 <h3>Your browser's features</h3>
