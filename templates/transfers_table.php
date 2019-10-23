@@ -112,6 +112,7 @@
             data-password-version="<?php echo $transfer->password_version; ?>"
             data-password-encoding="<?php echo $transfer->password_encoding_string; ?>"
             data-password-hash-iterations="<?php echo $transfer->password_hash_iterations; ?>"
+            data-client-entropy="<?php echo $transfer->client_entropy; ?>"
         >
             <td class="expand">
                 <span class="clickable fa fa-plus-circle fa-lg" title="{tr:show_details}"></span>
@@ -303,6 +304,9 @@
                              data-password-version="<?php echo $transfer->password_version; ?>"
                              data-password-encoding="<?php echo $transfer->password_encoding_string; ?>"
                              data-password-hash-iterations="<?php echo $transfer->password_hash_iterations; ?>"
+                             data-client-entropy="<?php echo $transfer->client_entropy; ?>"
+                             data-fileiv="<?php echo $file->iv; ?>"
+                             data-fileaead="<?php echo $file->aead; ?>"
                         >
                             <?php echo Template::sanitizeOutput($file->path) ?> (<?php echo Utilities::formatBytes($file->size) ?>) : <?php echo count($file->downloads) ?> {tr:downloads}
                             
@@ -318,6 +322,9 @@
                                         data-password-version="<?php echo $transfer->password_version; ?>"
                                         data-password-encoding="<?php echo $transfer->password_encoding_string; ?>"
                                         data-password-hash-iterations="<?php echo $transfer->password_hash_iterations; ?>"
+                                        data-client-entropy="<?php echo $transfer->client_entropy; ?>"
+                                        data-fileiv="<?php echo $file->iv; ?>"
+                                        data-fileaead="<?php echo $file->aead; ?>"
                                       
                                 ></span>
                                         

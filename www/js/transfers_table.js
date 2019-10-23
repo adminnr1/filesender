@@ -374,7 +374,13 @@ $(function() {
         var password_version  = $(this).attr('data-password-version');
         var password_encoding = $(this).attr('data-password-encoding');
         var password_hash_iterations = $(this).attr('data-password-hash-iterations');
-
+        var client_entropy = $(this).attr('data-client-entropy');
+        var fileiv = $(this).attr('data-fileiv');
+        var fileaead = $(this).attr('data-fileaead');
+        if( fileaead.length ) {
+            fileaead = atob(fileaead);
+        }
+        
         if (typeof id == 'string'){
             id = [id];
         }
@@ -382,7 +388,10 @@ $(function() {
             filesender.config.base_path + 'download.php?files_ids=' + id.join(','),
             mime, filename, key_version, salt,
             password_version, password_encoding,
-            password_hash_iterations
+            password_hash_iterations,
+            client_entropy,
+            window.filesender.crypto_app().decodeCryptoFileIV(fileiv),
+            fileaead
         );
 
         return false;

@@ -133,6 +133,18 @@ class Transfer extends DBObject
             'null'    => false,
             'default' => 150000
         ),
+        // This is some entropy from the uploading client
+        // A single pool of entropy is used here to allow
+        // different code paths to get some material without needing
+        // specific fields for each such use.
+        //
+        // See decodeClientEntropy() in crypto_app for how to use this
+        // client side.
+        'client_entropy' => array(   
+            'type'    => 'string',
+            'size'    => '44',
+            'null'    => true,
+        ),
         
     );
 
@@ -148,6 +160,7 @@ class Transfer extends DBObject
              . DBView::columnDefinition_age($dbtype, 'expires')
              . DBView::columnDefinition_age($dbtype, 'made_available')
              . DBView::columnDefinition_is_encrypted('options', 'is_encrypted')
+             . " , (CASE WHEN password_version=1 THEN 'user' ELSE 'generated' END) as password_origin "
              . '  from ' . self::getDBTable();
     }
     public static function getViewMap()
@@ -158,7 +171,8 @@ class Transfer extends DBObject
             $a[$dbtype] = self::getPrimaryViewDefinition($dbtype);
             
             $authviewdef[$dbtype] = 'select t.id as id,t.userid as userid,u.authid as authid,a.saml_user_identification_uid as user_id,'
-                                      . 't.made_available,t.expires,t.created FROM '
+                                  . 't.made_available,t.expires,t.created '
+                                  . ' FROM '
                                       . self::getDBTable().' t, '
                                             . call_user_func('User::getDBTable').' u, '
                                             . call_user_func('Authentication::getDBTable').' a where t.userid = u.id and u.authid = a.id ';
@@ -209,6 +223,7 @@ class Transfer extends DBObject
     protected $password_encoding = 0;
     protected $password_encoding_string = 'none';
     protected $password_hash_iterations = 150000;
+    protected $client_entropy = '';
     
     /**
      * Related objects cache
@@ -772,6 +787,7 @@ class Transfer extends DBObject
             'subject', 'message', 'created', 'made_available',
             'expires', 'expiry_extensions', 'options', 'lang', 'key_version', 'userid',
             'password_version', 'password_encoding', 'password_encoding_string', 'password_hash_iterations'
+            , 'client_entropy'
         ))) {
             return $this->$property;
         }
@@ -965,6 +981,8 @@ class Transfer extends DBObject
             $this->password_encoding_string = $value;
         } elseif ($property == 'password_hash_iterations') {
             $this->password_hash_iterations = $value;
+        } elseif ($property == 'client_entropy') {
+            $this->client_entropy = $value;
         } else {
             throw new PropertyAccessException($this, $property);
         }
@@ -976,10 +994,11 @@ class Transfer extends DBObject
      * @param string $path the file name
      * @param string $size the file size
      * @param string $mime_type the optional file mime_type
+     * @param string $iv base64 encoded IV used to encrypt file 
      *
      * @return File
      */
-    public function addFile($path, $size, $mime_type = null)
+    public function addFile($path, $size, $mime_type = null, $iv = null, $aead = null )
     {
         if (is_null($this->filesCache)) {
             $this->filesCache = File::fromTransfer($this);
@@ -1000,6 +1019,8 @@ class Transfer extends DBObject
 
         // Create and save new file
         $file = File::create($this, $path, $size, $mime_type);
+        $file->iv = $iv;
+        $file->aead = $aead;
         $file->save();
  
         // Update local cache

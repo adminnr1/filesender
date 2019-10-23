@@ -114,6 +114,7 @@ window.filesender.terasender = {
         if(!file.endpoint) file.endpoint = this.transfer.authenticatedEndpoint(filesender.config.terasender_upload_endpoint.replace('{file_id}', file.id), file);
 
         var chunkid = Math.floor(file.uploaded / filesender.config.upload_chunk_size);
+        var encryption_details = this.transfer.getEncryptionMetadata( file );
         
 	if (typeof file.fine_progress_done === 'undefined') file.fine_progress_done=file.uploaded; //missing from file
         var job = {
@@ -123,13 +124,15 @@ window.filesender.terasender = {
                 end: Math.min(file.uploaded + filesender.config.upload_chunk_size, file.size) //MD last chunk was too big
             },
 	    encryption: this.transfer.encryption,
-	    encryption_details: this.transfer.getEncryptionMetadata(),
+	    encryption_details: encryption_details,
             file: {
                 id: file.id,
                 name: file.name,
                 size: file.size,
                 blob: file.blob,
-                endpoint: file.endpoint
+                endpoint: file.endpoint,
+                iv: file.iv,
+                aead: file.aead
             },
             security_token: this.security_token,
             csrfptoken: filesender.client.getCSRFToken()

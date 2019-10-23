@@ -280,13 +280,24 @@ window.filesender.client = {
             
         var files = [];
         for (var i = 0; i < transfer.files.length; i++) {
+            //
+            // Do not btoa an empty string, if there is nothing to send
+            // then just send nothing.
+            //
+            var aead = '';
+            if( transfer.files[i].aead ) {
+                aead = btoa(transfer.files[i].aead);
+            }
             files.push({
                 name: transfer.files[i].name,
                 size: transfer.files[i].size,
                 mime_type: transfer.files[i].mime_type,
-                cid: transfer.files[i].cid
+                cid: transfer.files[i].cid,
+                iv: transfer.files[i].iv,
+                aead: aead 
             });
         }
+
         return this.post(transfer.authenticatedEndpoint('/transfer'), {
             from: transfer.from,
             encryption: transfer.encryption,
@@ -294,6 +305,7 @@ window.filesender.client = {
             encryption_password_encoding: transfer.encryption_password_encoding,
             encryption_password_version:  transfer.encryption_password_version,
             encryption_password_hash_iterations: transfer.encryption_password_hash_iterations,
+            encryption_client_entropy: transfer.encryption_client_entropy,
             files: files,
             recipients: transfer.recipients,
             subject: transfer.subject,
