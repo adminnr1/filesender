@@ -421,13 +421,17 @@ class AuditLog extends DBObject
         
         // delete auditlogs entries for guests who have
         // already been removed from the system
+        // Note Frans: modified due to error related to issues #586 and #602
+
         DBI::exec(
             ""
-           ."delete from ".self::getDBTable()." where ".self::getDBTable().".id in ("
+           ."delete a from ".self::getDBTable()." a where a.id in ("
+           ."   select id from ( "
            ."   select al.id from ".self::getViewName()." al "
            ."   left outer join ".Guest::getDBTable()." g"
            ."   on g.id = al.target_id_as_number "
            ."   where al.target_type = 'Guest' and g.id is null )"
+           ." b ) "
         );
         
         // if there is a sunset lifetime for the auditlog
