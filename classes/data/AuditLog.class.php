@@ -431,7 +431,7 @@ class AuditLog extends DBObject
            ."   left outer join ".Guest::getDBTable()." g"
            ."   on g.id = al.target_id_as_number "
            ."   where al.target_type = 'Guest' and g.id is null )"
-           ." b ) "
+           ." b )"
         );
         
         // if there is a sunset lifetime for the auditlog

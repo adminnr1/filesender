@@ -358,7 +358,7 @@ class Transfer extends DBObject
             // Note Frans: Still a bug in the mastercode. You have to change te table name to Recipients
             $sql .= " AND ( ";
             $sql .= " g.options like '%". '"can_only_send_to_me":true' . "%'  ";
-            $sql .= "    or t.id in ( select transfer_id from Recipients ";
+            $sql .= "    or t.id in ( select transfer_id from " . Recipient::getDBTable() . " ";
             $sql .= "                 where transfer_id = t.id and email = g.user_email ) ";
             $sql .= " ) ";
         }
