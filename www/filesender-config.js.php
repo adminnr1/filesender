@@ -141,6 +141,8 @@ window.filesender.config = {
 
     testing_terasender_worker_uploadRequestChange_function_name: '<?php echo Config::get('testing_terasender_worker_uploadRequestChange_function_name') ?>',
 
+    crypto_pbkdf2_dialog_enabled: '<?php echo Config::get('crypto_pbkdf2_dialog_enabled') ?>',
+    crypto_pbkdf2_delay_to_show_dialog: '<?php echo Config::get('crypto_pbkdf2_delay_to_show_dialog') ?>',
 
 	language: {
 		downloading : "<?php echo Lang::tr('downloading')->out(); ?>",
@@ -148,7 +150,8 @@ window.filesender.config = {
 		file_encryption_wrong_password : "<?php echo Lang::tr('file_encryption_wrong_password')->out(); ?>",
 		file_encryption_enter_password : "<?php echo Lang::tr('file_encryption_enter_password')->out(); ?>",
 		file_encryption_need_password : "<?php echo Lang::tr('file_encryption_need_password')->out(); ?>",
-		storage_filesystem_file_not_found : "<?php echo Lang::tr('storage_filesystem_file_not_found')->out(); ?>"
+		storage_filesystem_file_not_found : "<?php echo Lang::tr('storage_filesystem_file_not_found')->out(); ?>",
+		user_hit_guest_limit : "<?php echo Lang::tr('user_hit_guest_limit')->out(); ?>"
 	},
     
     clientlogs: {

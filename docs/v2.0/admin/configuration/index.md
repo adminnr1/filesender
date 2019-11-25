@@ -88,6 +88,9 @@ A note about colours;
 * [upload_display_per_file_stats](#upload_display_per_file_stats)
 * [upload_force_transfer_resume_forget_if_encrypted](#upload_force_transfer_resume_forget_if_encrypted)
 * [upload_considered_too_slow_if_no_progress_for_seconds](#upload_considered_too_slow_if_no_progress_for_seconds)
+* [crypto_pbkdf2_dialog_enabled](#crypto_pbkdf2_dialog_enabled)
+* [crypto_pbkdf2_delay_to_show_dialog](#crypto_pbkdf2_delay_to_show_dialog)
+* [crypto_pbkdf2_expected_secure_to_year](#crypto_pbkdf2_expected_secure_to_year)
 
 ## Transfers
 
@@ -775,6 +778,35 @@ User language detection is done in the following order:
 * __type:__ int
 * __default:__ 30
 * __available:__ since version 2.0
+
+
+
+### crypto_pbkdf2_dialog_enabled
+* __description:__ If set to true then a dialog is displayed with a key is being generated from a user supplied password. Such an action can be quite computationally expensive and may take half a minute to many minutes depending on your expectation of security for password based keys. See encryption_password_hash_iterations_new_files for an explanation of the delay expectation.
+* __mandatory:__ no
+* __type:__ boolean
+* __default:__ false
+* __available:__ since version 2.12
+
+
+### crypto_pbkdf2_delay_to_show_dialog
+* __description:__ If crypto_pbkdf2_dialog_enabled is true then this is a delay that must pass before the dialog is shown. If PBKDF2 completes before this delay then no dialog is shown. Note that you should be seeing the dialog for password hashing iteration counts that offer a reasonable expectation of security.
+* __mandatory:__ no
+* __type:__ integer
+* __default:__ 300
+* __available:__ since version 2.12
+
+
+### crypto_pbkdf2_expected_secure_to_year
+* __description:__ PBKDF2 is a method to convert a user supplied password into a cryptographic key. See https://en.wikipedia.org/wiki/PBKDF2. One parameter of PBKDF2 is the number of iterations to be performed (encryption_password_hash_iterations_new_files). This parameter will override encryption_password_hash_iterations_new_files based on how many iterations are expected to be needed to resist a brute force attack until the given year. See the admin/testing page to calculate how long it will take to perform PBKDF2 with various year settings on your computer. At upload time this setting is stored in the database for an upload. This allows the file(s) to be downloaded again using the correct number of iterations while the system administrator can alter this value to change the setting for new uploads. Note that setting this to false will allow you to directly set encryption_password_hash_iterations_new_files if that is what you prefer.
+* __mandatory:__ no
+* __type:__ integer
+* __default:__ 2027
+* __available:__ since version 2.12
+
+
+
+
 
 
 

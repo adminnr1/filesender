@@ -31,16 +31,19 @@ importfile cs_CZ FileSender_2.0_Czech.php
 importfile da_DK FileSender_2.0_Danish.php
 importfile nl_NL FileSender_2.0_Dutch.php
 importfile en_AU FileSender_2.0_English_AU.php
-importfile es_ES FileSender_2.0_Estonian.php
+importfile et_EE FileSender_2.0_Estonian.php
 importfile fi_FI FileSender_2.0_Finnish.php
 importfile de_DE FileSender_2.0_German.php
 importfile it_IT FileSender_2.0_Italian.php
 importfile fa_IR FileSender_2.0_Persian.php
+importfile pl_PL FileSender_2.0_Polish.php
 importfile ru_RU FileSender_2.0_Russian.php
 importfile sl_SI FileSender_2.0_Slovenian.php
 importfile es_ES FileSender_2.0_Spanish.php
+importfile fr_FR FileSender_2.0_French.php
 
-
-
-
-
+echo "Checking syntax of generated .php files, please wait..."
+for f in $(find ../../language -type f -name \*.php)
+do
+	php -l $f | grep -v '^No syntax errors detected in '
+done
