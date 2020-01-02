@@ -1,8 +1,31 @@
-# Release 2.13
 
-Repository: filesender/filesender · Tag: filesender-2.13 · Commit: d908ef1 · Released by: monkeyiq
+___
 
-## Release Version 2.13
+# Release 2.14
+Release date: 28 Dec 2019.
+
+## Distribution
+Source snapshots are attached to this announcement and the git tag filesender-2.14 contains the base that these snapshots were created from.
+
+## Installation
+Documentation is available at http://docs.filesender.org/v2.0/install/
+
+## Upgrade Notes
+Version 2.x breaks compatibility with version 1.x. We recommend a fresh installation to version 2.x of FileSender.
+
+## Major changes since 2.13
+Execution of scripts/upgrade/database.php is not required.
+There are no changes in the templates directory.
+
+This release will use a web assembly implementation of PBKDF2 on Edge and IE11 which lack the capability in their WebCrypto implementation. This is only active in those two browsers in key_version=1. Files uploaded using Edge and IE11 in key_version=1 will be downloadable in other browsers and vice versa. This update should be of particular interest to those who have been using key_version=0 in order to support these specific browsers. This has been tested in IE11 and Edge on Windows 10. Some updates have been merged for IE11 comparability.
+
+An auditlogs query was split into two queries in order to work across mariadb and postgresql and versions of each.
+
+## Configuration changes
+Added crypto_pbkdf2_dialog_custom_webasm_delay which allows dialogs to still appear before the webasm code is run which might make things unresponsive on some browsers. This is only effective when using webasm pbkdf2 which is itself only done on IE11 and Edge when key_version=1.
+___
+
+# Release Version 2.13
 Release date: 2 Dec 2019.
 
 ## Distribution
@@ -22,17 +45,79 @@ This update fixes some javascript issues with IE11 (#705) and makes the auditlog
 
 ## Configuration changes
 None.
-
-## Support and Feedback
-Please lodge new github issues for things that might improve the next release!
-See Support and Mailinglists and Feature requests.
 ___
 
-# Release 2.10
+# Release Version 2.12
+Release date: 28 Nov 2019.
 
-Repository: filesender/filesender · Tag: filesender-2.10 · Commit: 8319a0e · Released by: monkeyiq
+## Distribution
+Source snapshots are attached to this announcement and the git tag filesender-2.12 contains the base that these snapshots were created from.
 
-## Release Version 2.10
+## Installation
+Documentation is available at http://docs.filesender.org/v2.0/install/
+
+## Upgrade Notes
+Version 2.x breaks compatibility with version 1.x. We recommend a fresh installation to version 2.x of FileSender.
+
+## Major changes since 2.11
+After this release new contributions should be made against the development branch in git. When the next official release is made, the collective changes between development and master will be committed to master and a new tag generated in master. This has the outcome that master will always be the last officially released code and development will be updates made to that master code that has is not yet part of an official release.
+
+Execution of scripts/upgrade/database.php is required. After database.php is executed the script in scripts/upgrade/explicit/upgrade-2.11-to-2.12-after-database-guestsexpire.php should be executed to more explicitly enable guests which do not expire.
+
+There are changes in the templates directory, specifically the guests_page.php and admin/testing.
+
+The PBKDF2 algorithm is commonly used to generate a cryptographic key from a user supplied password. This algorithm has a configurable number of iterations that are be performed as part of the process to make the key. The larger the number of iterations the longer it takes to generate a key from a password. This also implies that it takes longer to guess a password because each guess requires computational effort. Instead of configuring the number of iterations directly a new parameter was added crypto_pbkdf2_expected_secure_to_year which can be between 2020 and 2030 and will override your setting for encryption_password_hash_iterations_new_files which is the number of PBKDF2 iterations to perform. This parameter is saved for each transfer so you can alter it and existing files can still be downloaded and decrypted.
+
+A default value for crypto_pbkdf2_expected_secure_to_year of 2027 was chosen to obtain as much security as possible with a reasonably low delay. A site admin can visit admin/testing to see how long the PBKDF2 delay is for various year settings in their browser.
+
+Due to the PBKDF2 delay taking from a few seconds to 30 seconds depending on browser and the specification of the PC a new dialog was added which is shown by default crypto_pbkdf2_dialog_enabled and will display a dialog to the user when PBKDF2 is occurring so that the user does not conclude that the lack of activity means that the system has stalled.
+
+Many translation updates. Estonian is now imported into et_EE. Polish is imported into pl. An update to the single quoting regex in scripts/language/common.php thanks to @Phaze-III #680.
+New scripts to compare two php lang files, convert from poeditor json lang format to php format, and download and import lang files directly from poeditor have been added #687. This poeditor import script gives pull requests like #691. All languages have been reimported from poeditor along the way and again just before the release.
+
+Better handling of guests who do not expire. Such guests now have an expires time of null in the database and many issues where transfers from guests who should not expire but had an expires time in the past have been resolved. See #683
+
+A nicer dialog is now shown when users already have the most guests the system allows them to have #684
+
+The python REST client now takes the default number of days valid for a transfer from the server at the time it is downloaded. Thanks to @peter- for the original pull request that was updated slightly and merged in with #682
+
+## Configuration changes
+Default values for these should be fine. See https://docs.filesender.org/v2.0/admin/configuration/ for details.
+
+crypto_pbkdf2_expected_secure_to_year
+crypto_pbkdf2_dialog_enabled
+crypto_pbkdf2_delay_to_show_dialog
+
+___
+
+# Release Version 2.11
+Release date: 4 Nov 2019.
+
+## Distribution
+Source snapshots are attached to this announcement and the git tag filesender-2.11 contains the base that these snapshots were created from.
+
+## Installation
+Documentation is available at http://docs.filesender.org/v2.0/install/
+
+## Upgrade Notes
+Version 2.x breaks compatibility with version 1.x. We recommend a fresh installation to version 2.x of FileSender.
+
+## Major changes since 2.10
+Execution of scripts/upgrade/database.php is not needed.
+No files in the templates directory were updated.
+
+Cryptographic keys are now cached and reused for all FileSender chunks in an upload and download. This will have a larger performance improvement for more secure user supplied password handling where the security is partially based on the time required to convert a password into a key, for example, using very high PBKDF2 hash iteration values. See #671 for details on the caching.
+
+Improved handling of listing that include both GCM and CBC files on the same page, for example the my transfers page.
+
+If an encrypted file has disappeared from the back end storage and a user tries to download the file a message the the file is not found is shown instead of 'bad password' which may have lead a user to frustration trying passwords many times for such files.
+
+## Configuration changes
+None.
+
+___
+
+# Release Version 2.10
 Release date: 31 Oct 2019.
 
 ## Distribution
@@ -55,17 +140,9 @@ Scoping of filesender object is always done from top level in crypto_app. DBCons
 
 ## Configuration changes
 The variable terasender_advanced has been added to ConfigDefaults.php to cover cases where it is not set explicitly in config.php.
-
-## Support and Feedback
-Please lodge new github issues for things that might improve the next release!
-See Support and Mailinglists and Feature requests.
 ___
 
-# Release 2.6
-
-@monkeyiq monkeyiq released this on Apr 16 · 101 commits to master since this release
-
-## Release Version 2.6
+# Release Version 2.6
 Release date: 16 April 2019.
 
 ## Errata
@@ -224,17 +301,9 @@ The help_url parameter was removed and replaced with the more specific support_e
 directory_upload_button_enabled (default: true) was added to allow a select directory button on the upload page for supported browsers.
 
 transfer_options_not_available_to_export_to_client was added to specifically select options which are not available (not shown to user) which should be exported to the client so the javascript can operate as though those options are explicitly set to the default values from the server. This should not need to be explicitly set.
-
-## Support and Feedback
-Please lodge new github issues for things that might improve the next release!
-See Support and Mailinglists and Feature requests.
 ___
 
-# Release 2.5
-
-@monkeyiq monkeyiq released this on Dec 26, 2018 · 154 commits to master since this release
-
-## Release Version 2.5
+# Release Version 2.5
 Release date: 27 December 2018.
 
 ## Distribution
@@ -269,18 +338,9 @@ aggregate_statlog_lifetime defaults to false to disable these statistics. Set th
 aggregate_statlog_send_report_days defaults to 0 to disable this report by default. Set this to the number of days between reports.
 
 aggregate_statlog_send_report_email_address is set to '' by default. Set this to the email address you wish to send the aggregate statistics to.
-
-## Support and Feedback
-See Support and Mailinglists and Feature requests.
-
-A new label "release2.5" has been created to specifically track issues relating to this release. Please attach that label when reporting issues that relate to this beta. Current known issues can be seen at https://github.com/filesender/filesender/labels/release2.5
 ___
 
-# Release 2.4
-
-@monkeyiq monkeyiq released this on Oct 5, 2018 · 165 commits to master since this release
-
-## Release Version 2.4
+# Release Version 2.4
 Release date: 6 October 2018.
 
 ## Distribution
@@ -301,9 +361,4 @@ CI has been updated to run against MariaDB 10.0 to check against what is now the
 
 ## Configuration changes
 No new settings.
-
-## Support and Feedback
-See Support and Mailinglists and Feature requests.
-
-A new label "release2.4" has been created to specifically track issues relating to this release. Please attach that label when reporting issues that relate to this beta. Current known issues can be seen at https://github.com/filesender/filesender/labels/release2.4
 ___
