@@ -8,6 +8,7 @@
 // 
 ?>
 <h1>Welcome to {cfg:site_name}</h1>
+<div style="padding: 5px; text-align: left;">
 <p>
     {cfg:site_name} is an installation of 
     the FileSender project (<a rel="nofollow" href="http://filesender.org/" target="_blank">filesender.org</a>)
@@ -29,4 +30,5 @@
     automatically delete the file. The software is not intended as a
     permanent file publishing platform.
 </p>
+</div>
 

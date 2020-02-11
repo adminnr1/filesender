@@ -7,4 +7,4 @@
 // 
 // 
 ?>
-I accept the terms and conditions of this service
+I accept the following Code of Conduct when using this service. 

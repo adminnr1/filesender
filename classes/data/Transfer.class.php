@@ -355,6 +355,7 @@ class Transfer extends DBObject
         if( $user_can_only_view_guest_transfers_shared_with_them ) {
             // filter back to only transfers that are can_only_send_to_me for the user
             // or that the guest explicitly included the email of the user in the recipients
+            // Note Frans: Still a bug in the mastercode. You have to change te table name to Recipients
             $sql .= " AND ( ";
             $sql .= " g.options like '%". '"can_only_send_to_me":true' . "%'  ";
             $sql .= "    or t.id in ( select transfer_id from " . Recipient::getDBTable() . " ";
