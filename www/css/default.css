@@ -1,23 +1,23 @@
 /*
  * FileSender www.filesender.org
- * 
+ *
  * Copyright (c) 2009-2012, AARNet, Belnet, HEAnet, SURFnet, UNINETT
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * *   Redistributions of source code must retain the above copyright
  *     notice, this list of conditions and the following disclaimer.
- * 
+ *
  * *   Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
  *     documentation and/or other materials provided with the distribution.
- * 
+ *
  * *   Neither the name of AARNet, Belnet, HEAnet, SURFnet and UNINETT nor the
  *     names of its contributors may be used to endorse or promote products
  *     derived from this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -706,7 +706,7 @@ table.list .date {
     height: 5em;
     text-align: center;
     max-height: 300em;
-    overflow-y: scroll;   
+    overflow-y: scroll;
 }
 
 
@@ -1596,3 +1596,328 @@ div.not_displayed {
 .active {
     font-weight: bold;
 }
+
+
+/* Fabrique */
+:root {
+    --logoUrl: url(/assets/logo/filesender_logo_zwart.svg); }
+
+  #header {
+    background: var(--logoUrl) no-repeat top left;
+    display: inline-block;
+    height: 50px;
+    margin: 40px 0 55px 50px;
+    width: 140px; }
+
+  :root {
+    --logoUrl: url(/assets/logo/filesender_logo_zwart.svg); }
+
+  #menu {
+    height: auto;
+    background: none;
+    margin-left: 50px; }
+    #menu .leftmenu {
+      float: none; }
+    #menu .rightmenu {
+      float: none; }
+    #menu ul {
+      display: block;
+      float: none; }
+      #menu ul li a {
+        color: #040608;
+        padding-left: 0; }
+        #menu ul li a:hover {
+          background-color: transparent; }
+    #menu li {
+      border-right: none;
+      text-shadow: none;
+      float: none;
+      display: block; }
+    #menu .rightmenu li {
+      border-left: none;
+      border-right: none; }
+    #menu .current {
+      background-color: transparent;
+      font-weight: bold; }
+
+  :root {
+    --logoUrl: url(/assets/logo/filesender_logo_zwart.svg); }
+
+  #page h1 {
+    padding: 20px; }
+
+  #page .logon {
+    padding: 30px 20px 20px 20px;
+    text-align: right; }
+
+  .box {
+    border: none;
+    width: 450px;
+    padding: 0;
+    margin: 0; }
+
+  .ui-button, button, #myTransfers {
+    background-color: #F07527;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 30px; }
+    .ui-button:hover, button:hover, #myTransfers:hover {
+      background-color: #F07527; }
+
+  a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
+    color: white; }
+
+  .fa-minus-square::before {
+    content: "";
+    background: url(/assets/logo/remove_files.svg) no-repeat;
+    background-size: 10px;
+    display: inline-block;
+    width: 10px;
+    height: 10px; }
+
+  .fa-cloud-upload {
+    display: none; }
+
+  .logon_page, .logout_page {
+    position: relative;
+    left: 300px;
+    top: -150px; }
+    .logon_page .box, .logout_page .box {
+      background-color: white;
+      border-radius: 10px; }
+      .logon_page .box p, .logout_page .box p {
+        padding: 0 20px;
+        margin: 15px 0; }
+    .logon_page #btn_logon, .logout_page #btn_logon {
+      width: 100px; }
+
+  .transfers_page .box {
+    width: 770px;
+    height: 450px;
+    overflow: scroll; }
+
+  .transfers_page table.list tbody td {
+    border: none; }
+
+  #upload_form .step1 {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+            flex-direction: column; }
+
+  #upload_form .files_dragdrop {
+    border: none;
+    background-color: transparent;
+    background: url(/assets/logo/drag_drop_button.svg) no-repeat;
+    padding: 0;
+    height: 400px;
+    cursor: pointer;
+    background-position: 50% 60%; }
+    #upload_form .files_dragdrop .instructions {
+      color: #040608;
+      text-align: left;
+      height: 400px; }
+
+  #upload_form .files_actions {
+    display: none; }
+
+  #upload_form .file_selector label {
+    background: url(/assets/logo/add_files.svg) no-repeat;
+    background-size: 40px;
+    height: 40px;
+    display: inline-block;
+    cursor: pointer;
+    line-height: 40px;
+    padding-left: 50px;
+    color: #F07527;
+    font-weight: bold; }
+
+  #upload_form .file_selector input {
+    display: none; }
+
+  #upload_form .two_columns {
+    background-color: white;
+    margin: 0;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 10px;
+    width: 450px;
+    position: relative; }
+    #upload_form .two_columns #encrypt_checkbox {
+      float: left;
+      width: 60%; }
+    #upload_form .two_columns #continue {
+      float: right;
+      width: 30%; }
+    #upload_form .two_columns td {
+      display: block;
+      width: 100%; }
+    #upload_form .two_columns tr {
+      display: block; }
+    #upload_form .two_columns .buttons {
+      margin-left: auto;
+      margin-right: 0; }
+      #upload_form .two_columns .buttons a {
+        width: 100px;
+        height: 40px;
+        padding: 0 20px; }
+    #upload_form .two_columns #upload_mode_title {
+      display: inline-block;
+      float: left;
+      margin-bottom: 20px; }
+    #upload_form .two_columns .recipients .recipient {
+      display: inline-block; }
+    #upload_form .two_columns [data-option="add_me_to_recipients"] {
+      color: #F07527; }
+      #upload_form .two_columns [data-option="add_me_to_recipients"] input {
+        display: none; }
+    #upload_form .two_columns #to, #upload_form .two_columns #subject {
+      width: 100%;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      border-bottom: 1px solid #D8D8D8;
+      height: 20px; }
+    #upload_form .two_columns textarea[name="message"] {
+      height: 20px;
+      border-left: none;
+      border-top: none;
+      border-right: none;
+      border-bottom: 1px solid #D8D8D8; }
+    #upload_form .two_columns .hidden_options + .fieldcontainer {
+      position: absolute;
+      bottom: 45px; }
+    #upload_form .two_columns #expires {
+      border: none;
+      text-decoration: underline;
+      cursor: pointer; }
+
+  #upload_form table > .fieldcontainer {
+    color: #F07527;
+    font-weight: bold;
+    float: right;
+    padding: 0; }
+    #upload_form table > .fieldcontainer label {
+      cursor: pointer; }
+
+  #upload_form .files {
+    -webkit-order: 1;
+            order: 1;
+    margin-top: 65px;
+    background-color: white;
+    margin-bottom: 0;
+    border-radius: 10px 10px 0 0;
+    height: 250px;
+    overflow-y: scroll; }
+    #upload_form .files .file {
+      background-color: white;
+      border-bottom: 1px solid #D8D8D8;
+      border-left: none;
+      border-right: none;
+      border-top: none;
+      border-radius: initial;
+      padding: 0;
+      margin: 20px; }
+    #upload_form .files #fileDetails {
+      padding: 20px;
+      font-weight: bold; }
+      #upload_form .files #fileDetails div span:last-child {
+        float: right;
+        font-weight: normal; }
+
+  #upload_form .file_selector {
+    -webkit-order: 2;
+            order: 2;
+    background-color: white;
+    border-radius: 0 0 10px 10px;
+    padding: 20px; }
+
+  #upload_form #filesList {
+    margin-top: 65px;
+    background-color: white;
+    padding: 20px;
+    margin-bottom: 5px;
+    border-radius: 10px; }
+    #upload_form #filesList div:nth-child(1) {
+      float: left;
+      font-weight: bold;
+      margin-bottom: 10px; }
+    #upload_form #filesList div:nth-child(2) {
+      float: right; }
+    #upload_form #filesList div:nth-child(3) {
+      clear: both; }
+
+  #upload_form #uploadDone {
+    height: 450px;
+    background-color: white;
+    margin-top: 80px;
+    border-radius: 10px;
+    position: relative; }
+    #upload_form #uploadDone div:first-child {
+      background: url(/assets/logo/check.svg) no-repeat;
+      background-size: 40px;
+      height: 40px;
+      width: 40px;
+      margin-left: auto;
+      margin-right: auto;
+      position: relative;
+      top: 40%; }
+
+  #upload_form #myTransfers {
+    display: inline-block;
+    text-decoration: none;
+    position: absolute;
+    bottom: 20px;
+    right: 20px; }
+
+  #footer {
+    display: none;
+    position: absolute;
+    bottom: 25px;
+    left: 0;
+    right: 0; }
+
+  :root {
+    --logoUrl: url(/assets/logo/filesender_logo_zwart.svg); }
+
+  @-webkit-keyframes fadeout {
+    0% {
+      opacity: 1; }
+    99% {
+      opacity: 0; }
+    100% {
+      opacity: 0;
+      display: none;
+      pointer-events: none; } }
+
+  @keyframes fadeout {
+    0% {
+      opacity: 1; }
+    99% {
+      opacity: 0; }
+    100% {
+      opacity: 0;
+      display: none;
+      pointer-events: none; } }
+
+  body {
+    background: #FFF3EB;
+    position: relative;
+    min-height: 100vh; }
+
+  #wrap {
+    background: #FFF3EB;
+    max-width: 1024px;
+    width: 100%;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+            flex-direction: column;
+    -webkit-flex-wrap: wrap;
+            flex-wrap: wrap;
+    height: 600px; }
+
+
