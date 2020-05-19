@@ -1597,134 +1597,249 @@ div.not_displayed {
     font-weight: bold;
 }
 
-
-/* Fabrique */
+@import url(https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;300;400;600;700;900&display=swap);
 :root {
-    --logoUrl: url(/assets/logo/filesender_logo_zwart.svg); }
+  --logoUrl: url(/assets/logo/filesender_logo_zwart.svg); }
 
-  #header {
-    background: var(--logoUrl) no-repeat top left;
-    display: inline-block;
-    height: 50px;
-    margin: 40px 0 55px 50px;
-    width: 140px; }
+#header {
+  background: var(--logoUrl) no-repeat top left;
+  display: inline-block;
+  height: 50px;
+  margin: 40px 0 55px 50px;
+  width: 140px; }
 
-  :root {
-    --logoUrl: url(/assets/logo/filesender_logo_zwart.svg); }
+:root {
+  --logoUrl: url(/assets/logo/filesender_logo_zwart.svg); }
 
-  #menu {
-    height: auto;
-    background: none;
-    margin-left: 50px; }
-    #menu .leftmenu {
-      float: none; }
-    #menu .rightmenu {
-      float: none; }
-    #menu ul {
-      display: block;
-      float: none; }
-      #menu ul li a {
-        color: #040608;
-        padding-left: 0; }
-        #menu ul li a:hover {
-          background-color: transparent; }
-    #menu li {
-      border-right: none;
-      text-shadow: none;
-      float: none;
-      display: block; }
-    #menu .rightmenu li {
-      border-left: none;
-      border-right: none; }
-    #menu .current {
-      background-color: transparent;
-      font-weight: bold; }
-
-  :root {
-    --logoUrl: url(/assets/logo/filesender_logo_zwart.svg); }
-
-  #page h1 {
-    padding: 20px; }
-
-  #page .logon {
-    padding: 30px 20px 20px 20px;
-    text-align: right; }
-
-  .box {
-    border: none;
-    width: 450px;
-    padding: 0;
-    margin: 0; }
-
-  .ui-button, button, #myTransfers {
-    background-color: #F07527;
-    border: none;
-    border-radius: 10px;
-    color: white;
-    height: 40px;
-    line-height: 40px;
-    padding: 0 30px; }
-    .ui-button:hover, button:hover, #myTransfers:hover {
-      background-color: #F07527; }
-
-  a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
-    color: white; }
-
-  .fa-minus-square::before {
-    content: "";
-    background: url(/assets/logo/remove_files.svg) no-repeat;
-    background-size: 10px;
-    display: inline-block;
-    width: 10px;
-    height: 10px; }
-
-  .fa-cloud-upload {
-    display: none; }
-
-  .logon_page, .logout_page {
-    position: relative;
-    left: 300px;
-    top: -150px; }
-    .logon_page .box, .logout_page .box {
-      background-color: white;
-      border-radius: 10px; }
-      .logon_page .box p, .logout_page .box p {
-        padding: 0 20px;
-        margin: 15px 0; }
-    .logon_page #btn_logon, .logout_page #btn_logon {
-      width: 100px; }
-
-  .transfers_page .box {
-    width: 770px;
-    height: 450px;
-    overflow: scroll; }
-
-  .transfers_page table.list tbody td {
-    border: none; }
-
-  #upload_form .step1 {
-    display: -webkit-flex;
-    display: flex;
-    -webkit-flex-direction: column;
-            flex-direction: column; }
-
-  #upload_form .files_dragdrop {
-    border: none;
-    background-color: transparent;
-    background: url(/assets/logo/drag_drop_button.svg) no-repeat;
-    padding: 0;
-    height: 400px;
-    cursor: pointer;
-    background-position: 50% 60%; }
-    #upload_form .files_dragdrop .instructions {
+#menu {
+  height: auto;
+  background: none;
+  margin-left: 50px; }
+  #menu .leftmenu {
+    float: none; }
+  #menu .rightmenu {
+    float: none; }
+  #menu ul {
+    display: block;
+    float: none; }
+    #menu ul li a {
+      font-size: 12px;
+      line-height: 15px;
+      font-family: "Source Sans Pro", sans-serif;
+      font-weight: 400;
       color: #040608;
-      text-align: left;
-      height: 400px; }
+      padding-left: 0; }
+      #menu ul li a:hover {
+        background-color: transparent; }
+  #menu li {
+    border-right: none;
+    text-shadow: none;
+    float: none;
+    display: block; }
+  #menu .rightmenu li {
+    border-left: none;
+    border-right: none; }
+  #menu .current {
+    background-color: transparent;
+    font-size: 12px;
+    line-height: 15px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 700; }
 
-  #upload_form .files_actions {
-    display: none; }
+:root {
+  --logoUrl: url(/assets/logo/filesender_logo_zwart.svg); }
 
+#page h1 {
+  padding: 20px 0; }
+
+#page .logon {
+  padding: 30px 20px 20px 20px;
+  text-align: right; }
+
+.box {
+  border: none;
+  width: 450px;
+  padding: 0;
+  margin: 0; }
+
+.ui-button, button, #myTransfers {
+  font-size: 15px;
+  line-height: 24px;
+  font-family: "Source Sans Pro", sans-serif;
+  font-weight: 600;
+  background-color: #F07527;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  height: 40px;
+  line-height: 40px;
+  padding: 0 30px; }
+  .ui-button:hover, button:hover, #myTransfers:hover {
+    background-color: #040608;
+    color: white;
+    border: 0px;
+    cursor: pointer; }
+
+a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
+  color: white; }
+
+.ui-dialog .ui-dialog-buttonpane button {
+  font-size: 15px;
+  line-height: 24px;
+  font-family: "Source Sans Pro", sans-serif;
+  font-weight: 600;
+  background-color: #F07527;
+  color: white;
+  margin: 0 10px;
+  padding: 0 20px; }
+  .ui-dialog .ui-dialog-buttonpane button:hover {
+    background-color: #040608; }
+
+.fa-minus-square::before {
+  content: "";
+  background: url(/assets/logo/remove_files.svg) no-repeat;
+  background-size: 10px;
+  display: inline-block;
+  width: 10px;
+  height: 10px; }
+
+.fa-cloud-upload, .fa-stop, .fa-play, .fa-pause {
+  display: none; }
+
+#upload_form .buttons a span.fa {
+  font-size: 15px;
+  line-height: 24px;
+  font-family: "Source Sans Pro", sans-serif;
+  font-weight: 600; }
+
+.logon_page {
+  position: relative;
+  left: 300px;
+  top: -150px; }
+  .logon_page .box {
+    background-color: white;
+    border-radius: 10px; }
+    .logon_page .box h1 {
+      font-size: 17px;
+      line-height: 18px;
+      font-family: "Source Sans Pro", sans-serif;
+      font-weight: 700;
+      margin-left: 20px; }
+    .logon_page .box p {
+      padding: 0 20px;
+      margin: 15px 0;
+      font-size: 14px;
+      line-height: 18px;
+      font-family: "Source Sans Pro", sans-serif;
+      font-weight: 400; }
+  .logon_page #btn_logon {
+    width: 100px; }
+
+.transfers_page .box {
+  background-color: white;
+  width: 770px;
+  height: 65vh;
+  overflow: scroll;
+  margin-top: 140px;
+  border-radius: 10px;
+  padding: 20px;
+  margin-left: 20px; }
+
+.transfers_page table.list thead tr {
+  display: none; }
+
+.transfers_page table.list tbody td {
+  font-size: 14px;
+  line-height: 18px;
+  font-family: "Source Sans Pro", sans-serif;
+  font-weight: 400;
+  border: none;
+  padding: 10px; }
+
+.transfers_page .transfer {
+  border-bottom: 1px solid #D8D8D8; }
+
+.transfers_page .recipients {
+  width: 20%; }
+
+.transfers_page table.transfers .size {
+  width: 10%;
+  text-align: center; }
+
+.transfers_page .files {
+  width: 30%; }
+
+.transfers_page .downloads {
+  width: 20%; }
+
+.transfers_page .expires {
+  width: 20%; }
+
+#transferDetails {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.4); }
+  #transferDetails #popup_wrapper {
+    margin-top: 100px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 450px; }
+  #transferDetails td {
+    background-color: white;
+    border-radius: 10px; }
+  #transferDetails table {
+    font-size: 14px;
+    line-height: 18px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 400;
+    width: 450px; }
+
+.upload_page {
+  margin-top: 40px;
+  height: 85vh;
+  overflow-y: scroll; }
+
+#upload_form .step1 {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: column;
+          flex-direction: column; }
+
+#upload_form .files_dragdrop {
+  border: none;
+  background-color: transparent;
+  background: url(/assets/logo/drag_drop_button.svg) no-repeat;
+  padding: 0;
+  height: 400px;
+  cursor: pointer;
+  background-position: 50% 60%; }
+  #upload_form .files_dragdrop .instructions {
+    font-size: 17px;
+    line-height: 18px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 700;
+    color: #040608;
+    text-align: left;
+    height: 400px; }
+
+#upload_form .files_actions {
+  display: none; }
+
+#upload_form .file_selector {
+  -webkit-order: 2;
+          order: 2;
+  background-color: white;
+  border-radius: 0 0 10px 10px;
+  padding: 20px; }
   #upload_form .file_selector label {
+    font-size: 12px;
+    line-height: 15px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 600;
+    color: #F07527;
     background: url(/assets/logo/add_files.svg) no-repeat;
     background-size: 40px;
     height: 40px;
@@ -1732,192 +1847,354 @@ div.not_displayed {
     cursor: pointer;
     line-height: 40px;
     padding-left: 50px;
-    color: #F07527;
     font-weight: bold; }
-
   #upload_form .file_selector input {
     display: none; }
 
-  #upload_form .two_columns {
+#upload_form .files {
+  -webkit-order: 1;
+          order: 1;
+  margin-top: 65px;
+  background-color: white;
+  margin-bottom: 0;
+  border-radius: 10px 10px 0 0;
+  height: 250px;
+  overflow-y: scroll; }
+  #upload_form .files .file {
     background-color: white;
-    margin: 0;
-    border-radius: 10px;
-    padding: 20px;
-    margin-bottom: 10px;
-    width: 450px;
-    position: relative; }
-    #upload_form .two_columns #encrypt_checkbox {
-      float: left;
-      width: 60%; }
-    #upload_form .two_columns #continue {
-      float: right;
-      width: 30%; }
-    #upload_form .two_columns td {
-      display: block;
-      width: 100%; }
-    #upload_form .two_columns tr {
-      display: block; }
-    #upload_form .two_columns .buttons {
-      margin-left: auto;
-      margin-right: 0; }
-      #upload_form .two_columns .buttons a {
-        width: 100px;
-        height: 40px;
-        padding: 0 20px; }
-    #upload_form .two_columns #upload_mode_title {
-      display: inline-block;
-      float: left;
-      margin-bottom: 20px; }
-    #upload_form .two_columns .recipients .recipient {
-      display: inline-block; }
-    #upload_form .two_columns [data-option="add_me_to_recipients"] {
-      color: #F07527; }
-      #upload_form .two_columns [data-option="add_me_to_recipients"] input {
-        display: none; }
-    #upload_form .two_columns #to, #upload_form .two_columns #subject {
-      width: 100%;
-      border-top: none;
-      border-left: none;
-      border-right: none;
-      border-bottom: 1px solid #D8D8D8;
-      height: 20px; }
-    #upload_form .two_columns textarea[name="message"] {
-      height: 20px;
-      border-left: none;
-      border-top: none;
-      border-right: none;
-      border-bottom: 1px solid #D8D8D8; }
-    #upload_form .two_columns .hidden_options + .fieldcontainer {
-      position: absolute;
-      bottom: 45px; }
-    #upload_form .two_columns #expires {
-      border: none;
-      text-decoration: underline;
-      cursor: pointer; }
-
-  #upload_form table > .fieldcontainer {
-    color: #F07527;
-    font-weight: bold;
-    float: right;
-    padding: 0; }
-    #upload_form table > .fieldcontainer label {
-      cursor: pointer; }
-
-  #upload_form .files {
-    -webkit-order: 1;
-            order: 1;
-    margin-top: 65px;
-    background-color: white;
-    margin-bottom: 0;
-    border-radius: 10px 10px 0 0;
-    height: 250px;
-    overflow-y: scroll; }
-    #upload_form .files .file {
-      background-color: white;
-      border-bottom: 1px solid #D8D8D8;
-      border-left: none;
-      border-right: none;
-      border-top: none;
-      border-radius: initial;
-      padding: 0;
-      margin: 20px; }
-    #upload_form .files #fileDetails {
-      padding: 20px;
-      font-weight: bold; }
-      #upload_form .files #fileDetails div span:last-child {
-        float: right;
-        font-weight: normal; }
-
-  #upload_form .file_selector {
-    -webkit-order: 2;
-            order: 2;
-    background-color: white;
-    border-radius: 0 0 10px 10px;
+    border-bottom: 1px solid #D8D8D8;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    border-radius: initial;
+    padding: 0;
+    margin: 20px; }
+    #upload_form .files .file .info {
+      font-size: 14px;
+      line-height: 18px;
+      font-family: "Source Sans Pro", sans-serif;
+      font-weight: 400; }
+  #upload_form .files #fileDetails {
     padding: 20px; }
-
-  #upload_form #filesList {
-    margin-top: 65px;
-    background-color: white;
-    padding: 20px;
-    margin-bottom: 5px;
-    border-radius: 10px; }
-    #upload_form #filesList div:nth-child(1) {
-      float: left;
-      font-weight: bold;
-      margin-bottom: 10px; }
-    #upload_form #filesList div:nth-child(2) {
+    #upload_form .files #fileDetails .fileCountDiv {
+      float: left; }
+      #upload_form .files #fileDetails .fileCountDiv span {
+        font-size: 17px;
+        line-height: 18px;
+        font-family: "Source Sans Pro", sans-serif;
+        font-weight: 700;
+        float: none !important;
+        font-weight: 700 !important; }
+    #upload_form .files #fileDetails .fileSizeDiv {
+      font-size: 14px;
+      line-height: 18px;
+      font-family: "Source Sans Pro", sans-serif;
+      font-weight: 400;
       float: right; }
-    #upload_form #filesList div:nth-child(3) {
-      clear: both; }
+      #upload_form .files #fileDetails .fileSizeDiv span {
+        font-size: 14px;
+        line-height: 18px;
+        font-family: "Source Sans Pro", sans-serif;
+        font-weight: 400;
+        float: none !important; }
 
-  #upload_form #uploadDone {
-    height: 450px;
-    background-color: white;
-    margin-top: 80px;
-    border-radius: 10px;
-    position: relative; }
-    #upload_form #uploadDone div:first-child {
-      background: url(/assets/logo/check.svg) no-repeat;
-      background-size: 40px;
-      height: 40px;
-      width: 40px;
-      margin-left: auto;
-      margin-right: auto;
-      position: relative;
-      top: 40%; }
-
-  #upload_form #myTransfers {
-    display: inline-block;
-    text-decoration: none;
-    position: absolute;
-    bottom: 20px;
-    right: 20px; }
-
-  #footer {
-    display: none;
-    position: absolute;
-    bottom: 25px;
-    left: 0;
-    right: 0; }
-
-  :root {
-    --logoUrl: url(/assets/logo/filesender_logo_zwart.svg); }
-
-  @-webkit-keyframes fadeout {
-    0% {
-      opacity: 1; }
-    99% {
-      opacity: 0; }
-    100% {
-      opacity: 0;
-      display: none;
-      pointer-events: none; } }
-
-  @keyframes fadeout {
-    0% {
-      opacity: 1; }
-    99% {
-      opacity: 0; }
-    100% {
-      opacity: 0;
-      display: none;
-      pointer-events: none; } }
-
-  body {
-    background: #FFF3EB;
+#upload_form .two_columns {
+  background-color: white;
+  margin: 0;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 10px;
+  width: 450px;
+  position: relative; }
+  #upload_form .two_columns #encrypt_checkbox {
     position: relative;
-    min-height: 100vh; }
-
-  #wrap {
-    background: #FFF3EB;
-    max-width: 1024px;
+    float: left;
+    width: 60%; }
+    #upload_form .two_columns #encrypt_checkbox input[type="checkbox"] {
+      margin: 3px 0.5ex;
+      visibility: hidden; }
+      #upload_form .two_columns #encrypt_checkbox input[type="checkbox"]:checked ~ label::before {
+        content: "\2713";
+        position: absolute;
+        left: 5px;
+        z-index: 1;
+        top: 9px;
+        color: white;
+        width: 14px;
+        height: 14px;
+        background-color: #F07527; }
+    #upload_form .two_columns #encrypt_checkbox span {
+      font-size: 14px;
+      line-height: 18px;
+      font-family: "Source Sans Pro", sans-serif;
+      font-weight: 400; }
+    #upload_form .two_columns #encrypt_checkbox label::after {
+      content: '';
+      width: 14px;
+      position: absolute;
+      height: 14px;
+      background-color: #FDE4D3;
+      left: 5px;
+      top: 9px; }
+  #upload_form .two_columns #encryption_description_container, #upload_form .two_columns #encryption_generate_password {
+    font-size: 14px;
+    line-height: 18px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 400; }
+  #upload_form .two_columns #encryption_description_container {
+    padding-bottom: 20px; }
+  #upload_form .two_columns #continue {
+    float: right;
+    width: 30%; }
+  #upload_form .two_columns td {
+    display: block;
+    width: 100%; }
+  #upload_form .two_columns tr {
+    display: block; }
+  #upload_form .two_columns .buttons {
+    margin-left: auto;
+    margin-right: 0; }
+    #upload_form .two_columns .buttons a {
+      width: 100px;
+      height: 40px;
+      padding: 0 20px; }
+  #upload_form .two_columns #upload_mode_title {
+    font-size: 17px;
+    line-height: 18px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 700;
+    display: inline-block;
+    float: left;
+    margin-bottom: 20px; }
+  #upload_form .two_columns .recipients .recipient {
+    font-size: 14px;
+    line-height: 18px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 400;
+    display: inline-block;
+    background-color: #FDE4D3;
+    border: 0px; }
+  #upload_form .two_columns [data-option="add_me_to_recipients"] {
+    color: #F07527; }
+    #upload_form .two_columns [data-option="add_me_to_recipients"] input {
+      display: none; }
+  #upload_form .two_columns #to, #upload_form .two_columns #subject {
     width: 100%;
-    display: -webkit-flex;
-    display: flex;
-    -webkit-flex-direction: column;
-            flex-direction: column;
-    -webkit-flex-wrap: wrap;
-            flex-wrap: wrap;
-    height: 600px; }
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: 1px solid #D8D8D8;
+    height: 20px; }
+  #upload_form .two_columns textarea[name="message"] {
+    min-height: 20px;
+    border-left: none;
+    border-top: none;
+    border-right: none;
+    border-bottom: 1px solid #D8D8D8; }
+  #upload_form .two_columns .fieldcontainer [for="to"] {
+    font-size: 14px;
+    line-height: 18px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 700; }
+  #upload_form .two_columns .fieldcontainer [for="subject"] {
+    font-size: 14px;
+    line-height: 18px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 700; }
+  #upload_form .two_columns .fieldcontainer [for="message"] {
+    font-size: 14px;
+    line-height: 18px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 700; }
+  #upload_form .two_columns .fieldcontainer label {
+    font-size: 14px;
+    line-height: 18px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 400; }
+  #upload_form .two_columns .hidden_options + .fieldcontainer {
+    position: absolute;
+    bottom: 45px; }
+  #upload_form .two_columns #expires {
+    font-size: 14px;
+    line-height: 18px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 400;
+    border: none;
+    text-decoration: underline;
+    cursor: pointer; }
 
+#upload_form table > .fieldcontainer {
+  font-weight: bold;
+  float: right;
+  padding: 0; }
+  #upload_form table > .fieldcontainer [for="get_a_link"] {
+    font-size: 12px;
+    line-height: 15px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 600;
+    color: #F07527;
+    cursor: pointer; }
+
+#upload_form #filesList {
+  margin-top: 65px;
+  background-color: white;
+  padding: 20px;
+  margin-bottom: 5px;
+  border-radius: 10px; }
+  #upload_form #filesList div:nth-child(1) {
+    float: left;
+    margin-bottom: 10px;
+    font-size: 17px;
+    line-height: 18px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 700; }
+    #upload_form #filesList div:nth-child(1) #fileCount, #upload_form #filesList div:nth-child(1) #maxFileCount {
+      font-size: 17px;
+      line-height: 18px;
+      font-family: "Source Sans Pro", sans-serif;
+      font-weight: 700; }
+  #upload_form #filesList div:nth-child(2) {
+    float: right;
+    font-size: 14px;
+    line-height: 18px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 400; }
+  #upload_form #filesList div:nth-child(3) {
+    clear: both;
+    font-size: 14px;
+    line-height: 18px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 400; }
+
+#upload_form #uploadDone {
+  height: 220px;
+  background-color: white;
+  margin-top: 80px;
+  border-radius: 10px;
+  position: relative; }
+  #upload_form #uploadDone div:first-child {
+    background: url(/assets/logo/check.svg) no-repeat;
+    background-size: 40px;
+    height: 40px;
+    width: 40px;
+    margin-left: 20px;
+    position: relative;
+    top: 40%; }
+  #upload_form #uploadDone #done {
+    font-size: 17px;
+    line-height: 18px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 700;
+    display: block;
+    padding: 0 20px;
+    margin-left: auto;
+    margin-right: auto; }
+  #upload_form #uploadDone #downloadLinkArea {
+    position: relative;
+    top: 32px;
+    left: 50px;
+    width: 70%;
+    text-align: center; }
+    #upload_form #uploadDone #downloadLinkArea .wide {
+      width: 80%;
+      background-color: #D8D8D8; }
+
+#upload_form #myTransfers {
+  display: inline-block;
+  text-decoration: none;
+  position: absolute;
+  bottom: 20px;
+  right: 20px; }
+
+.user_page .box, .privacy_page .box, .about_page .box, .help_page .box {
+  background-color: white;
+  padding: 20px;
+  margin-top: 140px;
+  border-radius: 10px;
+  height: 65vh;
+  overflow-y: scroll; }
+  .user_page .box h2, .user_page .box h3, .privacy_page .box h2, .privacy_page .box h3, .about_page .box h2, .about_page .box h3, .help_page .box h2, .help_page .box h3 {
+    font-size: 17px;
+    line-height: 18px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 700; }
+  .user_page .box p, .user_page .box li, .privacy_page .box p, .privacy_page .box li, .about_page .box p, .about_page .box li, .help_page .box p, .help_page .box li {
+    font-size: 14px;
+    line-height: 18px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 400;
+    margin: 1em 0; }
+
+.guests_page div:first-child {
+  background-color: white;
+  padding: 20px;
+  margin-top: 40px;
+  border-radius: 10px; }
+
+.guests_page tr {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: column;
+          flex-direction: column; }
+
+.logout_page .box {
+  padding: 20px;
+  border-radius: 10px; }
+  .logout_page .box p {
+    font-size: 14px;
+    line-height: 18px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 400; }
+
+.user_page .send_client_logs {
+  margin: 20px 0; }
+
+#footer {
+  display: block;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0; }
+
+:root {
+  --logoUrl: url(/assets/logo/filesender_logo_zwart.svg); }
+
+@-webkit-keyframes fadeout {
+  0% {
+    opacity: 1; }
+  99% {
+    opacity: 0; }
+  100% {
+    opacity: 0;
+    display: none;
+    pointer-events: none; } }
+
+@keyframes fadeout {
+  0% {
+    opacity: 1; }
+  99% {
+    opacity: 0; }
+  100% {
+    opacity: 0;
+    display: none;
+    pointer-events: none; } }
+
+body {
+  background: #FFF3EB;
+  position: relative;
+  min-height: 100vh; }
+  body li, body p, body span, body div, body a {
+    font-family: "Source Sans Pro", sans-serif; }
+
+#wrap {
+  background: #FFF3EB;
+  max-width: 1024px;
+  width: 100%;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: column;
+          flex-direction: column;
+  -webkit-flex-wrap: wrap;
+          flex-wrap: wrap;
+  height: 600px; }
 
