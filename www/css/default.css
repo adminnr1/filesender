@@ -1599,7 +1599,7 @@ div.not_displayed {
 
 @import url(https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;300;400;600;700;900&display=swap);
 :root {
-  --logoUrl: url(/assets/logo/filesender_logo_zwart.svg); }
+  --logoUrl: url(/images/fabrique/logo/filesender_logo_zwart.svg); }
 
 #header {
   background: var(--logoUrl) no-repeat top left;
@@ -1609,7 +1609,7 @@ div.not_displayed {
   width: 140px; }
 
 :root {
-  --logoUrl: url(/assets/logo/filesender_logo_zwart.svg); }
+  --logoUrl: url(/images/fabrique/logo/filesender_logo_zwart.svg); }
 
 #menu {
   height: auto;
@@ -1647,7 +1647,7 @@ div.not_displayed {
     font-weight: 700; }
 
 :root {
-  --logoUrl: url(/assets/logo/filesender_logo_zwart.svg); }
+  --logoUrl: url(/images/fabrique/logo/filesender_logo_zwart.svg); }
 
 #page h1 {
   padding: 20px 0; }
@@ -1697,7 +1697,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
 
 .fa-minus-square::before {
   content: "";
-  background: url(/assets/logo/remove_files.svg) no-repeat;
+  background: url(/images/fabrique/logo/remove_files.svg) no-repeat;
   background-size: 10px;
   display: inline-block;
   width: 10px;
@@ -1811,7 +1811,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
 #upload_form .files_dragdrop {
   border: none;
   background-color: transparent;
-  background: url(/assets/logo/drag_drop_button.svg) no-repeat;
+  background: url(/images/fabrique/logo/drag_drop_button.svg) no-repeat;
   padding: 0;
   height: 400px;
   cursor: pointer;
@@ -1840,7 +1840,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
     font-family: "Source Sans Pro", sans-serif;
     font-weight: 600;
     color: #F07527;
-    background: url(/assets/logo/add_files.svg) no-repeat;
+    background: url(/images/fabrique/logo/add_files.svg) no-repeat;
     background-size: 40px;
     height: 40px;
     display: inline-block;
@@ -2073,7 +2073,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
   border-radius: 10px;
   position: relative; }
   #upload_form #uploadDone div:first-child {
-    background: url(/assets/logo/check.svg) no-repeat;
+    background: url(/images/fabrique/logo/check.svg) no-repeat;
     background-size: 40px;
     height: 40px;
     width: 40px;
@@ -2157,7 +2157,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
   right: 0; }
 
 :root {
-  --logoUrl: url(/assets/logo/filesender_logo_zwart.svg); }
+  --logoUrl: url(/images/fabrique/logo/filesender_logo_zwart.svg); }
 
 @-webkit-keyframes fadeout {
   0% {
