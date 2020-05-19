@@ -1,5 +1,35 @@
 // JavaScript Document
-class Fabrique {
+
+  /*
+   * FileSender www.filesender.org
+   *
+   * Copyright (c) 2009-2012, AARNet, Belnet, HEAnet, SURFnet, UNINETT
+   * All rights reserved.
+   *
+   * Redistribution and use in source and binary forms, with or without
+   * modification, are permitted provided that the following conditions are met:
+   *
+   * *	Redistributions of source code must retain the above copyright
+   * 	notice, this list of conditions and the following disclaimer.
+   * *	Redistributions in binary form must reproduce the above copyright
+   * 	notice, this list of conditions and the following disclaimer in the
+   * 	documentation and/or other materials provided with the distribution.
+   * *	Neither the name of AARNet, Belnet, HEAnet, SURFnet and UNINETT nor the
+   * 	names of its contributors may be used to endorse or promote products
+   * 	derived from this software without specific prior written permission.
+   *
+   * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS'
+   * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+   * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+   * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+   * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+   * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+   * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+   * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+   * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+   */
+  class Fabrique {
 
     constructor(){
       this.totalFileSize = 0;
@@ -24,6 +54,8 @@ class Fabrique {
       this.uploadButtons = $('.buttons').addClass('step2').hide();
       this.acceptTerms = $('.aup').first().hide();
       this.labelFrom = $('label[for="from"]').first().parent().hide();
+      this.labelUpload = $('label[for="files"]').html('Add files');
+
       $('#get_a_link').parent().hide();
 
       // Hide email form components initially
@@ -55,9 +87,9 @@ class Fabrique {
       // Add the div that collapses/shrinks when step 2 is active
       this.filesListBack = $(`
                               <div id="filesList" class="step2">
-                              <div><span id="fileCount"></span>/<span id="maxFileCount"></span></div>
-                              <div><span id="fileSize"></span>/<span id="maxFileSize"></span></div>
-                              <div><span>End-to-end encryption is </span> <span id="encryptionStatus"></span></div>
+                              <div class="infoDiv fileCountDiv"><span id="fileCount"></span> file(s) added</div>
+                              <div class=infoDiv fileSizeDiv">Total size <span id="fileSize"></span></div>
+                              <div class=infoDiv encryptDiv"><span>End-to-end encryption is </span> <span id="encryptionStatus"></span></div>
                               </div>
       `).hide();
       this.overallDiv.prepend(this.filesListBack);
@@ -67,8 +99,8 @@ class Fabrique {
       $('#fileslist').prepend(`
           <div id="fileDetails" class="step1">
               <div>
-                  <span id="fileCount"></span><span> files added</span>
-                  <span>Total size <span id="fileSize"></span>
+                  <div class="fileCountDiv"><span id="fileCount"></span><span> file(s) added</span></div>
+                  <div class="fileSizeDiv">Total size <span id="fileSize"></span></div>
               </div>
           </div>
       `).hide();
@@ -76,8 +108,8 @@ class Fabrique {
       // Add step 3 div in hidden form
       this.uploadDone = $(`
       <div id="uploadDone" class="step3">
-          <div>ICOONTJE</div>
-          <div><span id="done">All done</span></div>
+          <div></div>
+          <div><span id="done" class="done_text">All done</span></div>
           <div id="downloadLinkArea"><span id="uploadVariantReport"></span></div>
 
           <a href="?s=transfers" id="myTransfers">View my transfers</a>
@@ -282,36 +314,6 @@ class Fabrique {
 
     }
   }
-
-  /*
-   * FileSender www.filesender.org
-   *
-   * Copyright (c) 2009-2012, AARNet, Belnet, HEAnet, SURFnet, UNINETT
-   * All rights reserved.
-   *
-   * Redistribution and use in source and binary forms, with or without
-   * modification, are permitted provided that the following conditions are met:
-   *
-   * *	Redistributions of source code must retain the above copyright
-   * 	notice, this list of conditions and the following disclaimer.
-   * *	Redistributions in binary form must reproduce the above copyright
-   * 	notice, this list of conditions and the following disclaimer in the
-   * 	documentation and/or other materials provided with the distribution.
-   * *	Neither the name of AARNet, Belnet, HEAnet, SURFnet and UNINETT nor the
-   * 	names of its contributors may be used to endorse or promote products
-   * 	derived from this software without specific prior written permission.
-   *
-   * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS'
-   * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-   * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-   * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-   * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-   * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-   * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-   * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-   * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-   */
 
   /**
    * Client side language handling
