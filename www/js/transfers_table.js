@@ -1,53 +1,157 @@
 // JavaScript Document
 
+/*
+ * FileSender www.filesender.org
+ *
+ * Copyright (c) 2009-2012, AARNet, Belnet, HEAnet, SURFnet, UNINETT
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * *	Redistributions of source code must retain the above copyright
+ * 	notice, this list of conditions and the following disclaimer.
+ * *	Redistributions in binary form must reproduce the above copyright
+ * 	notice, this list of conditions and the following disclaimer in the
+ * 	documentation and/or other materials provided with the distribution.
+ * *	Neither the name of AARNet, Belnet, HEAnet, SURFnet and UNINETT nor the
+ * 	names of its contributors may be used to endorse or promote products
+ * 	derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 class FabriqueTransferList {
     constructor(){
 
       this.setDefaultUI();
+      console.log('cons is called');
     }
 
     setDefaultUI() {
       this.transferDetails = $('<div id="transferDetails"></div>').hide();
+
       $('body').append(this.transferDetails);
 
       $('.actions').hide();
+      $('.transfer_id').hide();
+      $('.expand').hide();
+
+      this.addListenerToRows();
+
+      // Move pagination and hide initially
+      this.previousPage = $('.pageprev')
+      this.firstPage = $('.pageprev0')
+      this.nextPage = $('.pagenext')
+      this.paginationWrapper = this.previousPage.parent().detach();
+      $('.nextColumn').append(this.paginationWrapper);
+
+      this.changeFileColumnContents();
+      this.changeEmailColumnContents();
     }
 
-    showTransferDetails(data) {
-      this.transferDetails.html(data);
-      this.transferDetails.show();
+    changeEmailColumnContents() {
+      $('.recipients').each(function(i){
+
+          if(!$(this).is('td')) return; // so we dont get the ones in the popup with the same class
+
+          const column = $(this);
+          let emailString = '';
+          let otherRecipientsCount = 0;
+
+          // iterate over the files in the column
+          if (column.children().length > 0) {
+              const currentElement = column.children().first();
+
+              if(currentElement.is('a')) {
+                  emailString += currentElement.text();
+
+                  const transferId = column.parent().attr('data-id');
+
+                  // Get the info from the collapsed field since that has all the other recipient info and the table only shows max 3
+                  const extraInfo = $('.transfer_details[data-id="' + transferId + '"]');
+                  otherRecipientsCount = extraInfo.find('.recipient').length - 1;
+              }
+              else if(currentElement.is('abbr')) {
+                  emailString = 'Download link';
+              }
+
+              let moreString = otherRecipientsCount ? (' + ' + otherRecipientsCount + ' more') : '';
+              emailString += moreString;
+              column.text(emailString);
+          }
+      });
+    }
+
+    changeFileColumnContents() {
+        $('.files').each(function(i){
+
+            if(!$(this).is('td')) return;
+
+            const column = $(this);
+            let fileString = '';
+            let otherFileCount = 0;
+
+            // iterate over the files in the column
+            if (column.children().length > 0) {
+              column.children().each(function(i) {
+                  const currentElement = $(this);
+                  if(currentElement.is('span')) {
+                      if(i == 0) {
+                          fileString += currentElement.text();
+                      }
+                      else {
+                          otherFileCount += 1;
+                      }
+                  }
+              });
+
+              let moreString = otherFileCount ? (' + ' + otherFileCount + ' more') : '';
+              fileString += moreString;
+              column.text(fileString);
+            }
+        });
+    }
+
+    addListenerToRows() {
+        const that = this;
+        $('.transfer').each(function(i){
+          $(this).click(function(){
+              const id = $(this).attr('data-id');
+              return that.toggleTransferDetails(id);
+          });
+        });
+    }
+
+    toggleTransferDetails(transferId) {
+      // get the data related
+
+      const data = document.querySelector('.transfer_details[data-id="' + transferId + '"]').innerHTML;
+      if(this.transferDetails.hasClass('popup')) {
+          this.transferDetails.hide();
+          this.transferDetails.removeClass('popup');
+          console.log('was shown, should now be hidden')
+          this.transferDetails.children().first().remove();
+      }
+      else {
+          this.transferDetails.append('<div id="popup_wrapper"/>');
+          $('#popup_wrapper').html(data);
+          this.transferDetails.show();
+          this.transferDetails.addClass('popup');
+          console.log('was hidden, should now be shown');
+      }
+      console.log('clicked');
     }
   }
-
-  /*
-   * FileSender www.filesender.org
-   *
-   * Copyright (c) 2009-2012, AARNet, Belnet, HEAnet, SURFnet, UNINETT
-   * All rights reserved.
-   *
-   * Redistribution and use in source and binary forms, with or without
-   * modification, are permitted provided that the following conditions are met:
-   *
-   * *	Redistributions of source code must retain the above copyright
-   * 	notice, this list of conditions and the following disclaimer.
-   * *	Redistributions in binary form must reproduce the above copyright
-   * 	notice, this list of conditions and the following disclaimer in the
-   * 	documentation and/or other materials provided with the distribution.
-   * *	Neither the name of AARNet, Belnet, HEAnet, SURFnet and UNINETT nor the
-   * 	names of its contributors may be used to endorse or promote products
-   * 	derived from this software without specific prior written permission.
-   *
-   * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-   * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-   * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-   * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-   * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-   * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-   * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-   * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-   * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-   */
 
   $(function() {
     if(window.transfers_table) return;
@@ -56,40 +160,39 @@ class FabriqueTransferList {
     var FabriqueTL = new FabriqueTransferList();
 
     // Expand each transfer's details
-    $('.transfer .expand span, .transfer span.expand').on('click', function() {
-        var el = $(this);
-        var tr = el.closest('tr');
-        var details = el.closest('table').find('.transfer_details[data-id="' + tr.attr('data-id') + '"]');
+  //   $('.transfer .expand span, .transfer span.expand').on('click', function() {
+  //       var el = $(this);
+  //       var tr = el.closest('tr');
+  //       console.log(tr.attr('data-id'));
+  //       var details = el.closest('table').find('.transfer_details[data-id="' + tr.attr('data-id') + '"]');
+  //       FabriqueTL.toggleTransferDetails(tr.attr('data-id'));
 
-        console.log(details);
-        FabriqueTL.showTransferDetails(details);
-
-        // tr.hide('fast');
-        // details.show('fast');
-    });
+  //       // tr.hide('fast');
+  //       // details.show('fast');
+  //   });
 
     // Collapse each transfer's details
-    $('.transfer_details .collapse span').on('click', function() {
-        var el = $(this);
-        var details = el.closest('tr');
-        var tr = el.closest('table').find('.transfer[data-id="' + details.attr('data-id') + '"]');
+  //   $('.transfer_details .collapse span').on('click', function() {
+  //       var el = $(this);
+  //       var details = el.closest('tr');
+  //       var tr = el.closest('table').find('.transfer[data-id="' + details.attr('data-id') + '"]');
 
-        details.hide('fast');
-        tr.show('fast');
-    });
+  //       details.hide('fast');
+  //       tr.show('fast');
+  //   });
 
     // Expand / retract all
-    $('thead .expand span').on('click', function() {
-        var el = $(this);
-        var table = el.closest('table');
+  //   $('thead .expand span').on('click', function() {
+  //       var el = $(this);
+  //       var table = el.closest('table');
 
-        var expanded = !el.hasClass('expanded');
+  //       var expanded = !el.hasClass('expanded');
 
-        table.find('.transfer_details')[expanded ? 'show' : 'hide']('fast');
-        table.find('.transfer')[expanded ? 'hide' : 'show']('fast');
+  //       table.find('.transfer_details')[expanded ? 'show' : 'hide']('fast');
+  //       table.find('.transfer')[expanded ? 'hide' : 'show']('fast');
 
-        el.toggleClass('expanded', expanded).toggleClass('fa-plus-circle', !expanded).toggleClass('fa-minus-circle', expanded);
-    });
+  //       el.toggleClass('expanded', expanded).toggleClass('fa-plus-circle', !expanded).toggleClass('fa-minus-circle', expanded);
+  //   });
 
     // Clone attributes for easier access
     $('.transfer_details').each(function() {
