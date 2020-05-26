@@ -656,10 +656,10 @@ function delayAndCallOnlyOnce(callback, ms) {
         ) ok = false;
     }
 
-    if(filesender.ui.nodes.aup.length)
-        filesender.ui.nodes.aup.prop('checked', true);
+  //   if(filesender.ui.nodes.aup.length)
+  //     //   filesender.ui.nodes.aup.prop('checked', true);
 
-        // if(!filesender.ui.nodes.aup.is(':checked')) ok = false; // TODO weer aanzetten?
+    if(!filesender.ui.nodes.aup.is(':checked')) ok = false;
 
     var invalid_nodes = filesender.ui.nodes.files.list.find('.invalid');
     if( invalid_nodes.length ) {
