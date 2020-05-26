@@ -1601,7 +1601,7 @@ div.not_displayed {
 /* Fabrique */
 @import url(https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;300;400;600;700;900&display=swap);
 :root {
-  --logoUrl: url(/assets/logo/filesender_logo_zwart.svg); }
+  --logoUrl: url(/images/fabrique/logo/filesender_logo_zwart.svg); }
 
 #header {
   z-index: 1;
@@ -1617,7 +1617,7 @@ div.not_displayed {
       color: black; }
 
 :root {
-  --logoUrl: url(/assets/logo/filesender_logo_zwart.svg); }
+  --logoUrl: url(/images/fabrique/logo/filesender_logo_zwart.svg); }
 
 #menu {
   z-index: 1;
@@ -1657,7 +1657,7 @@ div.not_displayed {
     font-weight: 700; }
 
 :root {
-  --logoUrl: url(/assets/logo/filesender_logo_zwart.svg); }
+  --logoUrl: url(/images/fabrique/logo/filesender_logo_zwart.svg); }
 
 #page {
   z-index: 1; }
@@ -1727,7 +1727,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
 
 .fa-minus-square::before {
   content: "";
-  background: url(/assets/logo/remove_files.svg) no-repeat;
+  background: url(/images/fabrique/logo/remove_files.svg) no-repeat;
   background-size: 10px;
   display: inline-block;
   width: 10px;
@@ -1872,7 +1872,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
 #upload_form .files_dragdrop {
   border: none;
   background-color: transparent;
-  background: url(/assets/logo/drag_drop_button.svg) no-repeat;
+  background: url(/images/fabrique/logo/drag_drop_button.svg) no-repeat;
   padding: 0;
   height: 400px;
   cursor: pointer;
@@ -1901,7 +1901,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
     font-family: "Source Sans Pro", sans-serif;
     font-weight: 600;
     color: #F07527;
-    background: url(/assets/logo/add_files.svg) no-repeat;
+    background: url(/images/fabrique/logo/add_files.svg) no-repeat;
     background-size: 40px;
     height: 40px;
     display: inline-block;
@@ -1978,7 +1978,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
       margin: 0 10px 10px 0; }
       #upload_form .two_columns #encrypt_checkbox input[type="checkbox"]:checked ~ label::before {
         content: "";
-        background: url(/assets/logo/check-small.svg) no-repeat;
+        background: url(/images/fabrique/logo/check-small.svg) no-repeat;
         background-position: center;
         position: absolute;
         left: 5px;
@@ -2028,7 +2028,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
     visibility: hidden; }
     #upload_form .two_columns #encryption_show_password:checked ~ label::before {
       content: "";
-      background: url(/assets/logo/check-small.svg) no-repeat;
+      background: url(/images/fabrique/logo/check-small.svg) no-repeat;
       background-position: center;
       position: absolute;
       left: 5px;
@@ -2058,7 +2058,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
     #upload_form .two_columns #encryption_description_container i {
       margin-top: 1em; }
       #upload_form .two_columns #encryption_description_container i::before {
-        content: url(/assets/logo/information-icon.svg);
+        content: url(/images/fabrique/logo/information-icon.svg);
         position: relative;
         top: 3px; }
   #upload_form .two_columns #continue {
@@ -2153,7 +2153,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
   visibility: hidden; }
   #upload_form .basic_options #email_upload_complete:checked ~ label::before, #upload_form .basic_options #email_download_complete:checked ~ label::before {
     content: "";
-    background: url(/assets/logo/check-small.svg) no-repeat;
+    background: url(/images/fabrique/logo/check-small.svg) no-repeat;
     background-position: center;
     position: absolute;
     left: 0;
@@ -2229,7 +2229,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
   border-radius: 10px;
   position: relative; }
   #upload_form #uploadDone div:first-child {
-    background: url(/assets/logo/check.svg) no-repeat;
+    background: url(/images/fabrique/logo/check.svg) no-repeat;
     background-size: 40px;
     height: 40px;
     width: 40px;
@@ -2244,7 +2244,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
     text-align: center; }
 
 #upload_form #uploadDone.downloadlink div:first-child {
-  background: url(/assets/logo/check.svg) no-repeat;
+  background: url(/images/fabrique/logo/check.svg) no-repeat;
   background-size: 40px;
   height: 40px;
   width: 40px;
@@ -2324,7 +2324,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
       visibility: hidden; }
       .guests_page #send_voucher input[type="checkbox"]:checked ~ label::before {
         content: "";
-        background: url(/assets/logo/check-small.svg) no-repeat;
+        background: url(/images/fabrique/logo/check-small.svg) no-repeat;
         background-position: center;
         position: absolute;
         left: 0;
@@ -2437,7 +2437,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
     margin: 1em 0; }
 
 :root {
-  --logoUrl: url(/assets/logo/filesender_logo_zwart.svg); }
+  --logoUrl: url(/images/fabrique/logo/filesender_logo_zwart.svg); }
 
 #footer {
   font-size: 14px;
@@ -2454,7 +2454,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
     color: #808282; }
 
 :root {
-  --logoUrl: url(/assets/logo/filesender_logo_zwart.svg); }
+  --logoUrl: url(/images/fabrique/logo/filesender_logo_zwart.svg); }
 
 @-webkit-keyframes fadeout {
   0% {
