@@ -52,7 +52,7 @@
       this.encryptionArea = $('#encrypt_checkbox');
       this.optionsArea = $('.basic_options').first().parent().addClass('step2').hide();
       this.uploadButtons = $('.buttons').addClass('step2').hide();
-      this.acceptTerms = $('.aup').first().hide();
+      // this.acceptTerms = $('.aup').first().hide();
       this.labelFrom = $('label[for="from"]').first().parent().hide();
       this.labelUpload = $('label[for="files"]').html('Add files');
 
@@ -200,6 +200,15 @@
 
     }
 
+    toggleUploadState(uploading) {
+        if (uploading) {
+            $('body').addClass('upload_in_progress');
+        }
+        else {
+          $('body').removeClass('upload_in_progress');
+        }
+    }
+
     // Shows the big + icon if no files are selected yet
     toggleBigPlus(filesPresent) {
       console.log(filesPresent);
@@ -249,6 +258,8 @@
       var percentage = (100 * this.totalCompletedBytes / this.totalFileSize).toFixed(2);
       console.log('percent' + percentage);
 
+      document.querySelector('body').style.backgroundSize = '100% ' + percentage +'%'
+
       // Keep track of how far we got this upload chunk
       this.previousBytes = completedBytes;
 
@@ -297,6 +308,7 @@
     // step 3 when upload is complete
     uploadCompleted(encryption, download_link, filecount) {
       console.log('upload done');
+      this.toggleUploadState(false);
 
       // Hide previous steps
       this.filesListBack.hide();
@@ -308,6 +320,7 @@
           var link = $('<textarea class="wide" readonly="readonly" />');
           $('#downloadLinkArea').append(link);
           link.val(download_link).focus().select();
+          $('#uploadDone').addClass('downloadlink');
       }
 
       $('#uploadDone').show();
@@ -1361,6 +1374,7 @@
               errorhandler = filesender.ui.error;
 
           this.status = 'running';
+          Fabrique.toggleUploadState(true);
 
           if(this.failed_transfer_restart) {
               return this.restartFailedTransfer(errorhandler);

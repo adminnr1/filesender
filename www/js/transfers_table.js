@@ -45,18 +45,31 @@ class FabriqueTransferList {
       $('.actions').hide();
       $('.transfer_id').hide();
       $('.expand').hide();
-
-      this.addListenerToRows();
+      $('.collapse').hide();
 
       // Move pagination and hide initially
-      this.previousPage = $('.pageprev')
-      this.firstPage = $('.pageprev0')
-      this.nextPage = $('.pagenext')
+      this.previousPage = $('.pageprev');
+      this.firstPage = $('.pageprev0');
+      this.nextPage = $('.pagenext');
       this.paginationWrapper = this.previousPage.parent().detach();
       $('.nextColumn').append(this.paginationWrapper);
 
+      this.addListenerToRows();
       this.changeFileColumnContents();
       this.changeEmailColumnContents();
+      this.changeDownloadColumnContents();
+      this.changeExpiryDateColumnContents();
+      this.setBottomNavigation();
+
+      // Set back click on everything except the detail popup div
+      $('#transferDetails').click(function(e){
+          console.log(e);
+
+          if( e.target !== this) return;
+
+          $('#transferDetails').hide();
+          $('#transferDetails').removeClass('popup');
+      });
     }
 
     changeEmailColumnContents() {
@@ -122,6 +135,24 @@ class FabriqueTransferList {
         });
     }
 
+    changeDownloadColumnContents() {
+      $('.downloads').each(function(i){
+          if(!$(this).is('td')) return;
+          const column = $(this);
+          const dlCount = column.html().toString().trim().split(' ')[0];
+          column.html(dlCount + ' downloads');
+      });
+    }
+
+    changeExpiryDateColumnContents() {
+      $('.expires').each(function(i){
+          if(!$(this).is('td')) return;
+          const column = $(this);
+          const date = column.text();
+          column.html('Expires ' + date);
+      });
+    }
+
     addListenerToRows() {
         const that = this;
         $('.transfer').each(function(i){
@@ -136,20 +167,53 @@ class FabriqueTransferList {
       // get the data related
 
       const data = document.querySelector('.transfer_details[data-id="' + transferId + '"]').innerHTML;
-      if(this.transferDetails.hasClass('popup')) {
-          this.transferDetails.hide();
-          this.transferDetails.removeClass('popup');
-          console.log('was shown, should now be hidden')
-          this.transferDetails.children().first().remove();
-      }
-      else {
-          this.transferDetails.append('<div id="popup_wrapper"/>');
-          $('#popup_wrapper').html(data);
-          this.transferDetails.show();
-          this.transferDetails.addClass('popup');
-          console.log('was hidden, should now be shown');
-      }
-      console.log('clicked');
+      this.transferDetails.append('<div id="popup_wrapper"/>');
+      $('#popup_wrapper').html(data);
+      this.transferDetails.show();
+      this.transferDetails.addClass('popup');
+
+    }
+
+    setBottomNavigation(transferCount, transferCountInactive) {
+        const navs = $('.pager_bottom_nav');
+
+
+        const transferListActive = $(navs[0]).children().first();
+        if (transferListActive.html().toString().includes('No more records')) {
+          transferListActive.html('<span id="nav_no_more" class="nav_option">No more active transfers</span>');
+        }
+        else {
+          transferListActive.html('<span id="nav_active_show_more" class="nav_option">Show more</span> <span id="nav_active_show_all" class="nav_option">Show all</span>')
+        }
+
+        // Set onclick
+        $('#nav_active_show_more').click(function(){
+          var paramSplit = window.location.href.split('openlimit=');
+          var previousCount = paramSplit.length > 1 ? parseInt(paramSplit.pop()) : 10;
+          window.location = '/?s=transfers&openlimit=' + (previousCount += 10);
+        });
+
+        $('#nav_active_show_all').click(function(){
+          console.log('test nav active all');
+          window.location = '/?s=transfers&openlimit=999999'
+        });
+
+        const transferListInactive = $(navs[1]).children().first();
+        if (transferListInactive.html().toString().includes('No more records')) {
+          transferListInactive.html('<span id="nav_no_more" class="nav_option">No more inactive transfers</span>');
+        }
+        else {
+          transferListInactive.html('<span id="nav_inactive_show_more" class="nav_option">Show more</span> <span id="nav_inactive_show_all" class="nav_option">Show all</span>')
+        }
+
+        // Set onclick -> different param?? dont know for
+        $('#nav_inactive_show_more').click(function(){
+          console.log('test nav inactive');
+        });
+
+        $('#nav_inactive_show_all').click(function(){
+          console.log('test nav inactive all');
+        });
     }
   }
 
