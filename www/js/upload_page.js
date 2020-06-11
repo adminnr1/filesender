@@ -1211,13 +1211,13 @@ $(function() {
   });
 
   // Bind aup
-  form.find('label[for="aup"]').addClass('clickable').on('click', function() {
-      $(this).closest('.fieldcontainer').find('.terms').slideToggle();
-      return false;
-  });
+  // Disabled since we changed this
+  // form.find('label[for="aup"]').addClass('clickable').on('click', function() {
+  //     $(this).closest('.fieldcontainer').find('.terms').slideToggle();
+  //     return false;
+  // });
 
   filesender.ui.nodes.aup.on('change', function() {
-      console.log('is checked');
       filesender.ui.evalUploadEnabled();
   });
 

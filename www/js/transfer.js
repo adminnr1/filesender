@@ -49,7 +49,10 @@ class Fabrique {
     this.splitOnColon();
 
     this.termsLink = $('.terms').children().first().detach();
-    this.termsLabel = $('label[for="aup"]').html(this.termsLink);
+    this.termsLink.html('Code of Conduct');
+
+    this.termsLabel = $('label[for="aup"]').html('I accept the following ' + $(this.termsLink).html() + ' when using this service.');
+    this.termsLabel.attr('title', '');
 
     this.labelEncrypt = $('label[for="encryption"]').children().first().children().first().html('Send files securely (max 2 GB)')
     this.encryptionArea = $('#encrypt_checkbox');
@@ -74,9 +77,12 @@ class Fabrique {
     $('#encrypt_checkbox').parent().children().splice(0, 4).forEach(function(element) {
         $(element).hide();
     });
-
+    this.terms = this.terms.detach();
+    this.termsinput = $('input', this.terms).detach();
+    this.termsinput.attr('id','aup'); // MKR add id otherwise the label click won'ßt work
+    this.terms.prepend(this.termsinput);
     // Move terms checkbox to other div
-    $('#encrypt_checkbox').parent().append(this.terms.detach());
+    $('#encrypt_checkbox').parent().append(this.terms);
 
     // Default is get a link
     $('#get_a_link').prop('checked', true);

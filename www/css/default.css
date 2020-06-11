@@ -1599,6 +1599,7 @@ div.not_displayed {
 
 
 /* Fabrique */
+
 @import url(https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;300;400;600;700;900&display=swap);
 :root {
   --logoUrl: url(/images/fabrique/logo/filesender_logo_zwart.svg);
@@ -1607,7 +1608,8 @@ div.not_displayed {
   --checkUrl: url(/images/fabrique/logo/check.svg);
   --dragDropUrl: url(/images/fabrique/logo/drag_drop_button.svg);
   --infoIconUrl: url(/images/fabrique/logo/information-icon.svg);
-  --removeUrl: url(/images/fabrique/logo/remove_files.svg); }
+  --removeUrl: url(/images/fabrique/logo/remove_files.svg);
+  --viewMoreUrl:  url(/images/fabrique/logo/arrow_down.svg); }
 
 #header {
   z-index: 1;
@@ -1629,7 +1631,8 @@ div.not_displayed {
   --checkUrl: url(/images/fabrique/logo/check.svg);
   --dragDropUrl: url(/images/fabrique/logo/drag_drop_button.svg);
   --infoIconUrl: url(/images/fabrique/logo/information-icon.svg);
-  --removeUrl: url(/images/fabrique/logo/remove_files.svg); }
+  --removeUrl: url(/images/fabrique/logo/remove_files.svg);
+  --viewMoreUrl:  url(/images/fabrique/logo/arrow_down.svg); }
 
 #menu {
   z-index: 1;
@@ -1679,7 +1682,8 @@ div.not_displayed {
   --checkUrl: url(/images/fabrique/logo/check.svg);
   --dragDropUrl: url(/images/fabrique/logo/drag_drop_button.svg);
   --infoIconUrl: url(/images/fabrique/logo/information-icon.svg);
-  --removeUrl: url(/images/fabrique/logo/remove_files.svg); }
+  --removeUrl: url(/images/fabrique/logo/remove_files.svg);
+  --viewMoreUrl:  url(/images/fabrique/logo/arrow_down.svg); }
 
 #page {
   width: 60%;
@@ -1831,6 +1835,45 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
   .transfers_page table.transfers .size {
     width: 10%;
     text-align: center; }
+  .transfers_page table.transfers tr {
+    background-color: white; }
+    .transfers_page table.transfers tr #nav_active_show_more {
+      font-size: 14px;
+      line-height: 15px;
+      font-family: "Source Sans Pro", sans-serif;
+      font-weight: 600;
+      color: #F07527;
+      cursor: pointer;
+      padding-right: 30px;
+      position: relative;
+      margin-right: 5px; }
+      .transfers_page table.transfers tr #nav_active_show_more::after {
+        content: '';
+        background: var(--viewMoreUrl) no-repeat;
+        width: 13px;
+        height: 13px;
+        position: absolute;
+        top: 8px;
+        right: 15px;
+        background-size: 100%; }
+    .transfers_page table.transfers tr #nav_active_show_all {
+      font-size: 14px;
+      line-height: 15px;
+      font-family: "Source Sans Pro", sans-serif;
+      font-weight: 600;
+      color: #F07527;
+      cursor: pointer;
+      padding-right: 20px;
+      position: relative; }
+      .transfers_page table.transfers tr #nav_active_show_all::after {
+        content: '';
+        background: var(--viewMoreUrl) no-repeat;
+        width: 13px;
+        height: 13px;
+        position: absolute;
+        top: 8px;
+        right: 6px;
+        background-size: 100%; }
   .transfers_page .files {
     width: 30%;
     overflow: hidden; }
@@ -1858,12 +1901,13 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
     -webkit-transform: translateY(-50%);
             transform: translateY(-50%); }
     #transferDetails #popup_wrapper [colspan="8"] {
-      padding: 30px;
+      padding: 0 30px 30px 30px;
       margin-bottom: 20px;
       display: -webkit-flex;
       display: flex;
       min-width: 450px;
       width: 50vw;
+      max-width: 900px;
       margin: 0 auto;
       -webkit-flex-direction: column;
               flex-direction: column;
@@ -1875,10 +1919,15 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
     font-family: "Source Sans Pro", sans-serif;
     font-weight: 700;
     margin-bottom: 10px;
-    margin-bottom: 30px;
+    background-color: white;
     text-align: left;
     -webkit-order: 1;
-            order: 1; }
+            order: 1;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    padding: 30px 0; }
   #transferDetails .collapse {
     margin-bottom: 1em; }
   #transferDetails td {
@@ -1945,9 +1994,41 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
     font-family: "Source Sans Pro", sans-serif;
     font-weight: 400;
     width: 100%;
-    margin-bottom: 20px; }
+    margin-bottom: 0; }
   #transferDetails .ui-button {
     margin: 10px 0; }
+  #transferDetails .download_link td {
+    padding-left: 0; }
+    #transferDetails .download_link td input {
+      margin-top: 15px;
+      border-left: 0;
+      border-right: 0;
+      border-top: 0;
+      border-bottom: 1px solid #F07527; }
+  #transferDetails .download_link a {
+    font-size: 15px;
+    line-height: 24px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 600;
+    background-color: #F07527;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 30px;
+    display: inline-block;
+    text-decoration: none; }
+    #transferDetails .download_link a:hover {
+      font-size: 15px;
+      line-height: 24px;
+      font-family: "Source Sans Pro", sans-serif;
+      font-weight: 600;
+      background-color: #040608;
+      color: white;
+      border: 0px;
+      cursor: pointer;
+      line-height: 40px; }
 
 .upload_page {
   margin-top: 40px;
@@ -2116,7 +2197,9 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
       color: #040608 !important; }
     #upload_form .two_columns #encryption_password_container {
       clear: both;
-      padding-top: 1.5em; }
+      padding-top: 1.5em;
+      -webkit-order: 2;
+              order: 2; }
       #upload_form .two_columns #encryption_password_container label {
         font-size: 20px;
         line-height: 18px;
@@ -2127,6 +2210,9 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
         margin-bottom: 10px; }
       #upload_form .two_columns #encryption_password_container input {
         height: 2em; }
+    #upload_form .two_columns #encryption_password_container_generate, #upload_form .two_columns #encryption_password_show_container {
+      -webkit-order: 2;
+              order: 2; }
     #upload_form .two_columns .encryption_password {
       border-left: 0;
       border-right: 0;
@@ -2154,9 +2240,9 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
         width: 14px;
         height: 14px;
         background-color: #F07527; }
-    #upload_form .two_columns label {
+    #upload_form .two_columns [for="aup"] {
       cursor: pointer; }
-      #upload_form .two_columns label::after {
+      #upload_form .two_columns [for="aup"]::after {
         content: '';
         width: 14px;
         position: absolute;
@@ -2209,15 +2295,16 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
         visibility: visible;
         cursor: pointer; }
     #upload_form .two_columns #encryption_description_container {
-      -webkit-order: 2;
-              order: 2;
+      -webkit-order: 3;
+              order: 3;
       padding-bottom: 0; }
       #upload_form .two_columns #encryption_description_container i {
         display: block;
-        margin-top: 0; }
+        margin-top: 0;
+        visibility: hidden; }
     #upload_form .two_columns #continue {
       position: absolute;
-      top: 55px;
+      top: 60px;
       right: 30px;
       width: 30%; }
     #upload_form .two_columns td {
@@ -2503,7 +2590,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
       background-color: #FFF3EB; }
   .guests_page #send_voucher {
     background-color: white;
-    padding: 30px;
+    padding: 30px 30px 15px 30px;
     border-radius: 10px; }
     .guests_page #send_voucher .recipients .recipient {
       display: inline-block;
@@ -2587,9 +2674,9 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
     margin-bottom: 10px; }
   .guests_page #base_notifications {
     margin-top: 1em; }
-  .guests_page [for="can_only_send_to_me"], .guests_page [for="add_me_to_recipients"], .guests_page [for="get_a_link"], .guests_page [for="email_upload_complete"], .guests_page [for="email_download_complete"] {
+  .guests_page [for="can_only_send_to_me"], .guests_page [for="add_me_to_recipients"], .guests_page [for="email_upload_complete"], .guests_page [for="get_a_link"], .guests_page [for="email_download_complete"] {
     cursor: pointer; }
-    .guests_page [for="can_only_send_to_me"]::after, .guests_page [for="add_me_to_recipients"]::after, .guests_page [for="get_a_link"]::after, .guests_page [for="email_upload_complete"]::after, .guests_page [for="email_download_complete"]::after {
+    .guests_page [for="can_only_send_to_me"]::after, .guests_page [for="add_me_to_recipients"]::after, .guests_page [for="email_upload_complete"]::after, .guests_page [for="get_a_link"]::after, .guests_page [for="email_download_complete"]::after {
       content: '';
       width: 14px;
       position: absolute;
@@ -2603,13 +2690,19 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
       padding: 0 20px;
       text-decoration: none; }
   .guests_page .guests {
-    background-color: white; }
+    background-color: white;
+    padding: 30px;
+    display: block;
+    border-radius: 10px; }
     .guests_page .guests thead {
       border-bottom: 1px solid #D8D8D8; }
     .guests_page .guests tr {
       display: table;
       background-color: white; }
   .guests_page .transfers {
+    padding: 30px;
+    display: block;
+    border-radius: 10px;
     background-color: white; }
     .guests_page .transfers thead {
       border-bottom: 1px solid #D8D8D8; }
@@ -2617,14 +2710,20 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
       display: table;
       background-color: white; }
 
-.logout_page .box {
-  padding: 30px;
-  border-radius: 10px; }
-  .logout_page .box p {
-    font-size: 14px;
-    line-height: 18px;
-    font-family: "Source Sans Pro", sans-serif;
-    font-weight: 400; }
+.logout_page {
+  height: calc(100vh - 200px);
+  margin-top: 100px; }
+  .logout_page .box {
+    padding: 30px;
+    border-radius: 10px;
+    background-color: white; }
+    .logout_page .box p {
+      font-size: 20px;
+      line-height: 18px;
+      font-family: "Source Sans Pro", sans-serif;
+      font-weight: 700;
+      margin-bottom: 10px;
+      margin: 0; }
 
 .user_page .send_client_logs {
   margin: 20px 0; }
@@ -2635,21 +2734,33 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
   width: 60%;
   min-width: 450px;
   max-width: 900px;
-  margin-top: 40px;
+  margin-top: 100px;
   margin-left: auto;
-  margin-right: auto; }
+  margin-right: auto;
+  max-height: calc(100vh - 200px);
+  overflow: scroll; }
+  .download_page .titlebar {
+    padding: 30px; }
+    .download_page .titlebar #title {
+      font-size: 20px;
+      line-height: 18px;
+      font-family: "Source Sans Pro", sans-serif;
+      font-weight: 700;
+      margin-bottom: 10px; }
+    .download_page .titlebar #totalsize {
+      display: block;
+      float: right; }
   .download_page div {
     font-size: 14px;
     line-height: 18px;
     font-family: "Source Sans Pro", sans-serif;
     font-weight: 400; }
   .download_page .boxnoframe {
-    max-height: calc(100vh - 160px);
-    overflow: scroll;
-    padding: 30px;
-    position: relative; }
-    .download_page .boxnoframe h1 {
-      padding: 0 !important; }
+    max-height: auto;
+    overflow: visible;
+    padding: 0 30px 30px 30px;
+    position: relative;
+    margin-bottom: 0; }
   .download_page .disclamer {
     margin: 1em 0; }
   .download_page .files .file {
@@ -2662,14 +2773,30 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
       margin-right: 5px; }
     .download_page .files .file .download {
       border: 0; }
+  .download_page .files .notOrange a {
+    color: #040608;
+    background-color: transparent;
+    font-size: 14px;
+    line-height: 15px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 600;
+    color: #F07527;
+    padding: 0; }
   .download_page .files .select_all {
     margin-bottom: 2em;
     margin-left: 0; }
+  .download_page .archive {
+    margin-bottom: 30px;
+    text-align: right; }
+    .download_page .archive .transferInfo div {
+      text-align: left; }
+    .download_page .archive .mac_archive_message {
+      text-align: left; }
   .download_page .archive_tar_download_frame {
     border: 0;
     background-color: transparent; }
   .download_page .archive_download_frame {
-    margin-bottom: 20px; }
+    margin-bottom: 0; }
 
 .ui-widget {
   background-color: white; }
@@ -2718,7 +2845,8 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
   --checkUrl: url(/images/fabrique/logo/check.svg);
   --dragDropUrl: url(/images/fabrique/logo/drag_drop_button.svg);
   --infoIconUrl: url(/images/fabrique/logo/information-icon.svg);
-  --removeUrl: url(/images/fabrique/logo/remove_files.svg); }
+  --removeUrl: url(/images/fabrique/logo/remove_files.svg);
+  --viewMoreUrl:  url(/images/fabrique/logo/arrow_down.svg); }
 
 #footer {
   font-size: 14px;
@@ -2741,7 +2869,8 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
   --checkUrl: url(/images/fabrique/logo/check.svg);
   --dragDropUrl: url(/images/fabrique/logo/drag_drop_button.svg);
   --infoIconUrl: url(/images/fabrique/logo/information-icon.svg);
-  --removeUrl: url(/images/fabrique/logo/remove_files.svg); }
+  --removeUrl: url(/images/fabrique/logo/remove_files.svg);
+  --viewMoreUrl:  url(/images/fabrique/logo/arrow_down.svg); }
 
 @-webkit-keyframes fadeout {
   0% {
