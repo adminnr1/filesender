@@ -1827,7 +1827,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
     border: none;
     padding: 10px; }
   .transfers_page .transfer {
-    border-bottom: 1px solid #D8D8D8;
+    border-bottom: 1px solid #CCCCCC;
     cursor: pointer; }
   .transfers_page .recipients {
     width: 20%;
@@ -1894,12 +1894,13 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
   z-index: 2;
   overflow-y: scroll; }
   #transferDetails #popup_wrapper {
-    width: 100%;
-    position: absolute;
+    width: auto;
+    position: fixed;
     top: 50%;
     text-align: center;
-    -webkit-transform: translateY(-50%);
-            transform: translateY(-50%); }
+    -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+    left: 50%; }
     #transferDetails #popup_wrapper [colspan="8"] {
       padding: 0 30px 30px 30px;
       margin-bottom: 20px;
@@ -1954,7 +1955,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
       font-family: "Source Sans Pro", sans-serif;
       font-weight: 400;
       padding: 15px 0;
-      border-bottom: 1px solid #D8D8D8; }
+      border-bottom: 1px solid #CCCCCC; }
     #transferDetails .detail_fileslist_title div:last-child {
       margin-bottom: 20px; }
     #transferDetails .detail_fileslist_title [data-action="remind"] {
@@ -1974,7 +1975,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
       font-family: "Source Sans Pro", sans-serif;
       font-weight: 400;
       padding: 15px 0;
-      border-bottom: 1px solid #D8D8D8; }
+      border-bottom: 1px solid #CCCCCC; }
     #transferDetails .files div:last-child {
       margin-bottom: 20px; }
     #transferDetails .files [data-action="delete"] {
@@ -2052,10 +2053,12 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
     background: var(--dragDropUrl) no-repeat;
     padding: 0;
     height: auto;
+    background-size: 30%;
     cursor: pointer;
-    background-position: 50% 50%; }
+    background-position: 50% 50%;
+    transition: background-size 1500ms ease-in; }
     #upload_form .files_dragdrop:hover {
-      background-size: 40%; }
+      background-size: 35%; }
     #upload_form .files_dragdrop .instructions {
       font-size: 20px;
       line-height: 18px;
@@ -2098,10 +2101,10 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
     border-radius: 10px 10px 0 0;
     min-height: 300px;
     overflow-y: scroll;
-    max-height: auto; }
+    max-height: 30vw; }
     #upload_form .files .file {
       background-color: white;
-      border-bottom: 1px solid #D8D8D8;
+      border-bottom: 1px solid #CCCCCC;
       border-left: none;
       border-right: none;
       border-top: none;
@@ -2217,7 +2220,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
       border-left: 0;
       border-right: 0;
       border-top: 0;
-      border-bottom: 1px solid #D8D8D8;
+      border-bottom: 1px solid #CCCCCC;
       height: 1em; }
     #upload_form .two_columns .aup {
       padding-left: 0;
@@ -2235,7 +2238,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
         position: absolute;
         left: 5px;
         z-index: 1;
-        bottom: 14px;
+        bottom: 17px;
         color: white;
         width: 14px;
         height: 14px;
@@ -2306,7 +2309,9 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
       position: absolute;
       top: 60px;
       right: 30px;
-      width: 30%; }
+      width: auto;
+      padding: 0 40px;
+      text-transform: capitalize; }
     #upload_form .two_columns td {
       display: -webkit-flex;
       display: flex;
@@ -2344,7 +2349,30 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
         margin-top: 0.15em; }
     #upload_form .two_columns [data-option="add_me_to_recipients"] {
       color: #F07527;
-      padding-left: 0; }
+      position: relative;
+      cursor: pointer; }
+      #upload_form .two_columns [data-option="add_me_to_recipients"] input:checked ~ label::before {
+        content: "";
+        background: var(--checkSmallUrl) no-repeat;
+        background-position: center;
+        position: absolute;
+        left: 0;
+        z-index: 1;
+        top: 9px;
+        color: white;
+        width: 14px;
+        height: 14px;
+        background-color: #F07527; }
+      #upload_form .two_columns [data-option="add_me_to_recipients"] label {
+        padding-left: 20px; }
+        #upload_form .two_columns [data-option="add_me_to_recipients"] label::after {
+          content: '';
+          width: 14px;
+          position: absolute;
+          height: 14px;
+          background-color: #FDE4D3;
+          left: 0;
+          top: 9px; }
       #upload_form .two_columns [data-option="add_me_to_recipients"] label {
         cursor: pointer; }
       #upload_form .two_columns [data-option="add_me_to_recipients"] input {
@@ -2354,14 +2382,14 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
       border-top: none;
       border-left: none;
       border-right: none;
-      border-bottom: 1px solid #D8D8D8;
+      border-bottom: 1px solid #CCCCCC;
       height: 20px; }
     #upload_form .two_columns textarea[name="message"] {
       min-height: 2em;
       border-left: none;
       border-top: none;
       border-right: none;
-      border-bottom: 1px solid #D8D8D8; }
+      border-bottom: 1px solid #CCCCCC; }
     #upload_form .two_columns [data-related-to="message"] {
       padding-left: 0;
       padding-bottom: 2em; }
@@ -2657,7 +2685,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
     border-left: 0;
     border-right: 0;
     border-top: 0;
-    border-bottom: 1px solid #D8D8D8;
+    border-bottom: 1px solid #CCCCCC;
     padding-top: 0.5em;
     height: 20px; }
   .guests_page textarea[name="message"] {
@@ -2665,7 +2693,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
     border-left: none;
     border-top: none;
     border-right: none;
-    border-bottom: 1px solid #D8D8D8;
+    border-bottom: 1px solid #CCCCCC;
     margin-bottom: 1em; }
   .guests_page .fieldcontainer {
     padding-left: 0;
@@ -2695,17 +2723,26 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
     display: block;
     border-radius: 10px; }
     .guests_page .guests thead {
-      border-bottom: 1px solid #D8D8D8; }
+      border-bottom: 1px solid #CCCCCC; }
+    .guests_page .guests .message {
+      width: 10em; }
+    .guests_page .guests .created {
+      width: 10em;
+      text-align: left; }
+    .guests_page .guests .expires {
+      width: 10em;
+      text-align: left; }
     .guests_page .guests tr {
       display: table;
-      background-color: white; }
+      background-color: white;
+      width: 100%; }
   .guests_page .transfers {
     padding: 30px;
     display: block;
     border-radius: 10px;
     background-color: white; }
     .guests_page .transfers thead {
-      border-bottom: 1px solid #D8D8D8; }
+      border-bottom: 1px solid #CCCCCC; }
     .guests_page .transfers tr {
       display: table;
       background-color: white; }
@@ -2904,10 +2941,12 @@ body {
   background: linear-gradient(180deg, #F7CC92, #F7B992);
   background-size: 100% 0%;
   background-repeat: no-repeat;
+  transition: background-size 500ms ease-in-out;
   position: relative;
   width: 100%;
   left: 0;
-  border-radius: 0 0 80px 80px; }
+  border-radius: 0 0 80px 80px;
+  transition: background-size 2s linear; }
 
 #wrap {
   background: inherit;
@@ -2922,16 +2961,4 @@ body {
   padding-bottom: 0;
   -webkit-align-items: baseline;
           align-items: baseline; }
-
-@-webkit-keyframes gradient {
-  0% {
-    background-size: 100% 0%; }
-  100% {
-    background-size: 100% 100%; } }
-
-@keyframes gradient {
-  0% {
-    background-size: 100% 0%; }
-  100% {
-    background-size: 100% 100%; } }
 

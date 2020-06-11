@@ -51,7 +51,7 @@ class Fabrique {
     this.termsLink = $('.terms').children().first().detach();
     this.termsLink.html('Code of Conduct');
 
-    this.termsLabel = $('label[for="aup"]').html('I accept the following ' + $(this.termsLink).html() + ' when using this service.');
+    this.termsLabel = $('label[for="aup"]').html('I accept the following ' + $(this.termsLink)[0].outerHTML + ' when using this service.');
     this.termsLabel.attr('title', '');
 
     this.labelEncrypt = $('label[for="encryption"]').children().first().children().first().html('Send files securely (max 2 GB)')
