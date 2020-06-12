@@ -2670,10 +2670,6 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
     border-spacing: 0;
     border-collapse: collapse; }
   .guests_page tr {
-    display: -webkit-flex;
-    display: flex;
-    -webkit-flex-direction: column;
-            flex-direction: column;
     border-spacing: 0;
     border-collapse: collapse; }
   .guests_page .mandatory {
@@ -2748,6 +2744,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
         .guests_page table.guests.list thead td, .guests_page table.transfers.list thead td {
           padding-top: 30px; }
       .guests_page table.guests.list tr, .guests_page table.transfers.list tr {
+        display: table;
         width: calc(100% - 60px);
         background-color: white;
         margin: 0px 30px;
@@ -2988,5 +2985,4 @@ body {
   padding-bottom: 0;
   -webkit-align-items: baseline;
           align-items: baseline; }
-
 
