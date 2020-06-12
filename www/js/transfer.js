@@ -46,6 +46,7 @@ class Fabrique {
     this.uploadArea = $('#upload_form').children().first().addClass('step1');
     $('.instructions').text('Drop or select files to send');
     this.basicFileSelector = $('.file_selector');
+    this.filesActions = $('.files_actions');
     this.splitOnColon();
 
     this.termsLink = $('.terms').children().first().detach();
@@ -79,7 +80,17 @@ class Fabrique {
     });
     this.terms = this.terms.detach();
     this.termsinput = $('input', this.terms).detach();
-    this.termsinput.attr('id','aup'); // MKR add id otherwise the label click won'ßt work
+    this.termsinput.attr('id','aup'); // MKR add id otherwise the label click won't work
+
+    this.termsinput.on('change', function() {
+        if (filesender.ui.evalUploadEnabled()) {
+            // console.log(filesender.ui.evalUploadEnabled());
+            $('#continue').removeClass('ui-state-disabled');
+        } else {
+            $('#continue').addClass('ui-state-disabled');
+        }
+    });
+
     this.terms.prepend(this.termsinput);
     // Move terms checkbox to other div
     $('#encrypt_checkbox').parent().append(this.terms);
@@ -88,7 +99,7 @@ class Fabrique {
     $('#get_a_link').prop('checked', true);
 
     // Add continue button to step 2
-    this.continueButton = $('<button id="continue" type="button"/>');
+    this.continueButton = $('<button id="continue" type="button"/>').addClass('ui-state-disabled');
     $(this.continueButton).html('continue');
     this.encryptionArea.parent().append(this.continueButton);
 
@@ -251,12 +262,13 @@ class Fabrique {
         $('.files_dragdrop').first().hide();
         $('#fileslist').show();
         this.basicFileSelector.show();
-
+        this.filesActions.show();
     }
     else {
         $('.files_dragdrop').first().show();
         $('#fileslist').hide();
         this.basicFileSelector.hide();
+        this.filesActions.hide();
     }
   }
 

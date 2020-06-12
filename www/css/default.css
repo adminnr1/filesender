@@ -1638,8 +1638,8 @@ div.not_displayed {
   z-index: 1;
   height: auto;
   background: none;
-  margin-left: 50px;
-  max-width: 200px; }
+  margin: 0px 0px 0px 50px;
+  width: 200px; }
   #menu .leftmenu {
     float: none;
     margin-bottom: 50px; }
@@ -1687,6 +1687,7 @@ div.not_displayed {
 
 #page {
   width: 60%;
+  margin-left: -250px;
   z-index: 1; }
   #page h1 {
     padding: 20px 0; }
@@ -1805,7 +1806,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
 .transfers_page {
   width: 60%;
   height: calc(100vh - 200px);
-  overflow: scroll;
+  overflow-y: scroll;
   margin-top: 100px;
   min-width: 900px; }
   .transfers_page .box {
@@ -2034,7 +2035,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
 .upload_page {
   margin-top: 40px;
   height: calc(100vh - 140px);
-  overflow-y: scroll; }
+  overflow-y: auto; }
 
 #upload_form {
   min-width: 450px;
@@ -2056,7 +2057,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
     background-size: 30%;
     cursor: pointer;
     background-position: 50% 50%;
-    transition: background-size 1500ms ease-in; }
+    transition: background-size 300ms ease-in; }
     #upload_form .files_dragdrop:hover {
       background-size: 35%; }
     #upload_form .files_dragdrop .instructions {
@@ -2069,7 +2070,21 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
       text-align: left;
       height: 50vh; }
   #upload_form .files_actions {
-    display: none; }
+    display: none;
+    -webkit-order: 3;
+            order: 3; }
+    #upload_form .files_actions div {
+      width: 100%;
+      padding-right: 15px; }
+      #upload_form .files_actions div a {
+        float: right;
+        width: auto;
+        -webkit-transform: translateY(-100%);
+                transform: translateY(-100%);
+        top: -40px; }
+    #upload_form .files_actions .stats,
+    #upload_form .files_actions div .select_files {
+      display: none; }
   #upload_form .file_selector {
     -webkit-order: 2;
             order: 2;
@@ -2100,8 +2115,8 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
     margin-bottom: 0;
     border-radius: 10px 10px 0 0;
     min-height: 300px;
-    overflow-y: scroll;
-    max-height: 30vw; }
+    max-height: none;
+    overflow-y: auto; }
     #upload_form .files .file {
       background-color: white;
       border-bottom: 1px solid #CCCCCC;
@@ -2121,8 +2136,6 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
         max-width: 90%; }
     #upload_form .files #fileDetails {
       padding: 30px 30px 30px 30px;
-      position: -webkit-sticky;
-      position: sticky;
       top: 0;
       z-index: 1;
       background-color: white; }
@@ -2228,7 +2241,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
       padding-bottom: 15px;
       position: relative; }
       #upload_form .two_columns .aup a {
-        text-decoration: none; }
+        text-decoration: underline; }
     #upload_form .two_columns [name="aup"] {
       visibility: hidden; }
       #upload_form .two_columns [name="aup"]:checked ~ label::before {
@@ -2508,7 +2521,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
       font-family: "Source Sans Pro", sans-serif;
       font-weight: 400; }
   #upload_form #uploadDone {
-    min-height: 330px;
+    min-height: 300px;
     background-color: white;
     margin-top: 80px;
     border-radius: 10px;
@@ -2517,7 +2530,10 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
       background: var(--checkUrl) no-repeat;
       background-size: 40px;
       height: 40px;
-      width: 40px; }
+      width: 40px;
+      position: relative;
+      margin: 0 auto;
+      top: 30px; }
     #upload_form #uploadDone #done {
       font-size: 20px;
       line-height: 18px;
@@ -2527,14 +2543,6 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
       display: block;
       text-align: center;
       margin-top: 50px; }
-  #upload_form #uploadDone.downloadlink div:first-child {
-    background: var(--checkUrl) no-repeat;
-    background-size: 40px;
-    height: 40px;
-    width: 40px;
-    position: relative;
-    margin: 0 auto;
-    top: 30px; }
   #upload_form #uploadDone.downloadlink #done {
     font-size: 20px;
     line-height: 18px;
@@ -2572,7 +2580,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
 
 .user_page, .privacy_page, .about_page, .help_page {
   height: calc(100vh - 200px);
-  overflow: scroll;
+  overflow-y: scroll;
   margin-top: 100px; }
   .user_page .box, .privacy_page .box, .about_page .box, .help_page .box {
     background-color: white;
@@ -2597,7 +2605,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
 
 .guests_page {
   height: calc(100vh - 140px);
-  overflow: scroll;
+  overflow-y: auto;
   margin-top: 40px;
   width: 50%; }
   .guests_page .box {
@@ -2717,35 +2725,52 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
     .guests_page .buttons a {
       padding: 0 20px;
       text-decoration: none; }
-  .guests_page .guests {
-    background-color: white;
-    padding: 30px;
-    display: block;
-    border-radius: 10px; }
-    .guests_page .guests thead {
-      border-bottom: 1px solid #CCCCCC; }
-    .guests_page .guests .message {
-      width: 10em; }
-    .guests_page .guests .created {
-      width: 10em;
-      text-align: left; }
-    .guests_page .guests .expires {
-      width: 10em;
-      text-align: left; }
-    .guests_page .guests tr {
-      display: table;
-      background-color: white;
-      width: 100%; }
   .guests_page .transfers {
     padding: 30px;
     display: block;
     border-radius: 10px;
     background-color: white; }
-    .guests_page .transfers thead {
-      border-bottom: 1px solid #CCCCCC; }
     .guests_page .transfers tr {
       display: table;
       background-color: white; }
+  .guests_page table {
+    border-spacing: 0;
+    border-collapse: collapse; }
+    .guests_page table.guests.list {
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      table-layout: fixed;
+      display: table;
+      width: 100%; }
+      .guests_page table.guests.list thead {
+        border: 0; }
+        .guests_page table.guests.list thead td {
+          padding-top: 30px; }
+      .guests_page table.guests.list tr {
+        width: calc(100% - 60px);
+        background-color: white;
+        margin: 0px 30px;
+        border-bottom: 1px solid #CCCCCC; }
+      .guests_page table.guests.list tbody tr:last-child {
+        margin-bottom: 30px; }
+      .guests_page table.guests.list td {
+        overflow: hidden;
+        white-space: nowrap;
+        padding: 4px 10px; }
+        .guests_page table.guests.list td.to {
+          width: 130px;
+          max-width: 130px; }
+        .guests_page table.guests.list td.subject {
+          width: 22%;
+          max-width: 22%;
+          text-align: left; }
+        .guests_page table.guests.list td.message {
+          text-align: left; }
+        .guests_page table.guests.list td.created, .guests_page table.guests.list td.expires {
+          text-align: left;
+          width: 90px;
+          max-width: 90px; }
 
 .logout_page {
   height: calc(100vh - 200px);
@@ -2775,7 +2800,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
   margin-left: auto;
   margin-right: auto;
   max-height: calc(100vh - 200px);
-  overflow: scroll; }
+  overflow-y: scroll; }
   .download_page .titlebar {
     padding: 30px; }
     .download_page .titlebar #title {
@@ -2941,12 +2966,11 @@ body {
   background: linear-gradient(180deg, #F7CC92, #F7B992);
   background-size: 100% 0%;
   background-repeat: no-repeat;
-  transition: background-size 500ms ease-in-out;
+  transition: background-size 600ms ease-in-out;
   position: relative;
   width: 100%;
   left: 0;
-  border-radius: 0 0 80px 80px;
-  transition: background-size 2s linear; }
+  border-radius: 0 0 80px 80px; }
 
 #wrap {
   background: inherit;

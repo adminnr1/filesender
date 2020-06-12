@@ -40,7 +40,7 @@ class FabriqueTransferList {
 
     $('body').append(this.transferDetails);
 
-    $('.actions').hide();
+    $('.actions').remove();//this causes layout problems otherwise
     $('.transfer_id').hide();
     $('.expand').hide();
     $('.collapse').hide();
