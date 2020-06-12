@@ -427,7 +427,7 @@ filesender.ui.files = {
 
       filesender.ui.nodes.files.input.val('');
 
-      filesender.ui.nodes.files.list.find('div').remove();
+      filesender.ui.nodes.files.list.find('div.file').remove();
 
       filesender.ui.nodes.files.clear.button('disable');
 
@@ -435,6 +435,7 @@ filesender.ui.files = {
       filesender.ui.nodes.stats.size.hide().find('.value').text('');
 
       Fabrique.updateFileStats([0, 30], [0, filesender.ui.formatBytes(filesender.config.max_transfer_size)]);
+      Fabrique.toggleBigPlus(filesender.ui.transfer.files.length);
 
       filesender.ui.evalUploadEnabled();
   },
@@ -656,9 +657,6 @@ filesender.ui.evalUploadEnabled = function() {
       ) ok = false;
   }
 
-//   if(filesender.ui.nodes.aup.length)
-//     //   filesender.ui.nodes.aup.prop('checked', true);
-
   if(!filesender.ui.nodes.aup.is(':checked')) ok = false;
 
   var invalid_nodes = filesender.ui.nodes.files.list.find('.invalid');
@@ -671,6 +669,12 @@ filesender.ui.evalUploadEnabled = function() {
       filesender.ui.nodes.buttons.restart.button(ok ? 'enable' : 'disable');
   } else {
       filesender.ui.nodes.buttons.start.button(ok ? 'enable' : 'disable');
+  }
+
+  if (ok) {
+      $('#continue').removeClass('ui-state-disabled');
+  } else {
+      $('#continue').addClass('ui-state-disabled');
   }
 
   return ok;
@@ -966,8 +970,6 @@ $(function() {
   var form = $('#upload_form');
   if(!form.length) return;
 
-  console.log("hallodielo");
-
   filesender.ui.errorOriginal = filesender.ui.error;
 
   // Transfer
@@ -1192,7 +1194,6 @@ $(function() {
 
   form.find('input[name="get_a_link"]').on('change', function() {
       var choice = $(this).is(':checked');
-      console.log(choice);
 
       form.find(
           '.fieldcontainer[data-related-to="message"], .recipients,' +
@@ -1201,7 +1202,6 @@ $(function() {
           ' .fieldcontainer[data-option="enable_recipient_email_download_complete"]'
       ).toggle(!choice);
 
-      console.log('choice changed');
       Fabrique.toggleEmailInput(!choice);
       filesender.ui.evalUploadEnabled();
   });
@@ -1217,9 +1217,9 @@ $(function() {
   //     return false;
   // });
 
-  filesender.ui.nodes.aup.on('change', function() {
-      filesender.ui.evalUploadEnabled();
-  });
+  // filesender.ui.nodes.aup.on('change', function() {
+  //     filesender.ui.evalUploadEnabled();
+  // });
 
   // Bind encryption
   filesender.ui.nodes.encryption.toggle.on('change', function() {
