@@ -1564,7 +1564,43 @@ table.paginator a {
     padding: 3px;
 }
 
-.crust {@import url(https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;300;400;600;700;900&display=swap);
+.crust {
+       float:right;
+}
+
+div.not_displayed {
+    display: none;
+}
+
+.crypto_not_supported_message {
+    display: none;
+}
+
+
+.selectdir_hidden_input_element {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+
+.get_a_link_lock {
+    background: #eeeeff;
+}
+
+.number {
+    text-align: right;
+}
+.active {
+    font-weight: bold;
+}
+
+
+/* Fabrique */
+
+@import url(https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;300;400;600;700;900&display=swap);
 :root {
   --logoUrl: url(/images/fabrique/logo/filesender_logo_zwart.svg);
   --addFilesUrl: url(/images/fabrique/logo/add_files.svg);
@@ -2953,39 +2989,4 @@ body {
   -webkit-align-items: baseline;
           align-items: baseline; }
 
-
-       float:right;
-}
-
-div.not_displayed {
-    display: none;
-}
-
-.crypto_not_supported_message {
-    display: none;
-}
-
-
-.selectdir_hidden_input_element {
-	width: 0.1px;
-	height: 0.1px;
-	opacity: 0;
-	overflow: hidden;
-	position: absolute;
-	z-index: -1;
-}
-
-.get_a_link_lock {
-    background: #eeeeff;
-}
-
-.number {
-    text-align: right;
-}
-.active {
-    font-weight: bold;
-}
-
-
-/* Fabrique */
 
