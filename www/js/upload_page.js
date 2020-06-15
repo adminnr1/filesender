@@ -30,6 +30,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+(function($) {
+    $.fn.fabShow = function() {
+        return this.each(function() {
+            $(this).addClass('block-e');
+            $(this).outerWidth(); //reflow
+            $(this).addClass('appear-e');
+        });
+    };
+    $.fn.fabHide = function() {
+        return this.each(function() {
+            $(this).addClass('disappear-e');
+            $(this).one('transitionend', function() {
+                $(this).removeClass('block-e disappear-e appear-e');
+            });
+        });
+    };
+}(jQuery));
+
 function delayAndCallOnlyOnce(callback, ms) {
   var timer = 0;
   return function() {
@@ -1228,15 +1246,16 @@ $(function() {
     Fabrique.updateEncryptionStatus(filesender.ui.transfer.encryption);
 
     if(filesender.ui.transfer.encryption) {
-        $('#encryption_password_container').show();
-        $('#encryption_password_container_generate').show();
-        $('#encryption_password_show_container').show();
+        // $('#encryption_password_container').show();
+        $('#encryption_password_container').fabShow(); //nicely animated/afaded
+        $('#encryption_password_container_generate').fabShow();
+        $('#encryption_password_show_container').fabShow();
         // $('#encryption_description_container').show();
     }
     else {
-        $('#encryption_password_container').hide();
-        $('#encryption_password_container_generate').hide();
-        $('#encryption_password_show_container').hide();
+        $('#encryption_password_container').fabHide();
+        $('#encryption_password_container_generate').fabHide();
+        $('#encryption_password_show_container').fabHide();
         $('#encryption_description_container').hide();
     }
 

@@ -1689,6 +1689,8 @@ div.not_displayed {
   width: 60%;
   margin-left: -250px;
   z-index: 1; }
+  #page.logon_page {
+    margin-left: 0; }
   #page h1 {
     padding: 20px 0; }
   #page .logon {
@@ -2081,7 +2083,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
         width: auto;
         -webkit-transform: translateY(-100%);
                 transform: translateY(-100%);
-        top: -40px; }
+        top: -25px; }
     #upload_form .files_actions .stats,
     #upload_form .files_actions div .select_files {
       display: none; }
@@ -2099,14 +2101,27 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
       color: #F07527;
       background: var(--addFilesUrl) no-repeat;
       background-size: 40px;
-      height: 40px;
+      height: 50px;
       display: inline-block;
       cursor: pointer;
-      line-height: 40px;
-      padding-left: 50px;
-      font-weight: bold; }
+      line-height: 50px;
+      padding-left: 60px;
+      font-weight: bold;
+      background-position: 5% 50%; }
+      #upload_form .file_selector label:hover {
+        background-size: 45px; }
     #upload_form .file_selector input {
       display: none; }
+  #upload_form .clear_all {
+    font-size: 14px;
+    line-height: 15px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 600;
+    color: #F07527;
+    background-color: white;
+    font-weight: bold; }
+    #upload_form .clear_all:hover {
+      background-color: white; }
   #upload_form .files {
     -webkit-order: 1;
             order: 1;
@@ -2134,6 +2149,9 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
         font-weight: 400;
         display: inline-block;
         max-width: 90%; }
+    #upload_form .files .file.invalid {
+      box-shadow: none;
+      border-bottom: 1px solid red; }
     #upload_form .files #fileDetails {
       padding: 30px 30px 30px 30px;
       top: 0;
@@ -2225,11 +2243,15 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
         display: inline-block;
         margin-bottom: 10px; }
       #upload_form .two_columns #encryption_password_container input {
-        height: 2em; }
+        height: 20px; }
     #upload_form .two_columns #encryption_password_container_generate, #upload_form .two_columns #encryption_password_show_container {
       -webkit-order: 2;
               order: 2; }
     #upload_form .two_columns .encryption_password {
+      font-size: 14px;
+      line-height: 18px;
+      font-family: "Source Sans Pro", sans-serif;
+      font-weight: 400;
       border-left: 0;
       border-right: 0;
       border-top: 0;
@@ -2363,7 +2385,8 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
     #upload_form .two_columns [data-option="add_me_to_recipients"] {
       color: #F07527;
       position: relative;
-      cursor: pointer; }
+      cursor: pointer;
+      padding-left: 20px; }
       #upload_form .two_columns [data-option="add_me_to_recipients"] input:checked ~ label::before {
         content: "";
         background: var(--checkSmallUrl) no-repeat;
@@ -2391,13 +2414,41 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
       #upload_form .two_columns [data-option="add_me_to_recipients"] input {
         display: none; }
     #upload_form .two_columns #to, #upload_form .two_columns #subject {
+      font-size: 14px;
+      line-height: 18px;
+      font-family: "Source Sans Pro", sans-serif;
+      font-weight: 400;
       width: 100%;
       border-top: none;
       border-left: none;
       border-right: none;
       border-bottom: 1px solid #CCCCCC;
       height: 20px; }
+      #upload_form .two_columns #to::-webkit-input-placeholder, #upload_form .two_columns #subject::-webkit-input-placeholder {
+        font-size: 14px;
+        line-height: 18px;
+        font-family: "Source Sans Pro", sans-serif;
+        font-weight: 400; }
+      #upload_form .two_columns #to:-ms-input-placeholder, #upload_form .two_columns #subject:-ms-input-placeholder {
+        font-size: 14px;
+        line-height: 18px;
+        font-family: "Source Sans Pro", sans-serif;
+        font-weight: 400; }
+      #upload_form .two_columns #to::-ms-input-placeholder, #upload_form .two_columns #subject::-ms-input-placeholder {
+        font-size: 14px;
+        line-height: 18px;
+        font-family: "Source Sans Pro", sans-serif;
+        font-weight: 400; }
+      #upload_form .two_columns #to::placeholder, #upload_form .two_columns #subject::placeholder {
+        font-size: 14px;
+        line-height: 18px;
+        font-family: "Source Sans Pro", sans-serif;
+        font-weight: 400; }
     #upload_form .two_columns textarea[name="message"] {
+      font-size: 14px;
+      line-height: 18px;
+      font-family: "Source Sans Pro", sans-serif;
+      font-weight: 400;
       min-height: 2em;
       border-left: none;
       border-top: none;
@@ -2406,19 +2457,9 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
     #upload_form .two_columns [data-related-to="message"] {
       padding-left: 0;
       padding-bottom: 2em; }
-    #upload_form .two_columns .fieldcontainer [for="to"] {
-      font-size: 17px;
-      line-height: 18px;
-      font-family: "Source Sans Pro", sans-serif;
-      font-weight: 700;
-      margin-bottom: 10px; }
-    #upload_form .two_columns .fieldcontainer [for="subject"] {
-      font-size: 17px;
-      line-height: 18px;
-      font-family: "Source Sans Pro", sans-serif;
-      font-weight: 700;
-      margin-bottom: 10px; }
-    #upload_form .two_columns .fieldcontainer [for="message"] {
+      #upload_form .two_columns [data-related-to="message"] .invalid {
+        margin-bottom: 5px; }
+    #upload_form .two_columns .fieldcontainer [for="subject"], #upload_form .two_columns .fieldcontainer [for="message"] {
       font-size: 17px;
       line-height: 18px;
       font-family: "Source Sans Pro", sans-serif;
@@ -2428,7 +2469,16 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
       font-size: 14px;
       line-height: 18px;
       font-family: "Source Sans Pro", sans-serif;
-      font-weight: 400; }
+      font-weight: 400;
+      display: inline-block;
+      padding: 0; }
+    #upload_form .two_columns .fieldcontainer [for="to"] {
+      font-size: 17px;
+      line-height: 18px;
+      font-family: "Source Sans Pro", sans-serif;
+      font-weight: 700;
+      margin-bottom: 10px;
+      margin-bottom: 0; }
     #upload_form .two_columns .hidden_options + .fieldcontainer {
       position: absolute;
       bottom: 45px;
@@ -2521,7 +2571,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
       font-family: "Source Sans Pro", sans-serif;
       font-weight: 400; }
   #upload_form #uploadDone {
-    min-height: 300px;
+    min-height: 210px;
     background-color: white;
     margin-top: 80px;
     border-radius: 10px;
@@ -2543,40 +2593,38 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
       display: block;
       text-align: center;
       margin-top: 50px; }
-  #upload_form #uploadDone.downloadlink #done {
-    font-size: 20px;
-    line-height: 18px;
-    font-family: "Source Sans Pro", sans-serif;
-    font-weight: 700;
-    margin-bottom: 10px;
-    display: block;
-    padding: 0 30px;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-    margin-bottom: 30px; }
-  #upload_form #uploadDone.downloadlink #downloadLinkArea {
-    position: static;
-    text-align: center;
-    width: 100%; }
-    #upload_form #uploadDone.downloadlink #downloadLinkArea .wide {
-      font-size: 14px;
+  #upload_form #uploadDone.downloadlink {
+    min-height: 280px; }
+    #upload_form #uploadDone.downloadlink #done {
+      font-size: 20px;
       line-height: 18px;
       font-family: "Source Sans Pro", sans-serif;
-      font-weight: 400;
-      width: 70%;
-      background-color: white;
-      border-left: 0;
-      border-right: 0;
-      border-top: 0;
-      border-bottom: 1px solid #F07527;
-      text-align: center; }
+      font-weight: 700;
+      margin-bottom: 10px;
+      padding: 0 30px;
+      margin-bottom: 30px; }
+    #upload_form #uploadDone.downloadlink #downloadLinkArea {
+      text-align: center;
+      width: auto;
+      margin: 30px; }
+      #upload_form #uploadDone.downloadlink #downloadLinkArea .wide {
+        font-size: 14px;
+        line-height: 18px;
+        font-family: "Source Sans Pro", sans-serif;
+        font-weight: 400;
+        width: 100%;
+        background-color: white;
+        border-left: 0;
+        border-right: 0;
+        border-top: 0;
+        border-bottom: 1px solid #F07527;
+        text-align: center; }
   #upload_form #myTransfers {
     display: inline-block;
     text-decoration: none;
-    position: absolute;
-    bottom: 30px;
-    right: 30px; }
+    position: static;
+    float: right;
+    margin-right: 30px; }
 
 .user_page, .privacy_page, .about_page, .help_page {
   height: calc(100vh - 200px);
@@ -2682,7 +2730,10 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
     line-height: 18px;
     font-family: "Source Sans Pro", sans-serif;
     font-weight: 700;
-    margin-bottom: 10px; }
+    margin-bottom: 10px;
+    display: inline-block; }
+  .guests_page #to {
+    margin-bottom: 1.5em; }
   .guests_page input {
     display: block;
     width: 100%;
@@ -2690,10 +2741,35 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
     border-right: 0;
     border-top: 0;
     border-bottom: 1px solid #CCCCCC;
-    padding-top: 0.5em;
-    height: 20px; }
+    padding-top: 0;
+    height: 20px;
+    margin-bottom: 1em; }
+    .guests_page input::-webkit-input-placeholder {
+      font-size: 14px;
+      line-height: 18px;
+      font-family: "Source Sans Pro", sans-serif;
+      font-weight: 400; }
+    .guests_page input:-ms-input-placeholder {
+      font-size: 14px;
+      line-height: 18px;
+      font-family: "Source Sans Pro", sans-serif;
+      font-weight: 400; }
+    .guests_page input::-ms-input-placeholder {
+      font-size: 14px;
+      line-height: 18px;
+      font-family: "Source Sans Pro", sans-serif;
+      font-weight: 400; }
+    .guests_page input::placeholder {
+      font-size: 14px;
+      line-height: 18px;
+      font-family: "Source Sans Pro", sans-serif;
+      font-weight: 400; }
   .guests_page textarea[name="message"] {
-    min-height: 2em;
+    font-size: 14px;
+    line-height: 18px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 400;
+    height: 60px;
     border-left: none;
     border-top: none;
     border-right: none;
@@ -2704,6 +2780,8 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
     position: relative; }
   .guests_page .basic_options .subtitle {
     margin-bottom: 10px; }
+  .guests_page .guest_options {
+    margin-top: 5px; }
   .guests_page #base_notifications {
     margin-top: 1em; }
   .guests_page [for="can_only_send_to_me"], .guests_page [for="add_me_to_recipients"], .guests_page [for="email_upload_complete"], .guests_page [for="get_a_link"], .guests_page [for="email_download_complete"] {
@@ -2865,6 +2943,10 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
   .ui-widget.ui-widget-content {
     border: 0; }
 
+.ui-widget-overlay {
+  background-color: #040608;
+  opacity: 0.4; }
+
 .ui-widget-header {
   background-color: white;
   border: 0; }
@@ -2889,6 +2971,8 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
       margin-left: 0; }
     .ui-dialog .ui-widget-content .failed_transfer div {
       margin-left: 0; }
+  .ui-dialog .ui-dialog-titlebar-close {
+    top: 40%; }
 
 .ui-button:hover {
   background-color: transparent; }
@@ -2899,6 +2983,23 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
 .ui-button .ui-icon {
   background: var(--removeUrl) no-repeat;
   background-size: 100%; }
+
+.block-e {
+  display: block !important;
+  opacity: 0;
+  transition: opacity 500ms ease-in, -webkit-transform 300ms ease-out;
+  transition: opacity 500ms ease-in, transform 300ms ease-out;
+  transition: opacity 500ms ease-in, transform 300ms ease-out, -webkit-transform 300ms ease-out;
+  -webkit-transform: translateY(10px);
+          transform: translateY(10px); }
+
+.appear-e {
+  opacity: 1;
+  -webkit-transform: translateY(0px);
+          transform: translateY(0px); }
+
+.disappear-e {
+  opacity: 0; }
 
 :root {
   --logoUrl: url(/images/fabrique/logo/filesender_logo_zwart.svg);
