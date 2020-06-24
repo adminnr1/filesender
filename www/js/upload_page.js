@@ -33,6 +33,7 @@
 (function($) {
     $.fn.fabShow = function() {
         return this.each(function() {
+            if ($(this).hasClass('disappear-e')) {return;}
             $(this).addClass('block-e');
             $(this).outerWidth(); //reflow
             $(this).addClass('appear-e');
@@ -40,10 +41,12 @@
     };
     $.fn.fabHide = function() {
         return this.each(function() {
-            $(this).addClass('disappear-e');
-            $(this).one('transitionend', function() {
-                $(this).removeClass('block-e disappear-e appear-e');
-            });
+            $(this).removeClass('block-e disappear-e appear-e');
+            //MKR this causes race conditions. shame...
+            // $(this).addClass('disappear-e');
+            // $(this).one('transitionend', function() {
+            //     $(this).removeClass('block-e disappear-e appear-e');
+            // });
         });
     };
 }(jQuery));
@@ -172,13 +175,14 @@ filesender.ui.files = {
                   filesender.ui.evalUploadEnabled();
               }).appendTo(node);
 
+              // error state is updated here
               var added_cid = filesender.ui.transfer.addFile(filepath, fileblob, function(error) {
                   var tt = 1;
                   if(error.details && error.details.filename) filesender.ui.files.invalidFiles.push(error.details.filename);
                   node.addClass('invalid');
                   node.addClass(error.message);
                   $('<span class="invalid fa fa-exclamation-circle fa-lg" />').prependTo(node.find('.info'))
-                  $('<div class="invalid_reason" />').text(lang.tr(error.message)).appendTo(node);
+                  $('<div class="invalid_reason" />').text(error.message).appendTo(node);
               }, source_node);
 
               filesender.ui.nodes.files.clear.button('enable');
@@ -671,8 +675,10 @@ filesender.ui.evalUploadEnabled = function() {
           filesender.ui.nodes.need_recipients &&
           !gal && !addme &&
           filesender.ui.nodes.recipients.list.length &&
-          !filesender.ui.transfer.recipients.length
-      ) ok = false;
+          !filesender.ui.transfer.recipients.length && !$('body').hasClass('step1')
+      ) {
+          ok = false;
+      }
   }
 
   if(!filesender.ui.nodes.aup.is(':checked')) ok = false;
@@ -815,7 +821,6 @@ filesender.ui.startUpload = function() {
 
   if( filesender.config.upload_display_per_file_stats ) {
       window.setInterval(function() {
-          console.log('updating progress for files')
           for (var i = 0; i < filesender.ui.transfer.files.length; i++) {
               file = filesender.ui.transfer.files[i];
               filesender.ui.files.update_crust_meter( file );
@@ -1072,7 +1077,6 @@ $(function() {
 
   // Bind file list select button
   filesender.ui.nodes.files.select.on('click', function() {
-      console.log("KLIK DE FILE SELECT BUTTON")
       filesender.ui.nodes.files.files_input.click();
       return false;
   }).button();
@@ -1091,7 +1095,6 @@ $(function() {
 
       e.preventDefault();
       e.stopPropagation();
-      console.log('drag en drop?');
       addtree_success = false;
 
       if (filesender.dragdrop &&
@@ -1319,9 +1322,6 @@ $(function() {
   filesender.ui.nodes.buttons.start.on('click', function() {
       $(this).focus(); // Get out of email field / datepicker so inputs are updated
       $(this).blur();
-
-      console.log("upload button clicked");
-
 
       if(filesender.ui.transfer.status == 'new' && $(this).filter('[aria-disabled="false"]')) {
 

@@ -84,7 +84,6 @@ class Fabrique {
 
     this.termsinput.on('change', function() {
         if (filesender.ui.evalUploadEnabled()) {
-            // console.log(filesender.ui.evalUploadEnabled());
             $('#continue').removeClass('ui-state-disabled');
         } else {
             $('#continue').addClass('ui-state-disabled');
@@ -96,7 +95,7 @@ class Fabrique {
     $('#encrypt_checkbox').parent().append(this.terms);
 
     // Default is get a link
-    $('#get_a_link').prop('checked', true);
+    // $('#get_a_link').prop('checked', true);  //MKR disable temporarily
 
     // Add continue button to step 2
     this.continueButton = $('<button id="continue" type="button"/>').addClass('ui-state-disabled');
@@ -186,6 +185,8 @@ class Fabrique {
                 this.labelFrom.hide();
             }
         }
+        //eval the continue button for state
+        filesender.ui.evalUploadEnabled();
     });
 
     this.continueButton.on('click', function(e) {
@@ -195,6 +196,15 @@ class Fabrique {
         self.terms.hide();
         self.encryptPassword.hide();
         $(this).hide();
+
+        // Hide all things related to the encryption/password container
+        self.encryptionDescriptionContainer.removeClass('appear-e block-e').hide();
+        $('#encryption_password_container').removeClass('appear-e block-e').hide();
+        $('#encrypt_checkbox').removeClass('appear-e block-e').hide();
+        $('#encryption_password_container_generate').removeClass('appear-e block-e').hide();
+        $('#encryption_password_container_too_short_message').removeClass('appear-e block-e').hide();
+        $('#encryption_password_show_container').removeClass('appear-e block-e').hide();
+
 
         self.filesListBack.show();
         self.optionsArea.show();
@@ -216,6 +226,7 @@ class Fabrique {
         else {
             $('#encrypt_checkbox').parent().hide();
         }
+        filesender.ui.evalUploadEnabled(); // eval send button after going back
     });
 
     this.encryptionDescription.on('click', function(e) {
@@ -360,12 +371,22 @@ class Fabrique {
 
   splitOnColon() {
     $('.file').each(function(e){
-        var cur = $(e).children().first();
+        var cur = $(this).children().first();
 
         if(cur.is('span')) {
-            console.log('???');
-            console.log(cur.html());
-            cur.text('test')
+            var elements = cur.text().split(':');
+            if(elements.length > 1) {
+                cur.html('<span class="list_fileName">' + elements[0] + '</span> <span class="list_fileSize">' + elements[1] + '</span>');
+            }
+        }
+
+        // Also split when the file is invalid with error state
+        if(cur.children().first().is('span') && cur.children().first().hasClass('invalid')) {
+            var errorSpan = cur.children().first();
+            var elements = errorSpan.text().split(':');
+            if(elements.length > 1) {
+                errorSpan.html('<span class="list_fileName">' + elements[0] + '</span> <span class="list_fileSize">' + elements[1] + '</span>');
+            }
         }
     });
   }
@@ -629,6 +650,9 @@ window.filesender.transfer = function() {
 
         if ('parentNode' in blob) // HTML file input
             blob = blob.files;
+
+        // Make fileslist neater, also when there are errors
+        Fabrique.splitOnColon();
 
         if ('length' in blob) { // FileList
             if (!blob.length) {
@@ -1368,8 +1392,8 @@ window.filesender.transfer = function() {
             this.updateFileInRestartTracker(file);
             this.onprogress.call(this, file, false);
         } else {
-	    console.log("transfer has not onprogress");
-	}
+	        console.log("transfer has not onprogress");
+	    }
     };
 
     /**

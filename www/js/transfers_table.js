@@ -45,7 +45,7 @@ class FabriqueTransferList {
     $('.expand').hide();
     $('.collapse').hide();
     $('.auditlog').hide();
-    $('.general').prev().addClass('detail_popup_title');
+    $('.general').prev().addClass('detail_popup_title').hide();
     $('.auditlog').next().addClass('detail_fileslist_title');
     $('.subheader').hide();
     $('.options').parent().parent().hide();
@@ -171,13 +171,26 @@ class FabriqueTransferList {
     this.transferDetails.show();
     this.transferDetails.addClass('popup');
 
+    $('.file').each(function(e) {
+        var current = $(this)
+        var elements = current.text().split(':')
+
+        if (elements.length > 1) {
+            current.html('<span class="popupList_fileName">' + elements[0] + '</span> <span class="popupList_downloadCount">' + elements[1] + '</span>');
+        }
+    });
+
+    // Download link opens in new window
+    this.transferDetails.find('.download_link').first().children().first().children().first().attr('target', '_blank');
   }
 
   setBottomNavigation(transferCount, transferCountInactive) {
       const navs = $('.pager_bottom_nav');
 
-
       const transferListActive = $(navs[0]).children().first();
+
+      if (!transferListActive.length) return;
+
       if (transferListActive.html().toString().includes('No more records')) {
         transferListActive.html('<span id="nav_no_more" class="nav_option">No more active transfers</span>');
       }
@@ -193,26 +206,18 @@ class FabriqueTransferList {
       });
 
       $('#nav_active_show_all').click(function(){
-        console.log('test nav active all');
         window.location = '/?s=transfers&openlimit=999999'
       });
 
       const transferListInactive = $(navs[1]).children().first();
+
+      if (!transferListInactive.length) return;
       if (transferListInactive.html().toString().includes('No more records')) {
         transferListInactive.html('<span id="nav_no_more" class="nav_option">No more inactive transfers</span>');
       }
       else {
         transferListInactive.html('<span id="nav_inactive_show_more" class="nav_option">Show more</span> <span id="nav_inactive_show_all" class="nav_option">Show all</span>')
       }
-
-      // Set onclick -> different param?? dont know for
-      $('#nav_inactive_show_more').click(function(){
-        console.log('test nav inactive');
-      });
-
-      $('#nav_inactive_show_all').click(function(){
-        console.log('test nav inactive all');
-      });
   }
 }
 

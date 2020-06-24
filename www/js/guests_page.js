@@ -49,7 +49,8 @@ class FabriqueGuestPage {
     $('#email_me_on_expire').prop('checked', false).parent().hide();
     $('#email_upload_complete').prop('checked', false);
     $('#email_download_complete').prop('checked', false);
-    $('#get_a_link').prop('checked', false).parent().removeClass('get_a_link_lock');
+    // $('#get_a_link').prop('checked', false).parent().removeClass('get_a_link_lock');
+    $('#get_a_link').parent().removeClass('get_a_link_lock');
     $('#email_report_on_closing').prop('checked', false).parent().hide();
 
     // Hide other layout elements
@@ -68,11 +69,11 @@ class FabriqueGuestPage {
     $('#base_notifications').append($('#email_download_complete').parent().detach());
 
     // Move get a link cb
-    $('.guest_options').prepend($('#get_a_link').parent().detach());
+    $('.guest_options:eq(1)').prepend($('#get_a_link').parent().detach());
     $('.guest_options').prepend('<div class="subtitle">Options</div>');
 
     // Add title
-    $('.two_columns').prepend('<div class="subtitle">Grant a guest access to the filesender</div>');
+    // $('.two_columns').prepend('<div class="subtitle">Grant a guest access to the filesender</div>');
     $('.box').first().prepend('<div class="title">Invite someone to send you a file</div>');
 
   }
@@ -404,7 +405,8 @@ $(function() {
       }
       fabriqueGuestPage.toggleVariant(checked);
   }
-  filesender.ui.nodes.get_a_link.on('click', function() {
+
+  filesender.ui.nodes.get_a_link.on('change', function() {
       get_a_link_updates();
   });
   get_a_link_updates();

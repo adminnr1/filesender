@@ -34,7 +34,6 @@ class FabriqueDownloadPage {
   constructor() {
     this.setInitialUI();
     this.changeDownloadButtons();
-    console.log('cons');
   }
 
   setInitialUI() {
@@ -55,6 +54,10 @@ class FabriqueDownloadPage {
     $('.boxnoframe').children().first().hide()
     $('.boxnoframe').parent().prepend('<div class="titlebar"><span id="title">Download your files</span> <span id="totalsize">Total size <span id="filesize"></span></span></div>');
     $('#filesize').text(bytes);
+
+    // Change button text
+    $('.archive_download_frame').first().children().first().text('Download .zip');
+    $('.archive_tar_download_frame').first().children().first().text('Download .tar');
 
     // Div with info about the transfer
     this.fileCount = $('.file').length;
@@ -82,7 +85,6 @@ $(function() {
   var page = $('.download_page');
   if(!page.length) return;
 
-  console.log('test');
   var fdp = new FabriqueDownloadPage();
 
   window.filesender.pbkdf2dialog.setup( true );
