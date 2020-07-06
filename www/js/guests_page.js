@@ -31,413 +31,413 @@
  */
 
 class FabriqueGuestPage {
-    constructor() {
-      this.setDefaultUI();
-    }
-
-    setDefaultUI() {
-      console.log('constructor called');
-
-      // Set to not expiring
-      $('#does_not_expire').prop('checked', true);
-
-      // Hide checkboxes we dont want
-      $('#does_not_expire').parent().parent().parent().hide();
-      $('#email_upload_started').prop('checked', false).parent().hide();
-      $('#email_upload_page_access').parent().hide();
-      $('#valid_only_one_time').prop('checked', true);
-      $('.toggle_advanced_options').parent().hide();
-      $('#email_me_on_expire').prop('checked', false).parent().hide();
-      $('#email_upload_complete').prop('checked', false);
-      $('#email_download_complete').prop('checked', false);
-      $('#get_a_link').prop('checked', false).parent().removeClass('get_a_link_lock');
-      $('#email_report_on_closing').prop('checked', false).parent().hide();
-
-      // Hide other layout elements
-      $('.disclamer').hide();
-      $('h3').hide();
-      $('.fa-envelope').hide();
-      $('#notifications').hide();
-
-      // Change text
-      $('label[for="add_me_to_recipients"]').text("Always include me in the transfer's recipients");
-      $('label[for="get_a_link"]').text('Have guest receive a transfer link');
-
-      // Add subtitles
-      $('#can_only_send_to_me').parent().parent().prepend('<div class="subtitle">Options</div>');
-      $('#get_a_link').parent().parent().append('<div id="base_notifications"> <div class="subtitle">Notifications</div> </div>');
-
-      // Move checkboxes for notifications
-      $('#base_notifications').append($('#email_upload_complete').parent().detach());
-      $('#base_notifications').append($('#email_download_complete').parent().detach());
-
-      // Add title
-      $('.two_columns').prepend('<div class="subtitle">Grant a guest access to the filesender</div>');
-      $('.box').first().prepend('<div class="title">Invite someone to send you a file</div>');
-
-    }
-
-    toggleVariant(getALink){
-      console.log(getALink);
-      if(getALink) {
-        $('#can_only_send_to_me').parent().removeClass('get_a_link_lock').hide();
-        $('#add_me_to_recipients').parent().removeClass('get_a_link_lock').hide();
-      }
-      else {
-        $('#can_only_send_to_me').parent().removeClass('get_a_link_lock').show();
-        $('#add_me_to_recipients').parent().removeClass('get_a_link_lock').show();
-      }
-    }
+  constructor() {
+    this.setDefaultUI();
   }
 
-  // Manage recipients
-  filesender.ui.recipients = {
-    list: [],
+  setDefaultUI() {
 
-    // Add recipient to list
-    add: function(email, errorhandler) {
-        if(!errorhandler) errorhandler = function(error) {
-            filesender.ui.error(error);
-        };
+    // Set to not expiring
+    $('#does_not_expire').prop('checked', true);
 
-        if(email.match(/[,;\s]/)) { // Multiple values
-            email = email.split(/[,;\s]/);
-            var invalid = [];
-            var too_much = null;
-            for(var i=0; i<email.length; i++) {
-                if(too_much) continue;
+    // Hide checkboxes we dont want
+    $('#does_not_expire').parent().parent().parent().hide();
+    $('#email_upload_started').prop('checked', false).parent().hide();
+    $('#email_upload_page_access').parent().hide();
+    $('#valid_only_one_time').prop('checked', true);
+    $('.toggle_advanced_options').parent().hide();
+    $('#email_me_on_expire').prop('checked', false).parent().hide();
+    $('#email_upload_complete').prop('checked', false);
+    $('#email_download_complete').prop('checked', false);
+    // $('#get_a_link').prop('checked', false).parent().removeClass('get_a_link_lock');
+    $('#get_a_link').parent().removeClass('get_a_link_lock');
+    $('#email_report_on_closing').prop('checked', false).parent().hide();
 
-                var s = email[i].replace(/^\s+/g, '').replace(/\s+$/g, '');
-                if(!s) continue;
+    // Hide other layout elements
+    $('.disclamer').hide();
+    $('h3').hide();
+    $('.fa-envelope').hide();
+    $('#notifications').hide();
 
-                if(this.add(s, function(error) {
-                    if(error.message == 'guest_too_many_recipients')
-                        too_much = error;
-                }))
-                    invalid.push(s);
-            }
+    // Change text
+    $('label[for="add_me_to_recipients"]').text("Always include me in the transfer's recipients");
+    $('label[for="get_a_link"]').text('Have guest receive a transfer link');
+    $('#get_a_link').parent().parent().append('<div id="base_notifications"> <div class="subtitle">Notifications</div> </div>');
 
-            if(too_much) {
-                filesender.ui.error(too_much);
-                return '';
-            }
+    // Move checkboxes for notifications
+    $('#base_notifications').append($('#email_upload_complete').parent().detach());
+    $('#base_notifications').append($('#email_download_complete').parent().detach());
 
-            return invalid.join(', ');
-        }
+    // Move get a link cb
+    $('.guest_options:eq(1)').prepend($('#get_a_link').parent().detach());
+    $('.guest_options').prepend('<div class="subtitle">Options</div>');
 
-        if(!email.match(filesender.ui.validators.email))
-            return email;
+    // Add title
+    // $('.two_columns').prepend('<div class="subtitle">Grant a guest access to the filesender</div>');
+    $('.box').first().prepend('<div class="title">Invite someone to send you a file</div>');
 
-        for(var i=0; i<this.list.length; i++) {
-            if(this.list[i] == email) {
-                //filesender.ui.error({message: 'duplicate_recipient', details: {email: email}});
-                //return email;
-                return '';
-            }
-        }
+  }
 
-        if(filesender.config.max_guest_recipients && this.list.length >= filesender.config.max_guest_recipients) {
-            errorhandler({message: 'guest_too_many_recipients', details: {max: filesender.config.max_guest_recipients}});
-            return '';
-        }
-
-        var node = $('<div class="recipient" />').attr('email', email).appendTo(filesender.ui.nodes.recipients.list);
-        $('<span />').attr('title', email).text(email).appendTo(node);
-        $('<span class="remove fa fa-minus-square" />').attr({
-            title: lang.tr('click_to_delete_recipient')
-        }).on('click', function() {
-            filesender.ui.recipients.remove($(this).closest('.recipient').attr('email'));
-            $(this).parent().remove();
-        }).appendTo(node);
-
-        this.list.push(email);
-
-        filesender.ui.nodes.recipients.list.show();
-
-        filesender.ui.evalSendEnabled();
-
-        return '';
-    },
-
-    // Add recipients from input
-    addFromInput: function(input) {
-        input = $(input);
-
-        var marker = input.data('error_marker');
-        if(!marker) {
-            marker = $('<span class="invalid fa fa-exclamation-circle fa-lg" />').attr({
-                title: lang.tr('invalid_recipient')
-            }).hide().insertBefore(input);
-            input.data('error_marker', marker);
-        }
-
-        var invalid = input.val() ? this.add(input.val()) : null;
-
-        if(invalid) {
-            input.val(invalid);
-            input.addClass('invalid');
-            marker.show();
-        }else{
-            input.val('');
-            input.removeClass('invalid');
-            marker.hide();
-        }
-    },
-
-    // Remove email from list
-    remove: function(email) {
-        if(email.match(/[,;\s]/)) { // Multiple values
-            email = email.split(/[,;\s]/);
-            for(var i=0; i<email.length; i++) {
-                var s = email[i].replace(/^\s+/g, '').replace(/\s+$/g, '');
-                if(s) this.remove(s);
-            }
-            return;
-        }
-
-        filesender.ui.nodes.recipients.list.find('[email="' + email + '"]').remove();
-
-        for(var i=0; i<this.list.length; i++)
-            if(this.list[i] == email) {
-                this.list.splice(i, 1);
-                break;
-            }
-
-        if(!filesender.ui.nodes.recipients.list.find('[email]').length)
-            filesender.ui.nodes.recipients.list.hide();
-
-        filesender.ui.evalSendEnabled();
-    },
-
-    // Clear the recipients list
-    clear: function() {
-        filesender.ui.nodes.recipients.input.val('');
-
-        filesender.ui.nodes.recipients.list.find('div').remove();
-
-        filesender.ui.evalSendEnabled();
-    },
-
-    // Enable autocomplete for frequent recipients on a field
-    autocomplete: function(){
-        if(!filesender.config.autocomplete.enabled) return;
-
-        $(filesender.ui.nodes.recipients.input).autocomplete({
-            source: function (request, response) {
-                filesender.client.getFrequentRecipients(request.term,
-                    function (data) {
-                        response($.map(data, function (item) {
-                            if (filesender.ui.nodes.recipients.list.find('[email="'+item+'"]').length == 0){
-                                return {
-                                    label: item,
-                                    value: item
-                                };
-                            }else{
-                                return undefined;
-                            }
-                        }))
-                    }
-                );
-            },
-            select: function (event, ui) {
-                filesender.ui.recipients.add(ui.item.value);
-
-                var marker = $(this).data('error_marker');
-
-                $(this).val('');
-                $(this).removeClass('invalid');
-                if(marker) marker.hide();
-
-                return false;
-            },
-            minLength: filesender.config.autocomplete.min_characters
-        });
+  toggleVariant(getALink){
+    if(getALink) {
+      $('#can_only_send_to_me').parent().removeClass('get_a_link_lock').hide();
+      $('#add_me_to_recipients').parent().removeClass('get_a_link_lock').hide();
     }
+    else {
+      $('#can_only_send_to_me').parent().removeClass('get_a_link_lock').show();
+      $('#add_me_to_recipients').parent().removeClass('get_a_link_lock').show();
+    }
+  }
+}
+
+// Manage recipients
+filesender.ui.recipients = {
+  list: [],
+
+  // Add recipient to list
+  add: function(email, errorhandler) {
+      if(!errorhandler) errorhandler = function(error) {
+          filesender.ui.error(error);
+      };
+
+      if(email.match(/[,;\s]/)) { // Multiple values
+          email = email.split(/[,;\s]/);
+          var invalid = [];
+          var too_much = null;
+          for(var i=0; i<email.length; i++) {
+              if(too_much) continue;
+
+              var s = email[i].replace(/^\s+/g, '').replace(/\s+$/g, '');
+              if(!s) continue;
+
+              if(this.add(s, function(error) {
+                  if(error.message == 'guest_too_many_recipients')
+                      too_much = error;
+              }))
+                  invalid.push(s);
+          }
+
+          if(too_much) {
+              filesender.ui.error(too_much);
+              return '';
+          }
+
+          return invalid.join(', ');
+      }
+
+      if(!email.match(filesender.ui.validators.email))
+          return email;
+
+      for(var i=0; i<this.list.length; i++) {
+          if(this.list[i] == email) {
+              //filesender.ui.error({message: 'duplicate_recipient', details: {email: email}});
+              //return email;
+              return '';
+          }
+      }
+
+      if(filesender.config.max_guest_recipients && this.list.length >= filesender.config.max_guest_recipients) {
+          errorhandler({message: 'guest_too_many_recipients', details: {max: filesender.config.max_guest_recipients}});
+          return '';
+      }
+
+      var node = $('<div class="recipient" />').attr('email', email).appendTo(filesender.ui.nodes.recipients.list);
+      $('<span />').attr('title', email).text(email).appendTo(node);
+      $('<span class="remove fa fa-minus-square" />').attr({
+          title: lang.tr('click_to_delete_recipient')
+      }).on('click', function() {
+          filesender.ui.recipients.remove($(this).closest('.recipient').attr('email'));
+          $(this).parent().remove();
+      }).appendTo(node);
+
+      this.list.push(email);
+
+      filesender.ui.nodes.recipients.list.show();
+
+      filesender.ui.evalSendEnabled();
+
+      return '';
+  },
+
+  // Add recipients from input
+  addFromInput: function(input) {
+      input = $(input);
+
+      var marker = input.data('error_marker');
+      if(!marker) {
+          marker = $('<span class="invalid fa fa-exclamation-circle fa-lg" />').attr({
+              title: lang.tr('invalid_recipient')
+          }).hide().insertBefore(input);
+          input.data('error_marker', marker);
+      }
+
+      var invalid = input.val() ? this.add(input.val()) : null;
+
+      if(invalid) {
+          input.val(invalid);
+          input.addClass('invalid');
+          marker.show();
+      }else{
+          input.val('');
+          input.removeClass('invalid');
+          marker.hide();
+      }
+  },
+
+  // Remove email from list
+  remove: function(email) {
+      if(email.match(/[,;\s]/)) { // Multiple values
+          email = email.split(/[,;\s]/);
+          for(var i=0; i<email.length; i++) {
+              var s = email[i].replace(/^\s+/g, '').replace(/\s+$/g, '');
+              if(s) this.remove(s);
+          }
+          return;
+      }
+
+      filesender.ui.nodes.recipients.list.find('[email="' + email + '"]').remove();
+
+      for(var i=0; i<this.list.length; i++)
+          if(this.list[i] == email) {
+              this.list.splice(i, 1);
+              break;
+          }
+
+      if(!filesender.ui.nodes.recipients.list.find('[email]').length)
+          filesender.ui.nodes.recipients.list.hide();
+
+      filesender.ui.evalSendEnabled();
+  },
+
+  // Clear the recipients list
+  clear: function() {
+      filesender.ui.nodes.recipients.input.val('');
+
+      filesender.ui.nodes.recipients.list.find('div').remove();
+
+      filesender.ui.evalSendEnabled();
+  },
+
+  // Enable autocomplete for frequent recipients on a field
+  autocomplete: function(){
+      if(!filesender.config.autocomplete.enabled) return;
+
+      $(filesender.ui.nodes.recipients.input).autocomplete({
+          source: function (request, response) {
+              filesender.client.getFrequentRecipients(request.term,
+                  function (data) {
+                      response($.map(data, function (item) {
+                          if (filesender.ui.nodes.recipients.list.find('[email="'+item+'"]').length == 0){
+                              return {
+                                  label: item,
+                                  value: item
+                              };
+                          }else{
+                              return undefined;
+                          }
+                      }))
+                  }
+              );
+          },
+          select: function (event, ui) {
+              filesender.ui.recipients.add(ui.item.value);
+
+              var marker = $(this).data('error_marker');
+
+              $(this).val('');
+              $(this).removeClass('invalid');
+              if(marker) marker.hide();
+
+              return false;
+          },
+          minLength: filesender.config.autocomplete.min_characters
+      });
+  }
+};
+
+filesender.ui.evalSendEnabled = function() {
+  var ok = true;
+
+  if(!filesender.ui.nodes.recipients.list.find('[email]').length) ok = false;
+
+  filesender.ui.nodes.sendbutton.button(ok ? 'enable' : 'disable');
+
+  return ok;
+};
+
+filesender.ui.send = function() {
+  var options = {guest: {}, transfer: {}};
+
+  var expires = filesender.ui.nodes.expires.datepicker('getDate').getTime() / 1000;
+
+  var from = null;
+  if(filesender.ui.nodes.from.length)
+      from = filesender.ui.nodes.from.val();
+
+  var subject = filesender.ui.nodes.subject.val();
+  var message = filesender.ui.nodes.message.val();
+
+  for(var c in filesender.ui.nodes.options) {
+      for(var o in filesender.ui.nodes.options[c]) {
+          var i = filesender.ui.nodes.options[c][o];
+          var v = i.filter('[type="checkbox"]') ? i.is(':checked') : i.val();
+          options[c][o] = v;
+      }
+  }
+
+  var emails = filesender.ui.recipients.list;
+  var sent = 0;
+  for(var i=0; i<emails.length; i++) {
+      filesender.client.postGuest(from, emails[i], subject, message, expires, options, function() {
+          sent++;
+          if(sent < emails.length) return;
+
+          filesender.ui.reload();
+
+      });
+  }
+};
+
+$(function() {
+  var send_voucher = $('#send_voucher');
+  if(!send_voucher.length) return;
+
+  var fabriqueGuestPage = new FabriqueGuestPage();
+
+  // Register frequently used nodes
+  filesender.ui.nodes = {
+      recipients: {
+          input: send_voucher.find('input[name="to"]'),
+          list: send_voucher.find('.recipients'),
+      },
+      from: send_voucher.find('select[name="from"]'),
+      subject: send_voucher.find('input[name="subject"]'),
+      message: send_voucher.find('textarea[name="message"]'),
+      expires: send_voucher.find('input[name="expires"]'),
+      does_not_expire: send_voucher.find('input[name="does_not_expire"]'),
+      get_a_link: send_voucher.find('input[name="get_a_link"]'),
+      can_only_send_to_me: send_voucher.find('input[name="can_only_send_to_me"]'),
+      options: {guest: {}, transfer: {}},
+      sendbutton: send_voucher.find('.send'),
+      message_can_not_contain_urls: send_voucher.find('textarea[name="message_can_not_contain_urls"]'),
   };
-
-  filesender.ui.evalSendEnabled = function() {
-    var ok = true;
-
-    if(!filesender.ui.nodes.recipients.list.find('[email]').length) ok = false;
-
-    filesender.ui.nodes.sendbutton.button(ok ? 'enable' : 'disable');
-
-    return ok;
-  };
-
-  filesender.ui.send = function() {
-    var options = {guest: {}, transfer: {}};
-
-    var expires = filesender.ui.nodes.expires.datepicker('getDate').getTime() / 1000;
-
-    var from = null;
-    if(filesender.ui.nodes.from.length)
-        from = filesender.ui.nodes.from.val();
-
-    var subject = filesender.ui.nodes.subject.val();
-    var message = filesender.ui.nodes.message.val();
-
-    for(var c in filesender.ui.nodes.options) {
-        for(var o in filesender.ui.nodes.options[c]) {
-            var i = filesender.ui.nodes.options[c][o];
-            var v = i.filter('[type="checkbox"]') ? i.is(':checked') : i.val();
-            options[c][o] = v;
-        }
-    }
-
-    var emails = filesender.ui.recipients.list;
-    var sent = 0;
-    for(var i=0; i<emails.length; i++) {
-        filesender.client.postGuest(from, emails[i], subject, message, expires, options, function() {
-            sent++;
-            if(sent < emails.length) return;
-
-            filesender.ui.notify('success', lang.tr('guest_vouchers_sent').r({sent: sent}), function() {
-                filesender.ui.reload();
-            });
-        });
-    }
-  };
-
-  $(function() {
-    var send_voucher = $('#send_voucher');
-    if(!send_voucher.length) return;
-
-    var fabriqueGuestPage = new FabriqueGuestPage();
-
-    // Register frequently used nodes
-    filesender.ui.nodes = {
-        recipients: {
-            input: send_voucher.find('input[name="to"]'),
-            list: send_voucher.find('.recipients'),
-        },
-        from: send_voucher.find('select[name="from"]'),
-        subject: send_voucher.find('input[name="subject"]'),
-        message: send_voucher.find('textarea[name="message"]'),
-        expires: send_voucher.find('input[name="expires"]'),
-        does_not_expire: send_voucher.find('input[name="does_not_expire"]'),
-        get_a_link: send_voucher.find('input[name="get_a_link"]'),
-        can_only_send_to_me: send_voucher.find('input[name="can_only_send_to_me"]'),
-        options: {guest: {}, transfer: {}},
-        sendbutton: send_voucher.find('.send'),
-        message_can_not_contain_urls: send_voucher.find('textarea[name="message_can_not_contain_urls"]'),
-    };
-    send_voucher.find('.guest_options input').each(function() {
-        var i = $(this);
-        filesender.ui.nodes.options.guest[i.attr('name')] = i;
-    });
-    send_voucher.find('.transfer_options input').each(function() {
-        var i = $(this);
-        filesender.ui.nodes.options.transfer[i.attr('name')] = i;
-    });
-
-    filesender.ui.recipients.autocomplete();
-
-    // Setup date picker
-    $.datepicker.setDefaults({
-        closeText: lang.tr('dp_close_text').out(),
-        prevText: lang.tr('dp_prev_text').out(),
-        nextText: lang.tr('dp_next_text').out(),
-        currentText: lang.tr('dp_current_text').out(),
-
-        monthNames: lang.tr('dp_month_names').values(),
-        monthNamesShort: lang.tr('dp_month_names_short').values(),
-        dayNames: lang.tr('dp_day_names').values(),
-        dayNamesShort: lang.tr('dp_day_names_short').values(),
-        dayNamesMin: lang.tr('dp_day_names_min').values(),
-
-        weekHeader: lang.tr('dp_week_header').out(),
-        dateFormat: lang.trWithConfigOverride('dp_date_format').out(),
-
-        firstDay: parseInt(lang.tr('dp_first_day').out()),
-        isRTL: lang.tr('dp_is_rtl').out().match(/true/),
-        showMonthAfterYear: lang.tr('dp_show_month_after_year').out().match(/true/),
-
-        yearSuffix: lang.tr('dp_year_suffix').out()
-    });
-
-    // Bind recipients events
-    filesender.ui.nodes.recipients.input.on('keydown', function(e) {
-        if(e.keyCode != 13) return;
-
-        // enter is pressed
-        e.preventDefault();
-        e.stopPropagation();
-
-        filesender.ui.recipients.addFromInput($(this));
-    }).on('blur', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        filesender.ui.recipients.addFromInput($(this));
-    });
-
-    // validate message as it is typed
-    window.filesender.ui.handleFlagInvalidOnRegexMatch(
-        filesender.ui.nodes.message,
-        $('#message_can_not_contain_urls'),
-        filesender.config.message_can_not_contain_urls_regex );
-
-    // Bind picker
-    filesender.ui.nodes.expires.datepicker({
-        minDate: 1,
-        maxDate: filesender.config.max_guest_days_valid
-    });
-    // set value from epoch time
-    filesender.ui.setDateFromEpochData( filesender.ui.nodes.expires );
-    filesender.ui.nodes.expires.on('change', function() {
-        filesender.ui.nodes.expires.datepicker('setDate', $(this).val());
-    });
-
-    /**
-     * It doesn't make sense to allow only send to me when the guest is getting a link
-     * This is a function so it can be called on click and also right now to update the UI.
-     */
-    var get_a_link_updates = function() {
-        var checked = filesender.ui.nodes.get_a_link.is(':checked');
-        var onlyToMe = filesender.ui.nodes.can_only_send_to_me;
-        if( checked ) {
-            onlyToMe.prop('checked', false );
-            onlyToMe.prop('disabled', true);
-            // filesender.ui.notify('info',lang.tr('turning_on_guests_get_a_link_disables_can_only_send_to_me'));
-        } else {
-            onlyToMe.prop('disabled', false);
-        }
-        fabriqueGuestPage.toggleVariant(checked);
-    }
-    filesender.ui.nodes.get_a_link.on('click', function() {
-        get_a_link_updates();
-    });
-    get_a_link_updates();
-
-
-    if( filesender.ui.nodes.does_not_expire ) {
-        filesender.ui.nodes.does_not_expire.on('click', function() {
-            var checked = filesender.ui.nodes.does_not_expire.is(':checked');
-            filesender.ui.nodes.expires.prop('disabled', checked);
-        });
-    }
-
-
-    // Bind advanced options display toggle
-    send_voucher.find('.toggle_advanced_options').on('click', function() {
-        $(this).closest('.options_box').find('.advanced_options').slideToggle();
-        return false;
-    });
-
-    // Bind buttons
-    filesender.ui.nodes.sendbutton.on('click', function() {
-        $(this).focus(); // Get out of email field / datepicker so inputs are updated
-        $(this).blur();
-        if($(this).filter('[aria-disabled="false"]')) {
-            filesender.ui.send();
-            filesender.ui.nodes.sendbutton.button('disable');
-        }
-        return false;
-    }).button({disabled: true});
-
-    // special fix for esc key on firefox stopping xhr
-    window.addEventListener('keydown', function(e) {
-        (e.keyCode == 27 && e.preventDefault())
-    });
+  send_voucher.find('.guest_options input').each(function() {
+      var i = $(this);
+      filesender.ui.nodes.options.guest[i.attr('name')] = i;
   });
+  send_voucher.find('.transfer_options input').each(function() {
+      var i = $(this);
+      filesender.ui.nodes.options.transfer[i.attr('name')] = i;
+  });
+
+  filesender.ui.recipients.autocomplete();
+
+  // Setup date picker
+  $.datepicker.setDefaults({
+      closeText: lang.tr('dp_close_text').out(),
+      prevText: lang.tr('dp_prev_text').out(),
+      nextText: lang.tr('dp_next_text').out(),
+      currentText: lang.tr('dp_current_text').out(),
+
+      monthNames: lang.tr('dp_month_names').values(),
+      monthNamesShort: lang.tr('dp_month_names_short').values(),
+      dayNames: lang.tr('dp_day_names').values(),
+      dayNamesShort: lang.tr('dp_day_names_short').values(),
+      dayNamesMin: lang.tr('dp_day_names_min').values(),
+
+      weekHeader: lang.tr('dp_week_header').out(),
+      dateFormat: lang.trWithConfigOverride('dp_date_format').out(),
+
+      firstDay: parseInt(lang.tr('dp_first_day').out()),
+      isRTL: lang.tr('dp_is_rtl').out().match(/true/),
+      showMonthAfterYear: lang.tr('dp_show_month_after_year').out().match(/true/),
+
+      yearSuffix: lang.tr('dp_year_suffix').out()
+  });
+
+  // Bind recipients events
+  filesender.ui.nodes.recipients.input.on('keydown', function(e) {
+      if(e.keyCode != 13) return;
+
+      // enter is pressed
+      e.preventDefault();
+      e.stopPropagation();
+
+      filesender.ui.recipients.addFromInput($(this));
+  }).on('blur', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      filesender.ui.recipients.addFromInput($(this));
+  });
+
+  // validate message as it is typed
+  window.filesender.ui.handleFlagInvalidOnRegexMatch(
+      filesender.ui.nodes.message,
+      $('#message_can_not_contain_urls'),
+      filesender.config.message_can_not_contain_urls_regex );
+
+  // Bind picker
+  filesender.ui.nodes.expires.datepicker({
+      minDate: 1,
+      maxDate: filesender.config.max_guest_days_valid
+  });
+  // set value from epoch time
+  filesender.ui.setDateFromEpochData( filesender.ui.nodes.expires );
+  filesender.ui.nodes.expires.on('change', function() {
+      filesender.ui.nodes.expires.datepicker('setDate', $(this).val());
+  });
+
+  /**
+   * It doesn't make sense to allow only send to me when the guest is getting a link
+   * This is a function so it can be called on click and also right now to update the UI.
+   */
+  var get_a_link_updates = function() {
+      var checked = filesender.ui.nodes.get_a_link.is(':checked');
+      var onlyToMe = filesender.ui.nodes.can_only_send_to_me;
+      if( checked ) {
+          onlyToMe.prop('checked', false );
+          onlyToMe.prop('disabled', true);
+          // filesender.ui.notify('info',lang.tr('turning_on_guests_get_a_link_disables_can_only_send_to_me'));
+      } else {
+          onlyToMe.prop('disabled', false);
+      }
+      fabriqueGuestPage.toggleVariant(checked);
+  }
+
+  filesender.ui.nodes.get_a_link.on('change', function() {
+      get_a_link_updates();
+  });
+  get_a_link_updates();
+
+
+  if( filesender.ui.nodes.does_not_expire ) {
+      filesender.ui.nodes.does_not_expire.on('click', function() {
+          var checked = filesender.ui.nodes.does_not_expire.is(':checked');
+          filesender.ui.nodes.expires.prop('disabled', checked);
+      });
+  }
+
+
+  // Bind advanced options display toggle
+  send_voucher.find('.toggle_advanced_options').on('click', function() {
+      $(this).closest('.options_box').find('.advanced_options').slideToggle();
+      return false;
+  });
+
+  // Bind buttons
+  filesender.ui.nodes.sendbutton.on('click', function() {
+      $(this).focus(); // Get out of email field / datepicker so inputs are updated
+      $(this).blur();
+      if($(this).filter('[aria-disabled="false"]')) {
+          filesender.ui.send();
+          filesender.ui.nodes.sendbutton.button('disable');
+      }
+      return false;
+  }).button({disabled: true});
+
+  // special fix for esc key on firefox stopping xhr
+  window.addEventListener('keydown', function(e) {
+      (e.keyCode == 27 && e.preventDefault())
+  });
+});
