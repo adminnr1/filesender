@@ -1629,18 +1629,6 @@ div.not_displayed {
     #header h1 a {
       color: black; }
 
-:root {
-  --logoUrl: url(/images/fabrique/logo/filesender_logo_zwart.svg);
-  --addFilesUrl: url(/images/fabrique/logo/add_files.svg);
-  --checkSmallUrl: url(/images/fabrique/logo/check-small.svg);
-  --checkUrl: url(/images/fabrique/logo/check.svg);
-  --dragDropUrl: url(/images/fabrique/logo/drag_drop_button.svg);
-  --infoIconUrl: url(/images/fabrique/logo/information-icon.svg);
-  --removeUrl: url(/images/fabrique/logo/remove_files.svg);
-  --viewMoreUrl:  url(/images/fabrique/logo/arrow_down.svg);
-  --arrowLeftUrl: url(/images/fabrique/logo/arrow.svg);
-  --arrowRightUrl: url(/images/fabrique/logo/arrow-right.svg); }
-
 #menu {
   z-index: 1;
   height: auto;
@@ -1681,18 +1669,6 @@ div.not_displayed {
     line-height: 15px;
     font-family: "Source Sans Pro", sans-serif;
     font-weight: 700; }
-
-:root {
-  --logoUrl: url(/images/fabrique/logo/filesender_logo_zwart.svg);
-  --addFilesUrl: url(/images/fabrique/logo/add_files.svg);
-  --checkSmallUrl: url(/images/fabrique/logo/check-small.svg);
-  --checkUrl: url(/images/fabrique/logo/check.svg);
-  --dragDropUrl: url(/images/fabrique/logo/drag_drop_button.svg);
-  --infoIconUrl: url(/images/fabrique/logo/information-icon.svg);
-  --removeUrl: url(/images/fabrique/logo/remove_files.svg);
-  --viewMoreUrl:  url(/images/fabrique/logo/arrow_down.svg);
-  --arrowLeftUrl: url(/images/fabrique/logo/arrow.svg);
-  --arrowRightUrl: url(/images/fabrique/logo/arrow-right.svg); }
 
 #page {
   width: 60%;
@@ -3066,18 +3042,6 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
 .disappear-e {
   opacity: 0; }
 
-:root {
-  --logoUrl: url(/images/fabrique/logo/filesender_logo_zwart.svg);
-  --addFilesUrl: url(/images/fabrique/logo/add_files.svg);
-  --checkSmallUrl: url(/images/fabrique/logo/check-small.svg);
-  --checkUrl: url(/images/fabrique/logo/check.svg);
-  --dragDropUrl: url(/images/fabrique/logo/drag_drop_button.svg);
-  --infoIconUrl: url(/images/fabrique/logo/information-icon.svg);
-  --removeUrl: url(/images/fabrique/logo/remove_files.svg);
-  --viewMoreUrl:  url(/images/fabrique/logo/arrow_down.svg);
-  --arrowLeftUrl: url(/images/fabrique/logo/arrow.svg);
-  --arrowRightUrl: url(/images/fabrique/logo/arrow-right.svg); }
-
 #footer {
   font-size: 14px;
   line-height: 18px;
@@ -3103,18 +3067,6 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
     display: block; }
   #langmenu li {
     border: 0; }
-
-:root {
-  --logoUrl: url(/images/fabrique/logo/filesender_logo_zwart.svg);
-  --addFilesUrl: url(/images/fabrique/logo/add_files.svg);
-  --checkSmallUrl: url(/images/fabrique/logo/check-small.svg);
-  --checkUrl: url(/images/fabrique/logo/check.svg);
-  --dragDropUrl: url(/images/fabrique/logo/drag_drop_button.svg);
-  --infoIconUrl: url(/images/fabrique/logo/information-icon.svg);
-  --removeUrl: url(/images/fabrique/logo/remove_files.svg);
-  --viewMoreUrl:  url(/images/fabrique/logo/arrow_down.svg);
-  --arrowLeftUrl: url(/images/fabrique/logo/arrow.svg);
-  --arrowRightUrl: url(/images/fabrique/logo/arrow-right.svg); }
 
 @-webkit-keyframes fadeout {
   0% {
