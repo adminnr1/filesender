@@ -52,7 +52,7 @@ class Fabrique {
     this.termsLink = $('.terms').children().first().detach();
     this.termsLink.html('Code of Conduct');
 
-    this.termsLabel = $('label[for="aup"]').html('I accept the following ' + $(this.termsLink)[0].outerHTML + ' when using this service.');
+      this.termsLabel = $('label[for="aup"]').html('I accept the following ' + $(this.termsLink)[0].outerHTML + ' when using this service.');
     this.termsLabel.attr('title', '');
 
     this.labelEncrypt = $('label[for="encryption"]').children().first().children().first().html('Send files securely (max 2 GB)')
@@ -104,6 +104,7 @@ class Fabrique {
 
     // Move the start upload buttons into the right div
     this.uploadButtons.detach().appendTo('.two_columns');
+      $('label[for="lang"]').parent().addClass('languageDropdown');
 
     // Move the checkbox for link or mail to the top of the div
     $('#get_a_link').parent().detach().prependTo('.two_columns');
@@ -119,7 +120,7 @@ class Fabrique {
     this.filesListBack = $(`
                             <div id="filesList" class="step2">
                             <div class="infoDiv fileCountDiv"><span id="fileCount"></span> file(s) added</div>
-                            <div class=infoDiv fileSizeDiv">Total size <span id="fileSize"></span></div>
+                            <div class=infoDiv fileSizeDiv">Total size <span id="fileSize"></span> / <span id="maxFileSize"></span></div>
                             <div class=infoDiv encryptDiv"><span>End-to-end encryption is </span> <span id="encryptionStatus"></span></div>
                             </div>
     `).hide();
@@ -131,7 +132,7 @@ class Fabrique {
         <div id="fileDetails" class="step1">
             <div>
                 <div class="fileCountDiv"><span id="fileCount"></span><span> file(s) added</span></div>
-                <div class="fileSizeDiv">Total size <span id="fileSize"></span></div>
+                <div class="fileSizeDiv">Total size <span id="fileSize"></span> / <span id="maxFileSize"></span></div>
             </div>
         </div>
     `).hide();
@@ -197,7 +198,7 @@ class Fabrique {
         self.encryptPassword.hide();
         $(this).hide();
 
-        // Hide all things related to the encryption/password container
+          // Hide all things related to the encryption/password container
         self.encryptionDescriptionContainer.removeClass('appear-e block-e').hide();
         $('#encryption_password_container').removeClass('appear-e block-e').hide();
         $('#encrypt_checkbox').removeClass('appear-e block-e').hide();
@@ -321,6 +322,7 @@ class Fabrique {
     var filesListStep1 = $('#fileslist');
     filesListStep1.find('#fileCount').text(fileCount[0]);
     filesListStep1.find('#fileSize').text(formattedFileSize[0]);
+      filesListStep1.find('#maxFileSize').text(formattedFileSize[1]);
 
   }
 
@@ -651,7 +653,7 @@ window.filesender.transfer = function() {
         if ('parentNode' in blob) // HTML file input
             blob = blob.files;
 
-        // Make fileslist neater, also when there are errors
+          // Make fileslist neater, also when there are errors
         Fabrique.splitOnColon();
 
         if ('length' in blob) { // FileList
