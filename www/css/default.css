@@ -1629,6 +1629,18 @@ div.not_displayed {
     #header h1 a {
       color: black; }
 
+:root {
+  --logoUrl: url(/images/fabrique/logo/filesender_logo_zwart.svg);
+  --addFilesUrl: url(/images/fabrique/logo/add_files.svg);
+  --checkSmallUrl: url(/images/fabrique/logo/check-small.svg);
+  --checkUrl: url(/images/fabrique/logo/check.svg);
+  --dragDropUrl: url(/images/fabrique/logo/drag_drop_button.svg);
+  --infoIconUrl: url(/images/fabrique/logo/information-icon.svg);
+  --removeUrl: url(/images/fabrique/logo/remove_files.svg);
+  --viewMoreUrl:  url(/images/fabrique/logo/arrow_down.svg);
+  --arrowLeftUrl: url(/images/fabrique/logo/arrow.svg);
+  --arrowRightUrl: url(/images/fabrique/logo/arrow-right.svg); }
+
 #menu {
   z-index: 1;
   height: auto;
@@ -1669,6 +1681,18 @@ div.not_displayed {
     line-height: 15px;
     font-family: "Source Sans Pro", sans-serif;
     font-weight: 700; }
+
+:root {
+  --logoUrl: url(/images/fabrique/logo/filesender_logo_zwart.svg);
+  --addFilesUrl: url(/images/fabrique/logo/add_files.svg);
+  --checkSmallUrl: url(/images/fabrique/logo/check-small.svg);
+  --checkUrl: url(/images/fabrique/logo/check.svg);
+  --dragDropUrl: url(/images/fabrique/logo/drag_drop_button.svg);
+  --infoIconUrl: url(/images/fabrique/logo/information-icon.svg);
+  --removeUrl: url(/images/fabrique/logo/remove_files.svg);
+  --viewMoreUrl:  url(/images/fabrique/logo/arrow_down.svg);
+  --arrowLeftUrl: url(/images/fabrique/logo/arrow.svg);
+  --arrowRightUrl: url(/images/fabrique/logo/arrow-right.svg); }
 
 #page {
   width: 60%;
@@ -1986,7 +2010,8 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
     line-height: 18px;
     font-family: "Source Sans Pro", sans-serif;
     font-weight: 400;
-    width: 100%; }
+    width: 100%;
+    position: relative; }
   #transferDetails .ui-button {
     margin: 10px 0; }
   #transferDetails .download_link td {
@@ -2021,6 +2046,20 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
       border: 0px;
       cursor: pointer;
       line-height: 40px; }
+  #transferDetails .auditlog .ui-widget {
+    font-size: 14px;
+    line-height: 18px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 400;
+    font-weight: bold;
+    margin: 10px 0;
+    display: inline-block; }
+  #transferDetails .transferLogsDiv {
+    position: absolute;
+    width: 100%;
+    margin-bottom: 30px; }
+  #transferDetails .transferLogTableRow .date {
+    padding-left: 0; }
 
 .upload_page {
   margin-top: 40px;
@@ -3042,6 +3081,18 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
 .disappear-e {
   opacity: 0; }
 
+:root {
+  --logoUrl: url(/images/fabrique/logo/filesender_logo_zwart.svg);
+  --addFilesUrl: url(/images/fabrique/logo/add_files.svg);
+  --checkSmallUrl: url(/images/fabrique/logo/check-small.svg);
+  --checkUrl: url(/images/fabrique/logo/check.svg);
+  --dragDropUrl: url(/images/fabrique/logo/drag_drop_button.svg);
+  --infoIconUrl: url(/images/fabrique/logo/information-icon.svg);
+  --removeUrl: url(/images/fabrique/logo/remove_files.svg);
+  --viewMoreUrl:  url(/images/fabrique/logo/arrow_down.svg);
+  --arrowLeftUrl: url(/images/fabrique/logo/arrow.svg);
+  --arrowRightUrl: url(/images/fabrique/logo/arrow-right.svg); }
+
 #footer {
   font-size: 14px;
   line-height: 18px;
@@ -3067,6 +3118,18 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
     display: block; }
   #langmenu li {
     border: 0; }
+
+:root {
+  --logoUrl: url(/images/fabrique/logo/filesender_logo_zwart.svg);
+  --addFilesUrl: url(/images/fabrique/logo/add_files.svg);
+  --checkSmallUrl: url(/images/fabrique/logo/check-small.svg);
+  --checkUrl: url(/images/fabrique/logo/check.svg);
+  --dragDropUrl: url(/images/fabrique/logo/drag_drop_button.svg);
+  --infoIconUrl: url(/images/fabrique/logo/information-icon.svg);
+  --removeUrl: url(/images/fabrique/logo/remove_files.svg);
+  --viewMoreUrl:  url(/images/fabrique/logo/arrow_down.svg);
+  --arrowLeftUrl: url(/images/fabrique/logo/arrow.svg);
+  --arrowRightUrl: url(/images/fabrique/logo/arrow-right.svg); }
 
 @-webkit-keyframes fadeout {
   0% {
@@ -3145,4 +3208,3 @@ body {
   padding-bottom: 0;
   -webkit-align-items: baseline;
           align-items: baseline; }
-
