@@ -486,6 +486,12 @@ filesender.ui.files = {
               msg.slideToggle( checkEncryptionPassword_slideToggleDelay );
           }
       }
+
+if (!invalid) {
+        $('#continue').removeClass('ui-state-disabled');
+      } else {
+        $('#continue').addClass('ui-state-disabled');
+      }
   },
 };
 

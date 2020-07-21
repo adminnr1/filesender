@@ -40,15 +40,16 @@ class FabriqueTransferList {
 
     $('body').append(this.transferDetails);
 
-    $('.actions').remove();//this causes layout problems otherwise
-    $('.transfer_id').hide();
-    $('.expand').hide();
-    $('.collapse').hide();
-    $('.auditlog').hide();
-    $('.general').prev().addClass('detail_popup_title').hide();
-    $('.auditlog').next().addClass('detail_fileslist_title');
-    $('.subheader').hide();
-    $('.options').parent().parent().hide();
+      $('.actions').remove();//this causes layout problems otherwise
+      $('.transfer_id').hide();
+      $('.expand').hide();
+      $('.collapse').hide();
+      $('.auditlog').hide();
+      $('.actions').hide();
+      $('.general').prev().addClass('detail_popup_title').hide();
+      $('.auditlog').next().addClass('detail_fileslist_title');
+      $('.subheader').hide();
+      $('.options').parent().parent().hide();
 
     // Move pagination and hide initially
     this.previousPage = $('.pageprev');
@@ -68,7 +69,7 @@ class FabriqueTransferList {
     $('#transferDetails').click(function(e){
         if( e.target !== this) return;
 
-        $('#transferDetails').hide();
+        // catch click on transferlogs somewhere$('#transferDetails').hide();
         $('#transferDetails').removeClass('popup');
     });
   }
@@ -167,11 +168,40 @@ class FabriqueTransferList {
   toggleTransferDetails(transferId) {
     const data = document.querySelector('.transfer_details[data-id="' + transferId + '"]').innerHTML;
     this.transferDetails.append('<div id="popup_wrapper"/>');
-    $('#popup_wrapper').html(data);
+    $('#popup_wrapper').html(data);// Re add buttons
+      var auditlog = $('#popup_wrapper').find('.auditlog')
+
+      $('#popup_wrapper').find('.general').first().append(auditlog.detach());
+      auditlog.show();
+      auditlog.children().first().hide();
+
+      auditlog.children().eq(1).removeClass('ui-button');
+      auditlog.children().eq(1).on('click', function(e){
+          var logToggleDiv = $(`<div class="transferLogsDiv">
+                                  <h2 class="transferLogsTitle">Transfer logs</h2>
+                                  <table id="transferLogTable">
+                                  </table>
+                                </div>`).hide();
+
+          $('#popup_wrapper').find('.general').first().append(logToggleDiv);
+
+          filesender.client.getTransferAuditlog(transferId, function(log) {
+              // Reset so it doesnt have entries from another transfer
+              $('#transferLogTable').html('');
+              log.forEach(function(entry){
+                  $('#transferLogTable').append(`<tr class="transferLogTableRow">
+                                                      <td class="date">${ entry.date.formatted }</td>
+                                                      <td class="author">${ entry.author.identity }</td>
+                                                      <td class="author">${ lang.tr(entry.event) }</td>
+                                                  </tr>`)
+              });
+              logToggleDiv.show();
+          });
+      });
     this.transferDetails.show();
     this.transferDetails.addClass('popup');
 
-    $('.file').each(function(e) {
+      $('.file').each(function(e) {
         var current = $(this)
         var elements = current.text().split(':')
 

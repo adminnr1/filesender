@@ -292,9 +292,9 @@ filesender.ui.send = function() {
           sent++;
           if(sent < emails.length) return;
 
-          filesender.ui.notify('success', lang.tr('guest_vouchers_sent').r({sent: sent}), function() {
+
               filesender.ui.reload();
-          });
+
       });
   }
 };
