@@ -34,17 +34,27 @@ class Fabrique {
   constructor(){
     this.totalFileSize = 0;
     this.totalCompletedBytes = 0;
+    this.fileCount = 0;
+    this.invalidFileCount = 0;
 
     this.previousBytes = 0;
     this.currentFile = '';
+    this.maxFileCount = 0;
+    this.maxTotalSize = 0;
+
     this.setDefaultUI();
   }
 
   setDefaultUI() {
+
+    // Set values
+    this.maxFileCount = filesender.config.max_transfer_files;
+    this.maxTotalSize = filesender.ui.formatBytes(filesender.config.max_transfer_size);
+
     // Add classes to designate steps, hide step 2 elements
     this.overallDiv = $('#upload_form');
     this.uploadArea = $('#upload_form').children().first().addClass('step1');
-    $('.instructions').text('Drop or select files to send');
+    $('.instructions').text(lang.tr('Drop or select files to send'));
     this.basicFileSelector = $('.file_selector');
     this.filesActions = $('.files_actions');
     this.splitOnColon();
@@ -52,15 +62,15 @@ class Fabrique {
     this.termsLink = $('.terms').children().first().detach();
     this.termsLink.html('Code of Conduct');
 
-      this.termsLabel = $('label[for="aup"]').html('I accept the following ' + $(this.termsLink)[0].outerHTML + ' when using this service.');
+    this.termsLabel = $('label[for="aup"]').html(`${lang.tr('I accept the following')} ${$(this.termsLink)[0].outerHTML} ${lang.tr('when using this service.')}`);
     this.termsLabel.attr('title', '');
 
-    this.labelEncrypt = $('label[for="encryption"]').children().first().children().first().html('Send files securely (max 2 GB)')
+    this.labelEncrypt = $('label[for="encryption"]').children().first().children().first().text(lang.tr('Send files securely (max 2 GB)'));
     this.encryptionArea = $('#encrypt_checkbox');
     this.encryptionArea.append('<span id="tooltip_encrypt_toggle">[i]</span>');
     this.encryptionDescription = $('#tooltip_encrypt_toggle');
     this.encryptionToggled = false;
-    this.showPasswordCheckbox = $('label[for="encryption_show_password"]').text('Show password');
+    this.showPasswordCheckbox = $('label[for="encryption_show_password"]').text(lang.tr('Show password'));
     this.encryptionDescriptionContainer = $('#encryption_description_container').hide();
     this.encryptionDescriptionContainer.html(this.encryptionDescriptionContainer.html().replace(new RegExp("&nbsp;","gm"), ''));
 
@@ -68,7 +78,7 @@ class Fabrique {
     this.uploadButtons = $('.buttons').addClass('step2').hide();
 
     this.labelFrom = $('label[for="from"]').first().parent().hide();
-    this.labelUpload = $('label[for="files"]').html('Add files');
+    this.labelUpload = $('label[for="files"]').html(lang.tr('Add files'));
     this.terms = $('.aup').first();
     this.encryptPassword = $('#encryption_password_container');
 
@@ -83,11 +93,7 @@ class Fabrique {
     this.termsinput.attr('id','aup'); // MKR add id otherwise the label click won't work
 
     this.termsinput.on('change', function() {
-        if (filesender.ui.evalUploadEnabled()) {
-            $('#continue').removeClass('ui-state-disabled');
-        } else {
-            $('#continue').addClass('ui-state-disabled');
-        }
+        filesender.ui.evalUploadEnabled();
     });
 
     this.terms.prepend(this.termsinput);
@@ -99,12 +105,12 @@ class Fabrique {
 
     // Add continue button to step 2
     this.continueButton = $('<button id="continue" type="button"/>').addClass('ui-state-disabled');
-    $(this.continueButton).html('continue');
+    $(this.continueButton).text(lang.tr('continue'));
     this.encryptionArea.parent().append(this.continueButton);
 
     // Move the start upload buttons into the right div
     this.uploadButtons.detach().appendTo('.two_columns');
-      $('label[for="lang"]').parent().addClass('languageDropdown');
+    $('label[for="lang"]').parent().addClass('languageDropdown');
 
     // Move the checkbox for link or mail to the top of the div
     $('#get_a_link').parent().detach().prependTo('.two_columns');
@@ -119,9 +125,9 @@ class Fabrique {
     // Add the div that collapses/shrinks when step 2 is active
     this.filesListBack = $(`
                             <div id="filesList" class="step2">
-                            <div class="infoDiv fileCountDiv"><span id="fileCount"></span> file(s) added</div>
-                            <div class=infoDiv fileSizeDiv">Total size <span id="fileSize"></span> / <span id="maxFileSize"></span></div>
-                            <div class=infoDiv encryptDiv"><span>End-to-end encryption is </span> <span id="encryptionStatus"></span></div>
+                                <div class="infoDiv fileCountDiv"><span id="fileCount"></span> ${lang.tr('file(s) added')} </div>
+                                <div class=infoDiv fileSizeDiv">${lang.tr('Total size')} <span id="fileSize"></span> / <span id="maxFileSize"></span></div>
+                                <div class=infoDiv encryptDiv"><span>${lang.tr('End-to-end encryption is')} </span> <span id="encryptionStatus"></span></div>
                             </div>
     `).hide();
     this.overallDiv.prepend(this.filesListBack);
@@ -132,19 +138,24 @@ class Fabrique {
         <div id="fileDetails" class="step1">
             <div>
                 <div class="fileCountDiv"><span id="fileCount"></span><span> file(s) added</span></div>
-                <div class="fileSizeDiv">Total size <span id="fileSize"></span> / <span id="maxFileSize"></span></div>
+                <div class="fileSizeDiv">${lang.tr('Total size')} <span id="fileSize"></span> / <span id="maxFileSize"></span></div>
             </div>
         </div>
     `).hide();
+
+    // Add total size/count data to the back div and original list
+    $('#filesList').find('#maxFileSize').text(this.maxTotalSize);
+    $('#fileslist').find('#maxFileSize').text(this.maxTotalSize);
+
 
     // Add step 3 div in hidden form
     this.uploadDone = $(`
     <div id="uploadDone" class="step3">
         <div></div>
-        <div><span id="done" class="done_text">All done</span></div>
+        <div><span id="done" class="done_text">${lang.tr('All done!')}</span></div>
         <div id="downloadLinkArea"><span id="uploadVariantReport"></span></div>
 
-        <a href="?s=transfers" id="myTransfers">View my transfers</a>
+        <a href="?s=transfers" id="myTransfers">${lang.tr('View my transfers')}</a>
     </div>
     `).hide();
     this.overallDiv.append(this.uploadDone);
@@ -154,7 +165,7 @@ class Fabrique {
     this.filesListBack.on('click', function(e) {
         // toggle previous state
         self.uploadArea.show();
-        self.encryptionArea.show(); // do with css.class at once later?
+        self.encryptionArea.show();
         $('#continue').show();
         self.optionsArea.hide();
         self.uploadButtons.hide();
@@ -186,6 +197,7 @@ class Fabrique {
                 this.labelFrom.hide();
             }
         }
+
         //eval the continue button for state
         filesender.ui.evalUploadEnabled();
     });
@@ -198,14 +210,13 @@ class Fabrique {
         self.encryptPassword.hide();
         $(this).hide();
 
-          // Hide all things related to the encryption/password container
+        // Hide all things related to the encryption/password container
         self.encryptionDescriptionContainer.removeClass('appear-e block-e').hide();
         $('#encryption_password_container').removeClass('appear-e block-e').hide();
         $('#encrypt_checkbox').removeClass('appear-e block-e').hide();
         $('#encryption_password_container_generate').removeClass('appear-e block-e').hide();
         $('#encryption_password_container_too_short_message').removeClass('appear-e block-e').hide();
         $('#encryption_password_show_container').removeClass('appear-e block-e').hide();
-
 
         self.filesListBack.show();
         self.optionsArea.show();
@@ -237,7 +248,7 @@ class Fabrique {
     // Hide the checkboxes we dont want at all in step 2
     $('#email_me_on_expire').parent().hide();
     $('#email_report_on_closing').parent().hide();
-    $('.toggle_advanced_options').parent().hide();
+    $('.toggle_advanced_options').parent().hide(); // terasender should be here? but it's not
 
     // Move the email toggle and hide its corresponding checkbox (onclick seems to function on the label)
     $('#get_a_link').hide();
@@ -249,9 +260,53 @@ class Fabrique {
     $('#upload_mode_title').hide();
 
     // Set standard texts for the email/link toggle
-    $('label[for="get_a_link"]').text('or send files by email');
-    $('#upload_mode_title').text('Create download link');
+    $('label[for="get_a_link"]').text(lang.tr('or send files by email'));
+    $('#upload_mode_title').text(lang.tr('Create download link'));
 
+  }
+
+  addFile(file) {
+      this.fileCount += 1;
+      this.updateTotalFileSize(file.size);
+      this.updateFileStats();
+      this.toggleBigPlus();
+  }
+
+  removeFile(file) {
+      this.fileCount -= 1;
+      this.updateTotalFileSize(-file.size);
+      this.updateFileStats();
+      this.toggleBigPlus();
+  }
+
+  addInvalidFile(file) {
+      this.invalidFileCount += 1;
+      this.updateFileStats();
+      this.toggleBigPlus();
+  }
+
+  removeInvalidFile(file) {
+      this.invalidFileCount -= 1;
+      this.updateFileStats();
+      this.toggleBigPlus();
+  }
+
+  removeAllFiles() {
+      this.invalidFileCount = 0;
+      this.fileCount = 0;
+      this.totalFileSize = 0;
+
+      this.updateFileStats();
+      this.toggleBigPlus();
+  }
+
+  setContinueEnabled(enabled) {
+    if(enabled) {
+        $('#continue').removeClass('ui-state-disabled');
+    }
+    else {
+        $('#continue').addClass('ui-state-disabled');
+    }
   }
 
   toggleUploadState(uploading) {
@@ -268,7 +323,8 @@ class Fabrique {
   }
 
   // Shows the big + icon if no files are selected yet
-  toggleBigPlus(filesPresent) {
+  toggleBigPlus() {
+    var filesPresent = this.invalidFileCount + this.fileCount;
 
     if(filesPresent > 0) {
         $('.files_dragdrop').first().hide();
@@ -309,20 +365,20 @@ class Fabrique {
 
   }
 
-  updateFileStats(fileCount, formattedFileSize) {
+  updateFileStats() {
+    // Separates file size from file name so its prettier
     this.splitOnColon();
 
+    var totalCount = this.fileCount + this.invalidFileCount;
     var filesList = $('#filesList');
-    filesList.find('#fileCount').text(fileCount[0]);
-    filesList.find('#maxFileCount').text(fileCount[1]);
-
-    filesList.find('#fileSize').text(formattedFileSize[0]);
-    filesList.find('#maxFileSize').text(formattedFileSize[1]);
-
     var filesListStep1 = $('#fileslist');
-    filesListStep1.find('#fileCount').text(fileCount[0]);
-    filesListStep1.find('#fileSize').text(formattedFileSize[0]);
-      filesListStep1.find('#maxFileSize').text(formattedFileSize[1]);
+
+    var formatted = filesender.ui.formatBytes(this.totalFileSize);
+
+    filesList.find('#fileSize').text(formatted);
+    filesListStep1.find('#fileSize').text(formatted);
+    filesList.find('#fileCount').text(totalCount);
+    filesListStep1.find('#fileCount').text(totalCount);
 
   }
 
@@ -339,13 +395,13 @@ class Fabrique {
     if($('body').hasClass('step2')) {
         if(showEmail) {
             $('#encrypt_checkbox').parent().show();
-            $('#upload_mode_title').text('Send by email');
-            $('label[for="get_a_link"]').text('or create download link');
+            $('#upload_mode_title').text(lang.tr('Send by email'));
+            $('label[for="get_a_link"]').text(lang.tr('or create download link'));
         }
         else {
             $('#encrypt_checkbox').parent().hide();
-            $('#upload_mode_title').text('Create download link');
-            $('label[for="get_a_link"]').text('or send files by email');
+            $('#upload_mode_title').text(lang.tr('Create download link'));
+            $('label[for="get_a_link"]').text(lang.tr('or send files by email'));
         }
     }
   }
@@ -653,7 +709,7 @@ window.filesender.transfer = function() {
         if ('parentNode' in blob) // HTML file input
             blob = blob.files;
 
-          // Make fileslist neater, also when there are errors
+        // Make fileslist neater, also when there are errors
         Fabrique.splitOnColon();
 
         if ('length' in blob) { // FileList
@@ -772,9 +828,7 @@ window.filesender.transfer = function() {
         this.files.push(file);
 
         filesender.ui.log('Registered file ' + file.name + ' with size ' + file.size);
-        Fabrique.updateTotalFileSize(file.size);
-        Fabrique.toggleBigPlus(this.files.length);
-
+        Fabrique.addFile(file);
         return cid;
     };
 
@@ -787,9 +841,8 @@ window.filesender.transfer = function() {
         for (var i = 0; i < this.files.length; i++) {
             if (this.files[i].cid == cid) {
                 this.size -= this.files[i].size;
+                Fabrique.removeFile(this.files[i]);
                 this.files.splice(i, 1);
-
-                Fabrique.toggleBigPlus(this.files.length);
                 return;
             }
         }

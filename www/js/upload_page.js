@@ -144,6 +144,8 @@ filesender.ui.files = {
               $('<span class="remove fa fa-minus-square fa-lg" />').attr({
                   title: lang.tr('click_to_delete_file')
               }).on('click', function() {
+
+                  console.log('delete file?');
                   var el = $(this).parent();
                   var cid = el.attr('data-cid');
                   var name = el.attr('data-name');
@@ -166,10 +168,14 @@ filesender.ui.files = {
                           size += filesender.ui.transfer.files[j].size;
                       filesender.ui.nodes.stats.number_of_files.show().find('.value').text(filesender.ui.transfer.files.length + '/' + filesender.config.max_transfer_files);
                       filesender.ui.nodes.stats.size.show().find('.value').text(filesender.ui.formatBytes(size) + '/' + filesender.ui.formatBytes(filesender.config.max_transfer_size));
-                      Fabrique.updateFileStats([filesender.ui.transfer.files.length, 30], [filesender.ui.formatBytes(size), filesender.ui.formatBytes(filesender.config.max_transfer_size)]);
 
+                    // files with no size do not get added to the invalid list, so we catch them this way
+                    if(!cid) {
+                        Fabrique.removeInvalidFile();
+                    }
                   } else {
                       filesender.ui.files.invalidFiles.splice(iidx, 1);
+                      Fabrique.removeInvalidFile();
                   }
 
                   filesender.ui.evalUploadEnabled();
@@ -178,11 +184,15 @@ filesender.ui.files = {
               // error state is updated here
               var added_cid = filesender.ui.transfer.addFile(filepath, fileblob, function(error) {
                   var tt = 1;
+
                   if(error.details && error.details.filename) filesender.ui.files.invalidFiles.push(error.details.filename);
                   node.addClass('invalid');
                   node.addClass(error.message);
                   $('<span class="invalid fa fa-exclamation-circle fa-lg" />').prependTo(node.find('.info'))
                   $('<div class="invalid_reason" />').text(error.message).appendTo(node);
+
+                  Fabrique.addInvalidFile();
+
               }, source_node);
 
               filesender.ui.nodes.files.clear.button('enable');
@@ -251,8 +261,6 @@ filesender.ui.files = {
 
               filesender.ui.nodes.stats.number_of_files.show().find('.value').text(filesender.ui.transfer.files.length + '/' + filesender.config.max_transfer_files);
               filesender.ui.nodes.stats.size.show().find('.value').text(filesender.ui.formatBytes(size) + '/' + filesender.ui.formatBytes(filesender.config.max_transfer_size));
-
-              Fabrique.updateFileStats([filesender.ui.transfer.files.length, 30], [filesender.ui.formatBytes(size), filesender.ui.formatBytes(filesender.config.max_transfer_size)]);
             }
 
           node.attr('index', filesender.ui.transfer.files.length - 1);
@@ -456,8 +464,7 @@ filesender.ui.files = {
       filesender.ui.nodes.stats.number_of_files.hide().find('.value').text('');
       filesender.ui.nodes.stats.size.hide().find('.value').text('');
 
-      Fabrique.updateFileStats([0, 30], [0, filesender.ui.formatBytes(filesender.config.max_transfer_size)]);
-      Fabrique.toggleBigPlus(filesender.ui.transfer.files.length);
+      Fabrique.removeAllFiles();
 
       filesender.ui.evalUploadEnabled();
   },
@@ -487,11 +494,8 @@ filesender.ui.files = {
           }
       }
 
-if (!invalid) {
-        $('#continue').removeClass('ui-state-disabled');
-      } else {
-        $('#continue').addClass('ui-state-disabled');
-      }
+      // Both the pw must pass the check and overall upload state must be valid
+      Fabrique.setContinueEnabled(!invalid && filesender.ui.evalUploadEnabled());
   },
 };
 
@@ -701,11 +705,7 @@ filesender.ui.evalUploadEnabled = function() {
       filesender.ui.nodes.buttons.start.button(ok ? 'enable' : 'disable');
   }
 
-  if (ok) {
-      $('#continue').removeClass('ui-state-disabled');
-  } else {
-      $('#continue').addClass('ui-state-disabled');
-  }
+  Fabrique.setContinueEnabled(ok);
 
   return ok;
 };

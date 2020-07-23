@@ -85,7 +85,7 @@ $(function() {
   var page = $('.download_page');
   if(!page.length) return;
 
-    var fdp = new FabriqueDownloadPage();
+  var fdp = new FabriqueDownloadPage();
 
   window.filesender.pbkdf2dialog.setup( true );
 
@@ -240,4 +240,4 @@ $(function() {
       button_zipdl.addClass('recommended');
   }
 
-  });
+});

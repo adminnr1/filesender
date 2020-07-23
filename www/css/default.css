@@ -1599,6 +1599,7 @@ div.not_displayed {
 
 
 /* Fabrique */
+
 @import url(https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;300;400;600;700;900&display=swap);
 :root {
   --logoUrl: url(/images/fabrique/logo/filesender_logo_zwart.svg);
@@ -1747,6 +1748,9 @@ div.not_displayed {
     border: 0px;
     cursor: pointer;
     line-height: 40px; }
+  .ui-button:focus, button:focus, #myTransfers:focus, #submit_button:focus, .send:focus {
+    border: 0;
+    font-weight: 600; }
 
 #submit_button {
   background-image: none; }
@@ -1908,158 +1912,6 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
   .transfers_page .expires {
     width: 20% !important;
     overflow: hidden; }
-
-#transferDetails {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: rgba(0, 0, 0, 0.4);
-  z-index: 2;
-  overflow-y: scroll; }
-  #transferDetails #popup_wrapper {
-    width: auto;
-    position: fixed;
-    top: 50%;
-    text-align: center;
-    -webkit-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
-    left: 50%; }
-    #transferDetails #popup_wrapper [colspan="8"] {
-      padding: 30px;
-      margin-bottom: 20px;
-      display: -webkit-flex;
-      display: flex;
-      min-width: 450px;
-      width: 50vw;
-      max-width: 900px;
-      margin: 0 auto;
-      -webkit-flex-direction: column;
-              flex-direction: column;
-      max-height: calc(100vh - 200px);
-      overflow: scroll; }
-  #transferDetails .detail_popup_title {
-    font-size: 17px;
-    line-height: 18px;
-    font-family: "Source Sans Pro", sans-serif;
-    font-weight: 700;
-    margin-bottom: 10px;
-    background-color: white;
-    text-align: left;
-    -webkit-order: 1;
-            order: 1;
-    position: -webkit-sticky;
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    padding: 30px 0; }
-  #transferDetails .collapse {
-    margin-bottom: 1em; }
-  #transferDetails td {
-    background-color: white;
-    border-radius: 10px;
-    text-align: left; }
-    #transferDetails td input {
-      width: 100%; }
-    #transferDetails td .desc {
-      text-align: left;
-      padding-left: 0; }
-  #transferDetails .detail_fileslist_title {
-    -webkit-order: 3;
-            order: 3; }
-    #transferDetails .detail_fileslist_title h2 {
-      font-size: 17px;
-      line-height: 18px;
-      font-family: "Source Sans Pro", sans-serif;
-      font-weight: 700;
-      margin-bottom: 10px; }
-    #transferDetails .detail_fileslist_title div {
-      font-size: 14px;
-      line-height: 18px;
-      font-family: "Source Sans Pro", sans-serif;
-      font-weight: 400;
-      padding: 15px 0;
-      border-bottom: 1px solid #CCCCCC; }
-    #transferDetails .detail_fileslist_title div:last-child {
-      margin-bottom: 20px; }
-    #transferDetails .detail_fileslist_title [data-action="remind"] {
-      float: right; }
-  #transferDetails .files {
-    -webkit-order: 2;
-            order: 2; }
-    #transferDetails .files h2 {
-      font-size: 17px;
-      line-height: 18px;
-      font-family: "Source Sans Pro", sans-serif;
-      font-weight: 700;
-      margin-bottom: 10px; }
-    #transferDetails .files div {
-      font-size: 14px;
-      line-height: 18px;
-      font-family: "Source Sans Pro", sans-serif;
-      font-weight: 400;
-      padding: 15px 0;
-      border-bottom: 1px solid #CCCCCC; }
-    #transferDetails .files div:last-child {
-      margin-bottom: 20px; }
-  #transferDetails table {
-    -webkit-order: 4;
-            order: 4;
-    font-size: 14px;
-    line-height: 18px;
-    font-family: "Source Sans Pro", sans-serif;
-    font-weight: 400;
-    width: 100%;
-    position: relative; }
-  #transferDetails .ui-button {
-    margin: 10px 0; }
-  #transferDetails .download_link td {
-    padding-left: 0; }
-    #transferDetails .download_link td input {
-      margin-top: 15px;
-      border-left: 0;
-      border-right: 0;
-      border-top: 0;
-      border-bottom: 1px solid #F07527; }
-  #transferDetails .download_link a {
-    font-size: 15px;
-    line-height: 24px;
-    font-family: "Source Sans Pro", sans-serif;
-    font-weight: 600;
-    background-color: #F07527;
-    border: none;
-    border-radius: 10px;
-    color: white;
-    height: 40px;
-    line-height: 40px;
-    padding: 0 30px;
-    display: inline-block;
-    text-decoration: none; }
-    #transferDetails .download_link a:hover {
-      font-size: 15px;
-      line-height: 24px;
-      font-family: "Source Sans Pro", sans-serif;
-      font-weight: 600;
-      background-color: #040608;
-      color: white;
-      border: 0px;
-      cursor: pointer;
-      line-height: 40px; }
-  #transferDetails .auditlog .ui-widget {
-    font-size: 14px;
-    line-height: 18px;
-    font-family: "Source Sans Pro", sans-serif;
-    font-weight: 400;
-    font-weight: bold;
-    margin: 10px 0;
-    display: inline-block; }
-  #transferDetails .transferLogsDiv {
-    position: absolute;
-    width: 100%;
-    margin-bottom: 30px; }
-  #transferDetails .transferLogTableRow .date {
-    padding-left: 0; }
 
 .upload_page {
   margin-top: 40px;
@@ -2536,6 +2388,24 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
       cursor: pointer; }
   #upload_form .basic_options .languageDropdown {
     padding-left: 0; }
+    #upload_form .basic_options .languageDropdown label::after {
+      content: "";
+      background: var(--viewMoreUrl) no-repeat;
+      width: 13px;
+      height: 13px;
+      position: absolute;
+      bottom: 0;
+      right: 15px;
+      background-size: 100%;
+      pointer-events: none; }
+    #upload_form .basic_options .languageDropdown #lang {
+      border-left: 0;
+      border-top: 0;
+      border-right: 0;
+      border-bottom: 1px solid #040608;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none; }
   #upload_form .basic_options #email_upload_complete, #upload_form .basic_options #email_download_complete {
     visibility: hidden; }
     #upload_form .basic_options #email_upload_complete:checked ~ label::before, #upload_form .basic_options #email_download_complete:checked ~ label::before {
@@ -2718,6 +2588,11 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
       font-family: "Source Sans Pro", sans-serif;
       font-weight: 400;
       font-weight: bold; }
+    .user_page .box #dialog-privacy, .privacy_page .box #dialog-privacy, .about_page .box #dialog-privacy, .help_page .box #dialog-privacy {
+      font-size: 14px;
+      line-height: 18px;
+      font-family: "Source Sans Pro", sans-serif;
+      font-weight: 400; }
 
 .guests_page {
   height: calc(100vh - 140px);
@@ -3041,6 +2916,10 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
   border-radius: 10px;
   padding: 20px 15px; }
   .ui-dialog .ui-widget-content {
+    font-size: 14px;
+    line-height: 18px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 400;
     border: 0; }
     .ui-dialog .ui-widget-content p, .ui-dialog .ui-widget-content div {
       font-size: 14px;
@@ -3107,17 +2986,293 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
   #footer p {
     color: #808282; }
 
+:root {
+  --logoUrl: url(/images/fabrique/logo/filesender_logo_zwart.svg);
+  --addFilesUrl: url(/images/fabrique/logo/add_files.svg);
+  --checkSmallUrl: url(/images/fabrique/logo/check-small.svg);
+  --checkUrl: url(/images/fabrique/logo/check.svg);
+  --dragDropUrl: url(/images/fabrique/logo/drag_drop_button.svg);
+  --infoIconUrl: url(/images/fabrique/logo/information-icon.svg);
+  --removeUrl: url(/images/fabrique/logo/remove_files.svg);
+  --viewMoreUrl:  url(/images/fabrique/logo/arrow_down.svg);
+  --arrowLeftUrl: url(/images/fabrique/logo/arrow.svg);
+  --arrowRightUrl: url(/images/fabrique/logo/arrow-right.svg); }
+
+#notifications .notification {
+  font-size: 14px;
+  line-height: 18px;
+  font-family: "Source Sans Pro", sans-serif;
+  font-weight: 400;
+  background-color: #FFF3EB;
+  border: 1px solid #F07527;
+  background-image: var(--checkUrl);
+  padding: 10px 40px;
+  border-radius: 10px; }
+
+:root {
+  --logoUrl: url(/images/fabrique/logo/filesender_logo_zwart.svg);
+  --addFilesUrl: url(/images/fabrique/logo/add_files.svg);
+  --checkSmallUrl: url(/images/fabrique/logo/check-small.svg);
+  --checkUrl: url(/images/fabrique/logo/check.svg);
+  --dragDropUrl: url(/images/fabrique/logo/drag_drop_button.svg);
+  --infoIconUrl: url(/images/fabrique/logo/information-icon.svg);
+  --removeUrl: url(/images/fabrique/logo/remove_files.svg);
+  --viewMoreUrl:  url(/images/fabrique/logo/arrow_down.svg);
+  --arrowLeftUrl: url(/images/fabrique/logo/arrow.svg);
+  --arrowRightUrl: url(/images/fabrique/logo/arrow-right.svg); }
+
 #langmenu {
   border-radius: 0;
   margin: 0px 0px 30px 50px; }
+  #langmenu label::after {
+    content: "";
+    background: var(--viewMoreUrl) no-repeat;
+    width: 13px;
+    height: 13px;
+    position: absolute;
+    bottom: 0;
+    right: 15px;
+    background-size: 100%;
+    pointer-events: none; }
   #langmenu #language_selector {
     font-size: 14px;
     line-height: 18px;
     font-family: "Source Sans Pro", sans-serif;
     font-weight: 400;
-    display: block; }
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin-top: 5px;
+    display: block;
+    background-color: #FFF3EB;
+    border-left: 0;
+    border-top: 0;
+    border-right: 0;
+    border-bottom: 1px solid #040608;
+    cursor: pointer; }
   #langmenu li {
     border: 0; }
+
+:root {
+  --logoUrl: url(/images/fabrique/logo/filesender_logo_zwart.svg);
+  --addFilesUrl: url(/images/fabrique/logo/add_files.svg);
+  --checkSmallUrl: url(/images/fabrique/logo/check-small.svg);
+  --checkUrl: url(/images/fabrique/logo/check.svg);
+  --dragDropUrl: url(/images/fabrique/logo/drag_drop_button.svg);
+  --infoIconUrl: url(/images/fabrique/logo/information-icon.svg);
+  --removeUrl: url(/images/fabrique/logo/remove_files.svg);
+  --viewMoreUrl:  url(/images/fabrique/logo/arrow_down.svg);
+  --arrowLeftUrl: url(/images/fabrique/logo/arrow.svg);
+  --arrowRightUrl: url(/images/fabrique/logo/arrow-right.svg); }
+
+#transferDetails {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 2;
+  overflow-y: scroll; }
+  #transferDetails #popup_wrapper {
+    position: fixed;
+    top: 50%;
+    text-align: center;
+    -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+    left: 50%; }
+    #transferDetails #popup_wrapper [colspan="8"] {
+      padding: 30px;
+      margin-bottom: 20px;
+      display: -webkit-flex;
+      display: flex;
+      min-width: 450px;
+      width: 50vw;
+      max-width: 900px;
+      margin: 0 auto;
+      -webkit-flex-direction: column;
+              flex-direction: column;
+      max-height: calc(100vh - 200px);
+      overflow: auto; }
+  #transferDetails .detail_popup_title {
+    font-size: 17px;
+    line-height: 18px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 700;
+    margin-bottom: 10px;
+    background-color: white;
+    text-align: left;
+    -webkit-order: 1;
+            order: 1;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    padding: 30px 0; }
+  #transferDetails .title-popup-details, #transferDetails .title-popup-options, #transferDetails .title-popup-transferlog {
+    padding-top: 30px; }
+  #transferDetails .collapse {
+    margin-bottom: 1em; }
+  #transferDetails td {
+    background-color: white;
+    border-radius: 10px;
+    text-align: left; }
+    #transferDetails td input {
+      width: 100%; }
+    #transferDetails td .desc {
+      text-align: left;
+      padding-left: 0; }
+  #transferDetails .detail_fileslist_title {
+    -webkit-order: 3;
+            order: 3; }
+    #transferDetails .detail_fileslist_title h2 {
+      font-size: 17px;
+      line-height: 18px;
+      font-family: "Source Sans Pro", sans-serif;
+      font-weight: 700;
+      margin-bottom: 10px; }
+    #transferDetails .detail_fileslist_title div {
+      font-size: 14px;
+      line-height: 18px;
+      font-family: "Source Sans Pro", sans-serif;
+      font-weight: 400;
+      padding: 15px 0;
+      border-bottom: 1px solid #CCCCCC; }
+    #transferDetails .detail_fileslist_title div:last-child {
+      margin-bottom: 20px; }
+    #transferDetails .detail_fileslist_title [data-action="remind"] {
+      float: right; }
+  #transferDetails .files {
+    -webkit-order: 2;
+            order: 2; }
+    #transferDetails .files h2 {
+      font-size: 17px;
+      line-height: 18px;
+      font-family: "Source Sans Pro", sans-serif;
+      font-weight: 700;
+      margin-bottom: 10px; }
+    #transferDetails .files div {
+      font-size: 14px;
+      line-height: 18px;
+      font-family: "Source Sans Pro", sans-serif;
+      font-weight: 400;
+      padding: 15px 0;
+      border-bottom: 1px solid #CCCCCC; }
+    #transferDetails .files div:last-child {
+      margin-bottom: 20px; }
+    #transferDetails .files .file {
+      display: -webkit-flex;
+      display: flex; }
+      #transferDetails .files .file .popupList_fileName {
+        max-width: 80%; }
+      #transferDetails .files .file .popupList_downloadCount {
+        margin-left: auto; }
+      #transferDetails .files .file #deleteTransferFile {
+        margin-left: 10px; }
+        #transferDetails .files .file #deleteTransferFile::before {
+          content: "";
+          background: var(--removeUrl) no-repeat;
+          background-size: 10px;
+          display: inline-block;
+          width: 10px;
+          height: 10px; }
+  #transferDetails .recipients {
+    padding-top: 20px; }
+    #transferDetails .recipients .recipient {
+      display: -webkit-flex;
+      display: flex; }
+      #transferDetails .recipients .recipient .popupList_fileName {
+        max-width: 50%; }
+      #transferDetails .recipients .recipient .popupList_downloadCount {
+        margin-left: auto; }
+      #transferDetails .recipients .recipient #remindRecipient {
+        margin-left: 10px;
+        font-size: 14px;
+        line-height: 15px;
+        font-family: "Source Sans Pro", sans-serif;
+        font-weight: 600;
+        color: #F07527; }
+      #transferDetails .recipients .recipient #deleteRecipient {
+        margin-left: 10px; }
+        #transferDetails .recipients .recipient #deleteRecipient::before {
+          content: "";
+          background: var(--removeUrl) no-repeat;
+          background-size: 10px;
+          display: inline-block;
+          width: 10px;
+          height: 10px; }
+  #transferDetails #addRecipient {
+    margin-top: 10px; }
+  #transferDetails #addRecipient, #transferDetails #deleteTransfer, #transferDetails #extendTransfer, #transferDetails .seeTransferLogs {
+    font-size: 14px;
+    line-height: 15px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 600;
+    color: #F07527;
+    cursor: pointer;
+    padding: 0 0 5px 0;
+    display: inline-block;
+    text-decoration: none; }
+  #transferDetails table {
+    -webkit-order: 4;
+            order: 4;
+    font-size: 14px;
+    line-height: 18px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 400;
+    width: 100%;
+    position: relative; }
+  #transferDetails .ui-button {
+    margin: 10px 0; }
+  #transferDetails .download_link td {
+    padding-left: 0; }
+    #transferDetails .download_link td input {
+      margin-top: 15px;
+      border-left: 0;
+      border-right: 0;
+      border-top: 0;
+      border-bottom: 1px solid #F07527; }
+  #transferDetails .download_link a {
+    font-size: 15px;
+    line-height: 24px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 600;
+    background-color: #F07527;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 30px;
+    display: inline-block;
+    text-decoration: none; }
+    #transferDetails .download_link a:hover {
+      font-size: 15px;
+      line-height: 24px;
+      font-family: "Source Sans Pro", sans-serif;
+      font-weight: 600;
+      background-color: #040608;
+      color: white;
+      border: 0px;
+      cursor: pointer;
+      line-height: 40px; }
+    #transferDetails .download_link a:focus {
+      border: 0;
+      font-weight: 600; }
+  #transferDetails .auditlog .ui-widget {
+    font-size: 14px;
+    line-height: 18px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 400;
+    font-weight: bold;
+    margin: 10px 0;
+    display: inline-block; }
+  #transferDetails .transferLogsDiv {
+    position: absolute;
+    width: 100%;
+    margin-bottom: 30px; }
+  #transferDetails .transferLogTableRow .date {
+    padding-left: 0; }
 
 :root {
   --logoUrl: url(/images/fabrique/logo/filesender_logo_zwart.svg);
@@ -3208,3 +3363,4 @@ body {
   padding-bottom: 0;
   -webkit-align-items: baseline;
           align-items: baseline; }
+

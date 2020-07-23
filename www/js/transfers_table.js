@@ -31,8 +31,17 @@
  */
 
 class FabriqueTransferList {
-  constructor(){
+  constructor() {
+    this.hideTable();
     this.setDefaultUI();
+  }
+
+  hideTable() {
+      $('.transfers').hide();
+  }
+
+  showTable() {
+    $('.transfers').show();
   }
 
   setDefaultUI() {
@@ -40,16 +49,16 @@ class FabriqueTransferList {
 
     $('body').append(this.transferDetails);
 
-      $('.actions').remove();//this causes layout problems otherwise
-      $('.transfer_id').hide();
-      $('.expand').hide();
-      $('.collapse').hide();
-      $('.auditlog').hide();
-      $('.actions').hide();
-      $('.general').prev().addClass('detail_popup_title').hide();
-      $('.auditlog').next().addClass('detail_fileslist_title');
-      $('.subheader').hide();
-      $('.options').parent().parent().hide();
+    $('.actions').remove();//this causes layout problems otherwise
+    $('.transfer_id').hide();
+    $('.expand').hide();
+    $('.collapse').hide();
+    $('.auditlog').hide();
+    $('.actions').hide();
+    $('.general').prev().addClass('detail_popup_title').hide();
+    $('.auditlog').next().addClass('detail_fileslist_title');
+    $('.subheader').hide();
+    $('.options').parent().parent().hide();
 
     // Move pagination and hide initially
     this.previousPage = $('.pageprev');
@@ -58,6 +67,7 @@ class FabriqueTransferList {
     this.paginationWrapper = this.previousPage.parent().detach();
     $('.nextColumn').append(this.paginationWrapper);
 
+    // Change layout
     this.addListenerToRows();
     this.changeFileColumnContents();
     this.changeEmailColumnContents();
@@ -66,12 +76,18 @@ class FabriqueTransferList {
     this.setBottomNavigation();
 
     // Set back click on everything except the detail popup div
+    var self = this;
     $('#transferDetails').click(function(e){
         if( e.target !== this) return;
-
-        // catch click on transferlogs somewhere$('#transferDetails').hide();
-        $('#transferDetails').removeClass('popup');
+        self.hideTransferDetails();
     });
+
+    window.setTimeout(this.showTable, 400);
+  }
+
+  hideTransferDetails() {
+    $('#transferDetails').hide();
+    $('#transferDetails').removeClass('popup');
   }
 
   changeEmailColumnContents() {
@@ -97,10 +113,10 @@ class FabriqueTransferList {
                 otherRecipientsCount = extraInfo.find('.recipient').length - 1;
             }
             else if(currentElement.is('abbr')) {
-                emailString = 'Download link';
+                emailString = lang.tr('Download link');
             }
 
-            let moreString = otherRecipientsCount ? (' + ' + otherRecipientsCount + ' more') : '';
+            let moreString = otherRecipientsCount ? (' + ' + otherRecipientsCount + ' ' + lang.tr('more')) : '';
             emailString += moreString;
             column.text(emailString);
         }
@@ -130,7 +146,7 @@ class FabriqueTransferList {
                 }
             });
 
-            let moreString = otherFileCount ? (' + ' + otherFileCount + ' more') : '';
+            let moreString = otherFileCount ? (' + ' + otherFileCount + ' ' + lang.tr('more')) : '';
             fileString += moreString;
             column.text(fileString);
           }
@@ -142,7 +158,7 @@ class FabriqueTransferList {
         if(!$(this).is('td')) return;
         const column = $(this);
         const dlCount = column.html().toString().trim().split(' ')[0];
-        column.html(dlCount + ' downloads');
+        column.html(dlCount + ' ' + lang.tr('downloads'));
     });
   }
 
@@ -151,7 +167,7 @@ class FabriqueTransferList {
         if(!$(this).is('td')) return;
         const column = $(this);
         const date = column.text();
-        column.html('Expires ' + date);
+        column.html(lang.tr('Expires') + ' ' + date);
     });
   }
 
@@ -165,53 +181,328 @@ class FabriqueTransferList {
       });
   }
 
-  toggleTransferDetails(transferId) {
-    const data = document.querySelector('.transfer_details[data-id="' + transferId + '"]').innerHTML;
-    this.transferDetails.append('<div id="popup_wrapper"/>');
-    $('#popup_wrapper').html(data);// Re add buttons
-      var auditlog = $('#popup_wrapper').find('.auditlog')
+  addRecipient(transferId, data) {
+      var id = transferId;
+      if(!id || isNaN(id)) return;
 
-      $('#popup_wrapper').find('.general').first().append(auditlog.detach());
-      auditlog.show();
-      auditlog.children().first().hide();
-
-      auditlog.children().eq(1).removeClass('ui-button');
-      auditlog.children().eq(1).on('click', function(e){
-          var logToggleDiv = $(`<div class="transferLogsDiv">
-                                  <h2 class="transferLogsTitle">Transfer logs</h2>
-                                  <table id="transferLogTable">
-                                  </table>
-                                </div>`).hide();
-
-          $('#popup_wrapper').find('.general').first().append(logToggleDiv);
-
-          filesender.client.getTransferAuditlog(transferId, function(log) {
-              // Reset so it doesnt have entries from another transfer
-              $('#transferLogTable').html('');
-              log.forEach(function(entry){
-                  $('#transferLogTable').append(`<tr class="transferLogTableRow">
-                                                      <td class="date">${ entry.date.formatted }</td>
-                                                      <td class="author">${ entry.author.identity }</td>
-                                                      <td class="author">${ lang.tr(entry.event) }</td>
-                                                  </tr>`)
-              });
-              logToggleDiv.show();
-          });
+      var recipients = [];
+      $('.transfer_details[data-id="' + id + '"] .recipients .recipient').each(function() {
+          recipients.push($(this).attr('data-email'));
       });
-    this.transferDetails.show();
-    this.transferDetails.addClass('popup');
 
-      $('.file').each(function(e) {
-        var current = $(this)
+      var prompt = filesender.ui.prompt(lang.tr('enter_to_email'), function() {
+          var input = $(this).find('input');
+          $('p.error', this).remove();
+
+          var raw_emails = input.val().split(/[,;]/);
+
+          var emails = [];
+          var errors = [];
+
+          for(var i=0; i<raw_emails.length; i++) {
+              var email = raw_emails[i].replace(/^\s+/, '').replace(/\s+$/, '');
+              if(!email) continue;
+
+              if(!email.match(filesender.ui.validators.email)) {
+                  errors.push(lang.tr('invalid_recipient').r({email: email}));
+                  continue;
+              }
+
+              for(var j=0; j<recipients.length; j++) {
+                  if(recipients[j] == email) {
+                      errors.push(lang.tr('duplicate_recipient').r({email: email}));
+                      continue;
+                  }
+              }
+
+              for(var j=0; j<emails.length; j++) {
+                  if(emails[j] == email) {
+                      errors.push(lang.tr('duplicate_recipient').r({email: email}));
+                      continue;
+                  }
+              }
+
+              emails.push(email);
+          }
+
+          if(recipients.length + emails.length >= filesender.config.max_email_recipients)
+              errors.push(lang.tr('max_email_recipients_exceeded').r({max: filesender.config.max_email_recipients}));
+
+          if(errors.length) {
+              for(var i=0; i<errors.length; i++)
+                  $('<p class="error message" />').text(errors[i].out()).appendTo(this);
+              return false;
+          }
+
+          var done = 0;
+          for(var i=0; i<emails.length; i++) {
+              filesender.client.addRecipient(id, emails[i], function() {
+                  done++;
+
+                  if(done < emails.length) return;
+
+                  filesender.ui.notify('success', lang.tr('recipient_added'), function() {
+                      filesender.ui.reload();
+                  });
+              });
+          }
+
+          return true;
+      })
+
+      prompt.append('<p>' + lang.tr('email_separator_msg') + '</p>');
+      var input = $('<input type="text" class="wide" />').appendTo(prompt);
+      input.focus();
+  }
+
+  deleteTransfer(transferId, data) {
+    var id = transferId;
+    if(!id || isNaN(id)) return;
+
+    self = this;
+
+    if($('.transfers list').filter('[data-mode="admin"][data-status="available"]')) {
+        var d = filesender.ui.chooseAction(['delete_transfer_nicely', 'delete_transfer_roughly'], function(choosen) {
+            var done = function() {
+                $('[data-transfer][data-id="' + id + '"]').remove();
+                self.hideTransferDetails();
+                filesender.ui.notify("success", lang.tr('Transfer was deleted successfully!'));
+                filesender.ui.reload();
+            };
+
+            switch(choosen) {
+                case 'delete_transfer_nicely' :
+                    filesender.client.closeTransfer(id, function() {
+                        filesender.client.deleteTransfer(id, done);
+                    });
+                    break;
+
+                case 'delete_transfer_roughly' :
+                    filesender.client.deleteTransfer(id, done);
+                    break;
+            }
+        });
+    } else if($(this).closest('table').filter('[data-mode="admin"][data-status="uploading"]')) {
+        filesender.ui.confirm(lang.tr('stop_transfer_upload'), function() {
+            filesender.client.deleteTransfer(id, function() {
+                $('[data-transfer][data-id="' + id + '"]').remove();
+                filesender.ui.notify('success', lang.tr('transfer_upload_stopped'));
+            });
+        });
+    } else {
+        filesender.ui.confirm(lang.tr('confirm_close_transfer'), function() {
+            filesender.client.closeTransfer(id, function() {
+                $('[data-transfer][data-id="' + id + '"]').remove();
+                filesender.ui.notify('success', lang.tr('transfer_closed'));
+                filesender.ui.updateUserQuotaBar();
+            });
+        });
+    }
+  }
+
+  extendTransfer(transferId, data) {
+
+    var t = $('#popup_wrapper').find('.transfer_details');
+
+    var id = t.attr('data-id');
+    if(!id || isNaN(id)) {
+        filesender.ui.notify("error", lang.tr('Something went wrong, could not extend transfer.'));
+        return;
+    }
+
+    var duration = parseInt(t.attr('data-expiry-extension'));
+    if(!duration || duration <= 0) {
+        filesender.ui.notify("error", lang.tr('This transfer cannot be extended (anymore).'));
+        return;
+    }
+
+    var extend = function(remind) {
+        filesender.client.extendTransfer(id, remind, function(t) {
+            $('[data-transfer][data-id="' + id + '"]').attr('data-expiry-extension', t.expiry_date_extension);
+
+            $('[data-transfer][data-id="' + id + '"] [data-rel="expires"]').text(t.expires.formatted);
+
+            if(!t.expiry_date_extension) {
+                $('[data-transfer][data-id="' + id + '"] [data-action="extend"]').addClass('disabled').attr({
+                    title: lang.tr('transfer_expiry_extension_count_exceeded')
+                });
+
+            } else {
+                $('[data-transfer][data-id="' + id + '"] [data-action="extend"]').attr({
+                    title: lang.tr('extend_expiry_date').r({
+                        days: $(this).closest('[data-transfer]').attr('data-expiry-extension')
+                    })
+                });
+            }
+
+            filesender.ui.notify('success', lang.tr(remind ? 'transfer_extended_reminded' : 'transfer_extended').r({expires: t.expires.formatted}));
+        });
+    };
+
+    var buttons = {};
+
+    buttons.extend = function() {
+        extend(false);
+    };
+
+    if(t.attr('data-recipients-enabled')) buttons.extend_and_remind = function() {
+        extend(true);
+    };
+
+    buttons.cancel = false;
+
+    filesender.ui.popup(lang.tr('confirm_dialog'), buttons).html(lang.tr('confirm_extend_expiry').r({days: duration}).out());
+  }
+
+  buildAuditlog(transferId) {
+    // Re add log
+    var auditlog = $('#popup_wrapper').find('.auditlog')
+
+    $('#popup_wrapper').find('.general').first().append(auditlog.detach());
+    auditlog.children().first().hide();
+    auditlog.show();
+
+    var title = auditlog.children().eq(1);
+    title.addClass('seeTransferLogs');
+    title.removeClass('ui-corner-all ui-widget ui-button');
+    title.on('click', function(e){
+        var logToggleDiv = $(`<div class="transferLogsDiv">
+                                <div class="detail_fileslist_title title-popup-transferlog"><h2>${lang.tr('Transfer logs')}</h2></span>
+                                <table id="transferLogTable">
+                                </table>
+                              </div>`).hide();
+
+        $('#popup_wrapper').find('.general').first().append(logToggleDiv);
+
+        filesender.client.getTransferAuditlog(transferId, function(log) {
+            // Reset so it doesnt have entries from another transfer
+            $('#transferLogTable').html('');
+            log.forEach(function(entry){
+                $('#transferLogTable').append(`<tr class="transferLogTableRow">
+                                                    <td class="date">${ entry.date.formatted }</td>
+                                                    <td class="author">${ entry.author.identity }</td>
+                                                    <td class="author">${ lang.tr(entry.event) }</td>
+                                                </tr>`)
+            });
+            logToggleDiv.show();
+        });
+    });
+  }
+
+  toggleTransferDetails(transferId) {
+    var self = this;
+
+    // Create popup, a lot of logic is dependent on the data attributes of the surrounding TR, so we copy that too
+    const data = document.querySelector('.transfer_details[data-id="' + transferId + '"]').innerHTML;
+    const tableRowData = $('.transfer_details[data-id="' + transferId + '"]').clone().empty();
+
+
+    this.transferDetails.append('<div id="popup_wrapper"/>');
+    $('#popup_wrapper').html(data);
+    $('#popup_wrapper').append(tableRowData);
+
+    // Add "add recipient" button, but only if it was an emailed transfer
+    if($('#popup_wrapper').find('.recipient').length > 0) {
+        var addRecipientButton = $(`<span id="addRecipient">+ ${lang.tr('add recipient')}</span>`);
+        $('#popup_wrapper').find('.recipients').first().append(addRecipientButton);
+        addRecipientButton.on('click', function(e) { self.addRecipient(transferId, data) });
+    }
+
+    // Create headings
+    $('#popup_wrapper').find('.general').first().prepend(`<div class="detail_fileslist_title title-popup-details"><h2>${lang.tr('Details')}</h2></span>`);
+    $('#popup_wrapper').find('.general').first().append('<div class="detail_fileslist_title title-popup-options"></span>');
+
+    // Add delete button
+    var deleteTransferButton = $(`<div><span id="deleteTransfer">${lang.tr('Delete transfer')}</span></div>`);
+    $('#popup_wrapper').find('.general').first().append(deleteTransferButton);
+    deleteTransferButton.on('click', function(e) { self.deleteTransfer(transferId, data) });
+
+    // Add extend button
+    var extendTransferButton = $(`<div><span id="extendTransfer">${lang.tr('Extend transfer')}</span></div>`);
+    $('#popup_wrapper').find('.general').first().append(extendTransferButton);
+    extendTransferButton.on('click', function(e) { self.extendTransfer(transferId, data) });
+
+    // Build contents of transfer log
+    this.buildAuditlog(transferId);
+
+    // Download count and delete button in filelist
+    $('.file').each(function(e) {
+        var current = $(this);
         var elements = current.text().split(':')
 
         if (elements.length > 1) {
-            current.html('<span class="popupList_fileName">' + elements[0] + '</span> <span class="popupList_downloadCount">' + elements[1] + '</span>');
+            current.html('<span class="popupList_fileName">' + elements[0] + '</span> <span class="popupList_downloadCount">' + elements[1] + '</span>' + '<span id="deleteTransferFile"></span>');
         }
+
+        current.find('#deleteTransferFile').on('click', function(e){
+            var file = $(this).closest('.file');
+            var id = file.attr('data-id');
+            if(!id || isNaN(id)) return;
+
+            filesender.ui.confirm(lang.tr('confirm_delete_file'), function() {
+                filesender.client.deleteFile(id, function() {
+                    file.remove();
+                    if(!current.find('.files .file').length) {
+                        filesender.ui.notify("success", lang.tr('All files were removed, so transfer was deleted as well.'));
+                        self.hideTransferDetails();
+                        filesender.ui.reload();
+                    }
+                    filesender.ui.updateUserQuotaBar();
+                });
+            });
+        });
+    });
+
+    // Edit recipient list to also show
+    $('.recipient').each(function(e) {
+        var current = $(this);
+        var elements = current.text().split(':')
+
+        if (elements.length > 1) {
+            current.html('<span class="popupList_fileName">' + elements[0] + '</span> <span class="popupList_downloadCount">' + elements[1] + '</span>' + '<span id="remindRecipient">send reminder</span> <span id="deleteRecipient"></span>');
+        }
+
+        current.find('#remindRecipient').on('click', function(e){
+            var rcpt = $(this).closest('.recipient');
+            var id = rcpt.attr('data-id');
+            if(!id || isNaN(id)) return;
+
+            filesender.ui.confirm(lang.tr('confirm_remind_recipient'), function() {
+                filesender.client.remindRecipient(id, function() {
+                    filesender.ui.notify('success', lang.tr('recipient_reminded'));
+                });
+            });
+        });
+
+        current.find('#deleteRecipient').on('click', function(e){
+            var rcpt = $(this).closest('.recipient');
+            var id = rcpt.attr('data-id');
+            var transfer = rcpt.closest('.transfer_details');
+            if(!id || isNaN(id)) return;
+
+            filesender.ui.confirm(lang.tr('confirm_delete_recipient'), function() {
+                filesender.client.deleteRecipient(id, function() {
+                    rcpt.remove();
+                    if(!transfer.find('.recipients .recipient').length) {
+                        transfer.prev('.transfer').remove();
+                        transfer.remove();
+                        self.hideTransferDetails();
+                        filesender.ui.notify("success", lang.tr('All recipients were removed, so transfer was deleted as well.'));
+                        filesender.ui.reload();
+                    }
+                    filesender.ui.notify('success', lang.tr('recipient_deleted'));
+                });
+            });
+        });
+
     });
 
     // Download link opens in new window
     this.transferDetails.find('.download_link').first().children().first().children().first().attr('target', '_blank');
+
+    // Show popup now that we've set the layout elements
+    this.transferDetails.show();
+    this.transferDetails.addClass('popup');
   }
 
   setBottomNavigation(transferCount, transferCountInactive) {
@@ -222,10 +513,10 @@ class FabriqueTransferList {
       if (!transferListActive.length) return;
 
       if (transferListActive.html().toString().includes('No more records')) {
-        transferListActive.html('<span id="nav_no_more" class="nav_option">No more active transfers</span>');
+        transferListActive.html(`<span id="nav_no_more" class="nav_option">${lang.tr('No more active transfers')}</span>`);
       }
       else {
-        transferListActive.html('<span id="nav_active_show_more" class="nav_option">Show more</span> <span id="nav_active_show_all" class="nav_option">Show all</span>')
+        transferListActive.html(`<span id="nav_active_show_more" class="nav_option">${lang.tr('Show more')}</span> <span id="nav_active_show_all" class="nav_option">${lang.tr('Show all')}</span>`)
       }
 
       // Set onclick
@@ -243,10 +534,10 @@ class FabriqueTransferList {
 
       if (!transferListInactive.length) return;
       if (transferListInactive.html().toString().includes('No more records')) {
-        transferListInactive.html('<span id="nav_no_more" class="nav_option">No more inactive transfers</span>');
+        transferListInactive.html(`<span id="nav_no_more" class="nav_option">${lang.tr('No more inactive transfers')}</span>`);
       }
       else {
-        transferListInactive.html('<span id="nav_inactive_show_more" class="nav_option">Show more</span> <span id="nav_inactive_show_all" class="nav_option">Show all</span>')
+        transferListInactive.html(`<span id="nav_inactive_show_more" class="nav_option">${lang.tr('Show more')}</span> <span id="nav_inactive_show_all" class="nav_option">${lang.tr('Show all')}</span>`);
       }
   }
 }
@@ -254,7 +545,7 @@ class FabriqueTransferList {
 $(function() {
   if(window.transfers_table) return;
   window.transfers_table = true;
-
+  $('.transfers').hide();
   var FabriqueTL = new FabriqueTransferList();
 
   // Expand each transfer's details
