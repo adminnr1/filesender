@@ -1599,7 +1599,6 @@ div.not_displayed {
 
 
 /* Fabrique */
-
 @import url(https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;300;400;600;700;900&display=swap);
 :root {
   --logoUrl: url(/images/fabrique/logo/filesender_logo_zwart.svg);
@@ -2388,21 +2387,25 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
       cursor: pointer; }
   #upload_form .basic_options .languageDropdown {
     padding-left: 0; }
-    #upload_form .basic_options .languageDropdown label::after {
-      content: "";
-      background: var(--viewMoreUrl) no-repeat;
-      width: 13px;
-      height: 13px;
-      position: absolute;
-      bottom: 0;
-      right: 15px;
-      background-size: 100%;
-      pointer-events: none; }
+    #upload_form .basic_options .languageDropdown label {
+      position: relative; }
+      #upload_form .basic_options .languageDropdown label::after {
+        content: "";
+        background: var(--viewMoreUrl) no-repeat;
+        width: 13px;
+        height: 13px;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        background-size: 100%;
+        pointer-events: none; }
     #upload_form .basic_options .languageDropdown #lang {
       border-left: 0;
       border-top: 0;
       border-right: 0;
       border-bottom: 1px solid #040608;
+      display: block;
+      margin-top: 5px;
       -webkit-appearance: none;
       -moz-appearance: none;
       appearance: none; }
@@ -3031,7 +3034,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
     height: 13px;
     position: absolute;
     bottom: 0;
-    right: 15px;
+    right: 0;
     background-size: 100%;
     pointer-events: none; }
   #langmenu #language_selector {
