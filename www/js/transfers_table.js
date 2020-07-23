@@ -41,7 +41,7 @@ class FabriqueTransferList {
   }
 
   showTable() {
-    $('.transfers').show();
+    $('.transfers').fadeIn();
   }
 
   setDefaultUI() {
@@ -82,7 +82,7 @@ class FabriqueTransferList {
         self.hideTransferDetails();
     });
 
-    window.setTimeout(this.showTable, 400);
+    window.setTimeout(this.showTable, 1500);
   }
 
   hideTransferDetails() {
