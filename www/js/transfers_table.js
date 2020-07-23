@@ -32,12 +32,7 @@
 
 class FabriqueTransferList {
   constructor() {
-    this.hideTable();
     this.setDefaultUI();
-  }
-
-  hideTable() {
-      $('.transfers').hide();
   }
 
   showTable() {
