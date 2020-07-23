@@ -41,7 +41,7 @@ class FabriqueTransferList {
   }
 
   showTable() {
-    $('.transfers').fadeIn();
+    $('.transfers').addClass('active');
   }
 
   setDefaultUI() {
@@ -545,7 +545,6 @@ class FabriqueTransferList {
 $(function() {
   if(window.transfers_table) return;
   window.transfers_table = true;
-  $('.transfers').hide();
   var FabriqueTL = new FabriqueTransferList();
 
   // Expand each transfer's details

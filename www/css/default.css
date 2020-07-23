@@ -1599,6 +1599,7 @@ div.not_displayed {
 
 
 /* Fabrique */
+
 @import url(https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;300;400;600;700;900&display=swap);
 :root {
   --logoUrl: url(/images/fabrique/logo/filesender_logo_zwart.svg);
@@ -1828,17 +1829,17 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
 #content {
   background-color: white;
   height: 35vh;
-  overflow-y: scroll; }
+  overflow-y: auto; }
 
 .transfers_page {
   width: 60%;
   height: calc(100vh - 200px);
-  overflow-y: scroll;
+  overflow-y: auto;
   margin-top: 100px;
   min-width: 900px; }
   .transfers_page .box {
     background-color: white;
-    overflow: scroll;
+    overflow: auto;
     margin-top: 0;
     border-radius: 10px;
     padding: 30px;
@@ -1860,48 +1861,89 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
   .transfers_page .recipients {
     width: 20%;
     overflow: hidden; }
-  .transfers_page table.transfers .size {
-    width: 10%;
-    text-align: center; }
-  .transfers_page table.transfers tr {
-    background-color: white; }
-    .transfers_page table.transfers tr #nav_active_show_more {
-      font-size: 14px;
-      line-height: 15px;
-      font-family: "Source Sans Pro", sans-serif;
-      font-weight: 600;
-      color: #F07527;
-      cursor: pointer;
-      padding-right: 30px;
-      position: relative;
-      margin-right: 5px; }
-      .transfers_page table.transfers tr #nav_active_show_more::after {
-        content: '';
-        background: var(--viewMoreUrl) no-repeat;
-        width: 13px;
-        height: 13px;
-        position: absolute;
-        top: 8px;
-        right: 15px;
-        background-size: 100%; }
-    .transfers_page table.transfers tr #nav_active_show_all {
-      font-size: 14px;
-      line-height: 15px;
-      font-family: "Source Sans Pro", sans-serif;
-      font-weight: 600;
-      color: #F07527;
-      cursor: pointer;
-      padding-right: 20px;
-      position: relative; }
-      .transfers_page table.transfers tr #nav_active_show_all::after {
-        content: '';
-        background: var(--viewMoreUrl) no-repeat;
-        width: 13px;
-        height: 13px;
-        position: absolute;
-        top: 8px;
-        right: 6px;
-        background-size: 100%; }
+  .transfers_page table.transfers {
+    opacity: 0; }
+    .transfers_page table.transfers.active {
+      opacity: 1; }
+    .transfers_page table.transfers .size {
+      width: 10%;
+      text-align: center; }
+    .transfers_page table.transfers tr {
+      background-color: white; }
+      .transfers_page table.transfers tr #nav_active_show_more, .transfers_page table.transfers tr #nav_inactive_show_more {
+        font-size: 14px;
+        line-height: 15px;
+        font-family: "Source Sans Pro", sans-serif;
+        font-weight: 600;
+        color: #F07527;
+        cursor: pointer;
+        padding-right: 30px;
+        position: relative;
+        margin-right: 5px; }
+        .transfers_page table.transfers tr #nav_active_show_more::after, .transfers_page table.transfers tr #nav_inactive_show_more::after {
+          content: '';
+          background: var(--viewMoreUrl) no-repeat;
+          width: 13px;
+          height: 13px;
+          position: absolute;
+          top: 8px;
+          right: 15px;
+          background-size: 100%; }
+      .transfers_page table.transfers tr #nav_active_show_all, .transfers_page table.transfers tr #nav_inactive_show_more {
+        font-size: 14px;
+        line-height: 15px;
+        font-family: "Source Sans Pro", sans-serif;
+        font-weight: 600;
+        color: #F07527;
+        cursor: pointer;
+        padding-right: 20px;
+        position: relative; }
+        .transfers_page table.transfers tr #nav_active_show_all::after, .transfers_page table.transfers tr #nav_inactive_show_more::after {
+          content: '';
+          background: var(--viewMoreUrl) no-repeat;
+          width: 13px;
+          height: 13px;
+          position: absolute;
+          top: 8px;
+          right: 6px;
+          background-size: 100%; }
+  .transfers_page #nav_inactive_show_more {
+    font-size: 14px;
+    line-height: 15px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 600;
+    color: #F07527;
+    cursor: pointer;
+    padding-right: 30px;
+    position: relative;
+    margin-right: 5px; }
+    .transfers_page #nav_inactive_show_more::after {
+      content: '';
+      background: var(--viewMoreUrl) no-repeat;
+      width: 13px;
+      height: 13px;
+      position: absolute;
+      top: 8px;
+      right: 15px;
+      background-size: 100%; }
+  .transfers_page #nav_inactive_show_all {
+    font-size: 14px;
+    line-height: 15px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 600;
+    color: #F07527;
+    cursor: pointer;
+    padding-right: 20px;
+    position: relative; }
+    .transfers_page #nav_inactive_show_all::after {
+      content: '';
+      background: var(--viewMoreUrl) no-repeat;
+      width: 13px;
+      height: 13px;
+      position: absolute;
+      top: 8px;
+      right: 6px;
+      background-size: 100%; }
   .transfers_page .files {
     width: 30%;
     overflow: hidden; }
@@ -2395,8 +2437,8 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
         width: 13px;
         height: 13px;
         position: absolute;
-        bottom: 0;
-        right: 0;
+        bottom: -22px;
+        right: 15px;
         background-size: 100%;
         pointer-events: none; }
     #upload_form .basic_options .languageDropdown #lang {
@@ -2563,7 +2605,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
 
 .user_page, .privacy_page, .about_page, .help_page {
   height: calc(100vh - 200px);
-  overflow-y: scroll;
+  overflow-y: auto;
   margin-top: 100px; }
   .user_page .box, .privacy_page .box, .about_page .box, .help_page .box {
     background-color: white;
