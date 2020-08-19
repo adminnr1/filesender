@@ -1776,7 +1776,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
   font-weight: 600;
   background-color: #F07527;
   color: white;
-  margin: 0 10px;
+  margin: 5px 10px;
   padding: 0 20px; }
   .ui-dialog .ui-dialog-buttonpane button:hover {
     background-color: #040608; }
@@ -1799,9 +1799,9 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
   font-weight: 600; }
 
 .logon_page {
-  position: relative;
+  position: absolute;
   left: 300px;
-  top: -150px; }
+  top: 150px; }
   .logon_page .box {
     background-color: white;
     border-radius: 10px; }
@@ -1879,14 +1879,15 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
         cursor: pointer;
         padding-right: 30px;
         position: relative;
-        margin-right: 5px; }
+        margin-right: 5px;
+        display: inline-block; }
         .transfers_page table.transfers tr #nav_active_show_more::after, .transfers_page table.transfers tr #nav_inactive_show_more::after {
           content: '';
           background: var(--viewMoreUrl) no-repeat;
           width: 13px;
           height: 13px;
           position: absolute;
-          top: 8px;
+          top: 5px;
           right: 15px;
           background-size: 100%; }
       .transfers_page table.transfers tr #nav_active_show_all, .transfers_page table.transfers tr #nav_inactive_show_more {
@@ -1897,14 +1898,15 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
         color: #F07527;
         cursor: pointer;
         padding-right: 20px;
-        position: relative; }
+        position: relative;
+        display: inline-block; }
         .transfers_page table.transfers tr #nav_active_show_all::after, .transfers_page table.transfers tr #nav_inactive_show_more::after {
           content: '';
           background: var(--viewMoreUrl) no-repeat;
           width: 13px;
           height: 13px;
           position: absolute;
-          top: 8px;
+          top: 5px;
           right: 6px;
           background-size: 100%; }
   .transfers_page #nav_inactive_show_more {
@@ -1916,14 +1918,15 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
     cursor: pointer;
     padding-right: 30px;
     position: relative;
-    margin-right: 5px; }
+    margin-right: 5px;
+    display: inline-block; }
     .transfers_page #nav_inactive_show_more::after {
       content: '';
       background: var(--viewMoreUrl) no-repeat;
       width: 13px;
       height: 13px;
       position: absolute;
-      top: 8px;
+      top: 5px;
       right: 15px;
       background-size: 100%; }
   .transfers_page #nav_inactive_show_all {
@@ -2450,7 +2453,8 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
       margin-top: 5px;
       -webkit-appearance: none;
       -moz-appearance: none;
-      appearance: none; }
+      appearance: none;
+      cursor: pointer; }
   #upload_form .basic_options #email_upload_complete, #upload_form .basic_options #email_download_complete {
     visibility: hidden; }
     #upload_form .basic_options #email_upload_complete:checked ~ label::before, #upload_form .basic_options #email_download_complete:checked ~ label::before {
@@ -3213,7 +3217,8 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
       #transferDetails .files .file .popupList_downloadCount {
         margin-left: auto; }
       #transferDetails .files .file #deleteTransferFile {
-        margin-left: 10px; }
+        margin-left: 10px;
+        cursor: pointer; }
         #transferDetails .files .file #deleteTransferFile::before {
           content: "";
           background: var(--removeUrl) no-repeat;

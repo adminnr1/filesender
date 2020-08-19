@@ -670,33 +670,35 @@ filesender.ui.evalUploadEnabled = function() {
 
   if(filesender.ui.nodes.required_files) {
       if(filesender.ui.nodes.required_files.find('.file').length) ok = false;
-
+        console.log('invalid 1' + ok)
   } else {
       // Check if there is no files with banned extension
       if (filesender.ui.files.invalidFiles.length > 0) ok  = false;
-
+      console.log('invalid 2' + ok)
       if(!filesender.ui.transfer.files.length) ok = false;
-
+      console.log('invalid 3' + ok)
       var gal = ('get_a_link' in filesender.ui.nodes.options) ? filesender.ui.nodes.options.get_a_link.is(':checked') : false;
 
       var addme = ('add_me_to_recipients' in filesender.ui.nodes.options) ? filesender.ui.nodes.options.add_me_to_recipients.is(':checked') : false;
 
-      if(
-          filesender.ui.nodes.need_recipients &&
-          !gal && !addme &&
-          filesender.ui.nodes.recipients.list.length &&
-          !filesender.ui.transfer.recipients.length && !$('body').hasClass('step1')
-      ) {
-          ok = false;
-      }
+    //   if(
+    //       filesender.ui.nodes.need_recipients &&
+    //       !gal && !addme &&
+    //       filesender.ui.nodes.recipients.list.length &&
+    //       !filesender.ui.transfer.recipients.length && !$('body').hasClass('step1')
+    //   ) {
+    //       ok = false;
+    //       console.log('invalid 4' + ok)
+    //   }
   }
 
   if(!filesender.ui.nodes.aup.is(':checked')) ok = false;
-
+  console.log('invalid 5' + ok)
   var invalid_nodes = filesender.ui.nodes.files.list.find('.invalid');
   if( invalid_nodes.length ) {
       ok = false;
   }
+  console.log('invalid 6' + ok)
 
   if(filesender.ui.nodes.required_files) {
       if(ok) filesender.ui.nodes.required_files.hide();
@@ -705,6 +707,7 @@ filesender.ui.evalUploadEnabled = function() {
       filesender.ui.nodes.buttons.start.button(ok ? 'enable' : 'disable');
   }
 
+  console.log(ok);
   Fabrique.setContinueEnabled(ok);
 
   return ok;

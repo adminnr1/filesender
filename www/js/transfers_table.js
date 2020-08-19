@@ -63,6 +63,7 @@ class FabriqueTransferList {
     $('.nextColumn').append(this.paginationWrapper);
 
     // Change layout
+    this.setTableTitles();
     this.addListenerToRows();
     this.changeFileColumnContents();
     this.changeEmailColumnContents();
@@ -83,6 +84,11 @@ class FabriqueTransferList {
   hideTransferDetails() {
     $('#transferDetails').hide();
     $('#transferDetails').removeClass('popup');
+  }
+
+  setTableTitles() {
+      $('[data-status=available]').before(`<h2>${lang.tr('Available transfers')}</h2>`);
+      $('[data-status=closed]').before(`<h2>${lang.tr('Closed transfers')}</h2>`);
   }
 
   changeEmailColumnContents() {

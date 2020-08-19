@@ -101,7 +101,7 @@ class Fabrique {
     $('#encrypt_checkbox').parent().append(this.terms);
 
     // Default is get a link
-    // $('#get_a_link').prop('checked', true);  //MKR disable temporarily
+    $('#get_a_link').prop('checked', true);  //MKR disable temporarily
 
     // Add continue button to step 2
     this.continueButton = $('<button id="continue" type="button"/>').addClass('ui-state-disabled');
