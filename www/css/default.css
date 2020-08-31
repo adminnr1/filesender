@@ -1747,6 +1747,9 @@ div.not_displayed {
     border: 0px;
     cursor: pointer;
     line-height: 40px; }
+  .ui-button:focus, button:focus, #myTransfers:focus, #submit_button:focus, .send:focus {
+    border: 0;
+    font-weight: 600; }
 
 #submit_button {
   background-image: none; }
@@ -1772,7 +1775,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
   font-weight: 600;
   background-color: #F07527;
   color: white;
-  margin: 0 10px;
+  margin: 5px 10px;
   padding: 0 20px; }
   .ui-dialog .ui-dialog-buttonpane button:hover {
     background-color: #040608; }
@@ -1795,9 +1798,9 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
   font-weight: 600; }
 
 .logon_page {
-  position: relative;
+  position: absolute;
   left: 300px;
-  top: -150px; }
+  top: 150px; }
   .logon_page .box {
     background-color: white;
     border-radius: 10px; }
@@ -1825,17 +1828,17 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
 #content {
   background-color: white;
   height: 35vh;
-  overflow-y: scroll; }
+  overflow-y: auto; }
 
 .transfers_page {
   width: 60%;
   height: calc(100vh - 200px);
-  overflow-y: scroll;
+  overflow-y: auto;
   margin-top: 100px;
   min-width: 900px; }
   .transfers_page .box {
     background-color: white;
-    overflow: scroll;
+    overflow: auto;
     margin-top: 0;
     border-radius: 10px;
     padding: 30px;
@@ -1857,48 +1860,94 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
   .transfers_page .recipients {
     width: 20%;
     overflow: hidden; }
-  .transfers_page table.transfers .size {
-    width: 10%;
-    text-align: center; }
-  .transfers_page table.transfers tr {
-    background-color: white; }
-    .transfers_page table.transfers tr #nav_active_show_more {
-      font-size: 14px;
-      line-height: 15px;
-      font-family: "Source Sans Pro", sans-serif;
-      font-weight: 600;
-      color: #F07527;
-      cursor: pointer;
-      padding-right: 30px;
-      position: relative;
-      margin-right: 5px; }
-      .transfers_page table.transfers tr #nav_active_show_more::after {
-        content: '';
-        background: var(--viewMoreUrl) no-repeat;
-        width: 13px;
-        height: 13px;
-        position: absolute;
-        top: 8px;
-        right: 15px;
-        background-size: 100%; }
-    .transfers_page table.transfers tr #nav_active_show_all {
-      font-size: 14px;
-      line-height: 15px;
-      font-family: "Source Sans Pro", sans-serif;
-      font-weight: 600;
-      color: #F07527;
-      cursor: pointer;
-      padding-right: 20px;
-      position: relative; }
-      .transfers_page table.transfers tr #nav_active_show_all::after {
-        content: '';
-        background: var(--viewMoreUrl) no-repeat;
-        width: 13px;
-        height: 13px;
-        position: absolute;
-        top: 8px;
-        right: 6px;
-        background-size: 100%; }
+  .transfers_page table.transfers {
+    opacity: 0; }
+    .transfers_page table.transfers.active {
+      opacity: 1; }
+    .transfers_page table.transfers .size {
+      width: 10%;
+      text-align: center; }
+    .transfers_page table.transfers tr {
+      background-color: white; }
+      .transfers_page table.transfers tr #nav_active_show_more, .transfers_page table.transfers tr #nav_inactive_show_more {
+        font-size: 14px;
+        line-height: 15px;
+        font-family: "Source Sans Pro", sans-serif;
+        font-weight: 600;
+        color: #F07527;
+        cursor: pointer;
+        padding-right: 30px;
+        position: relative;
+        margin-right: 5px;
+        display: inline-block; }
+        .transfers_page table.transfers tr #nav_active_show_more::after, .transfers_page table.transfers tr #nav_inactive_show_more::after {
+          content: '';
+          background: var(--viewMoreUrl) no-repeat;
+          width: 13px;
+          height: 13px;
+          position: absolute;
+          top: 5px;
+          right: 15px;
+          background-size: 100%; }
+      .transfers_page table.transfers tr #nav_active_show_all, .transfers_page table.transfers tr #nav_inactive_show_more {
+        font-size: 14px;
+        line-height: 15px;
+        font-family: "Source Sans Pro", sans-serif;
+        font-weight: 600;
+        color: #F07527;
+        cursor: pointer;
+        padding-right: 20px;
+        position: relative;
+        display: inline-block; }
+        .transfers_page table.transfers tr #nav_active_show_all::after, .transfers_page table.transfers tr #nav_inactive_show_more::after {
+          content: '';
+          background: var(--viewMoreUrl) no-repeat;
+          width: 13px;
+          height: 13px;
+          position: absolute;
+          top: 5px;
+          right: 6px;
+          background-size: 100%; }
+  .transfers_page #nav_inactive_show_more {
+    font-size: 14px;
+    line-height: 15px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 600;
+    color: #F07527;
+    cursor: pointer;
+    padding-right: 30px;
+    position: relative;
+    margin-right: 5px;
+    display: inline-block; }
+    .transfers_page #nav_inactive_show_more::after {
+      content: '';
+      background: var(--viewMoreUrl) no-repeat;
+      width: 13px;
+      height: 13px;
+      position: absolute;
+      top: 5px;
+      right: 15px;
+      background-size: 100%; }
+  .transfers_page #nav_inactive_show_all {
+    font-size: 14px;
+    line-height: 15px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 600;
+    color: #F07527;
+    cursor: pointer;
+    padding-right: 20px;
+    position: relative;
+    display: inline-block; }
+    .transfers_page #nav_inactive_show_all::after {
+      content: '';
+      background: var(--viewMoreUrl) no-repeat;
+      width: 13px;
+      height: 13px;
+      position: absolute;
+      vertical-align: middle;
+      top: 5px;
+      right: 6px;
+      background-size: 100%; }
   .transfers_page .files {
     width: 30%;
     overflow: hidden; }
@@ -1908,158 +1957,6 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
   .transfers_page .expires {
     width: 20% !important;
     overflow: hidden; }
-
-#transferDetails {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: rgba(0, 0, 0, 0.4);
-  z-index: 2;
-  overflow-y: scroll; }
-  #transferDetails #popup_wrapper {
-    width: auto;
-    position: fixed;
-    top: 50%;
-    text-align: center;
-    -webkit-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
-    left: 50%; }
-    #transferDetails #popup_wrapper [colspan="8"] {
-      padding: 30px;
-      margin-bottom: 20px;
-      display: -webkit-flex;
-      display: flex;
-      min-width: 450px;
-      width: 50vw;
-      max-width: 900px;
-      margin: 0 auto;
-      -webkit-flex-direction: column;
-              flex-direction: column;
-      max-height: calc(100vh - 200px);
-      overflow: scroll; }
-  #transferDetails .detail_popup_title {
-    font-size: 17px;
-    line-height: 18px;
-    font-family: "Source Sans Pro", sans-serif;
-    font-weight: 700;
-    margin-bottom: 10px;
-    background-color: white;
-    text-align: left;
-    -webkit-order: 1;
-            order: 1;
-    position: -webkit-sticky;
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    padding: 30px 0; }
-  #transferDetails .collapse {
-    margin-bottom: 1em; }
-  #transferDetails td {
-    background-color: white;
-    border-radius: 10px;
-    text-align: left; }
-    #transferDetails td input {
-      width: 100%; }
-    #transferDetails td .desc {
-      text-align: left;
-      padding-left: 0; }
-  #transferDetails .detail_fileslist_title {
-    -webkit-order: 3;
-            order: 3; }
-    #transferDetails .detail_fileslist_title h2 {
-      font-size: 17px;
-      line-height: 18px;
-      font-family: "Source Sans Pro", sans-serif;
-      font-weight: 700;
-      margin-bottom: 10px; }
-    #transferDetails .detail_fileslist_title div {
-      font-size: 14px;
-      line-height: 18px;
-      font-family: "Source Sans Pro", sans-serif;
-      font-weight: 400;
-      padding: 15px 0;
-      border-bottom: 1px solid #CCCCCC; }
-    #transferDetails .detail_fileslist_title div:last-child {
-      margin-bottom: 20px; }
-    #transferDetails .detail_fileslist_title [data-action="remind"] {
-      float: right; }
-  #transferDetails .files {
-    -webkit-order: 2;
-            order: 2; }
-    #transferDetails .files h2 {
-      font-size: 17px;
-      line-height: 18px;
-      font-family: "Source Sans Pro", sans-serif;
-      font-weight: 700;
-      margin-bottom: 10px; }
-    #transferDetails .files div {
-      font-size: 14px;
-      line-height: 18px;
-      font-family: "Source Sans Pro", sans-serif;
-      font-weight: 400;
-      padding: 15px 0;
-      border-bottom: 1px solid #CCCCCC; }
-    #transferDetails .files div:last-child {
-      margin-bottom: 20px; }
-  #transferDetails table {
-    -webkit-order: 4;
-            order: 4;
-    font-size: 14px;
-    line-height: 18px;
-    font-family: "Source Sans Pro", sans-serif;
-    font-weight: 400;
-    width: 100%;
-    position: relative; }
-  #transferDetails .ui-button {
-    margin: 10px 0; }
-  #transferDetails .download_link td {
-    padding-left: 0; }
-    #transferDetails .download_link td input {
-      margin-top: 15px;
-      border-left: 0;
-      border-right: 0;
-      border-top: 0;
-      border-bottom: 1px solid #F07527; }
-  #transferDetails .download_link a {
-    font-size: 15px;
-    line-height: 24px;
-    font-family: "Source Sans Pro", sans-serif;
-    font-weight: 600;
-    background-color: #F07527;
-    border: none;
-    border-radius: 10px;
-    color: white;
-    height: 40px;
-    line-height: 40px;
-    padding: 0 30px;
-    display: inline-block;
-    text-decoration: none; }
-    #transferDetails .download_link a:hover {
-      font-size: 15px;
-      line-height: 24px;
-      font-family: "Source Sans Pro", sans-serif;
-      font-weight: 600;
-      background-color: #040608;
-      color: white;
-      border: 0px;
-      cursor: pointer;
-      line-height: 40px; }
-  #transferDetails .auditlog .ui-widget {
-    font-size: 14px;
-    line-height: 18px;
-    font-family: "Source Sans Pro", sans-serif;
-    font-weight: 400;
-    font-weight: bold;
-    margin: 10px 0;
-    display: inline-block; }
-  #transferDetails .transferLogsDiv {
-    position: absolute;
-    width: 100%;
-    margin-bottom: 30px; }
-  #transferDetails .transferLogTableRow .date {
-    padding-left: 0; }
 
 .upload_page {
   margin-top: 40px;
@@ -2536,6 +2433,29 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
       cursor: pointer; }
   #upload_form .basic_options .languageDropdown {
     padding-left: 0; }
+    #upload_form .basic_options .languageDropdown label {
+      position: relative; }
+      #upload_form .basic_options .languageDropdown label::after {
+        content: "";
+        background: var(--viewMoreUrl) no-repeat;
+        width: 13px;
+        height: 13px;
+        position: absolute;
+        bottom: -22px;
+        right: 15px;
+        background-size: 100%;
+        pointer-events: none; }
+    #upload_form .basic_options .languageDropdown #lang {
+      border-left: 0;
+      border-top: 0;
+      border-right: 0;
+      border-bottom: 1px solid #040608;
+      display: block;
+      margin-top: 5px;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      cursor: pointer; }
   #upload_form .basic_options #email_upload_complete, #upload_form .basic_options #email_download_complete {
     visibility: hidden; }
     #upload_form .basic_options #email_upload_complete:checked ~ label::before, #upload_form .basic_options #email_download_complete:checked ~ label::before {
@@ -2577,6 +2497,33 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
       display: inline-block;
       margin-top: -5px;
       margin-right: 5px; }
+  #upload_form [data-option="disable_terasender"] {
+    padding-left: 0;
+    position: relative; }
+    #upload_form [data-option="disable_terasender"] #disable_terasender {
+      visibility: hidden; }
+      #upload_form [data-option="disable_terasender"] #disable_terasender:checked ~ label::before {
+        content: "";
+        background: var(--checkSmallUrl) no-repeat;
+        background-position: center;
+        position: absolute;
+        left: 0;
+        z-index: 1;
+        top: 9px;
+        color: white;
+        width: 14px;
+        height: 14px;
+        background-color: #F07527; }
+    #upload_form [data-option="disable_terasender"] [for="disable_terasender"] {
+      cursor: pointer; }
+      #upload_form [data-option="disable_terasender"] [for="disable_terasender"]::after {
+        content: '';
+        width: 14px;
+        position: absolute;
+        height: 14px;
+        background-color: #FDE4D3;
+        left: 0;
+        top: 9px; }
   #upload_form #filesList {
     margin-top: 65px;
     background-color: white;
@@ -2690,7 +2637,7 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
 
 .user_page, .privacy_page, .about_page, .help_page {
   height: calc(100vh - 200px);
-  overflow-y: scroll;
+  overflow-y: auto;
   margin-top: 100px; }
   .user_page .box, .privacy_page .box, .about_page .box, .help_page .box {
     background-color: white;
@@ -2718,6 +2665,11 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
       font-family: "Source Sans Pro", sans-serif;
       font-weight: 400;
       font-weight: bold; }
+    .user_page .box #dialog-privacy, .privacy_page .box #dialog-privacy, .about_page .box #dialog-privacy, .help_page .box #dialog-privacy {
+      font-size: 14px;
+      line-height: 18px;
+      font-family: "Source Sans Pro", sans-serif;
+      font-weight: 400; }
 
 .guests_page {
   height: calc(100vh - 140px);
@@ -2730,6 +2682,8 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
     max-width: 900px;
     margin-left: auto;
     margin-right: auto; }
+    .guests_page .box h2 {
+      padding: 0 0 10px 0 !important; }
     .guests_page .box .title {
       font-size: 20px;
       line-height: 18px;
@@ -2765,12 +2719,13 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
   .guests_page div:first-child {
     margin-top: 0;
     margin-bottom: 20px;
-    padding: 0; }
+    padding: 5px 0 0 0; }
   .guests_page .disclamer, .guests_page div {
     font-size: 14px;
     line-height: 18px;
     font-family: "Source Sans Pro", sans-serif;
-    font-weight: 400; }
+    font-weight: 400;
+    margin-right: 30px; }
   .guests_page .two_columns {
     border-spacing: 0;
     border-collapse: collapse; }
@@ -2803,6 +2758,8 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
     display: inline-block; }
   .guests_page #to {
     margin-bottom: 1.5em; }
+  .guests_page #expires {
+    width: 80%; }
   .guests_page input {
     display: block;
     width: 100%;
@@ -2893,6 +2850,8 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
         border: 0; }
         .guests_page table.guests.list thead td, .guests_page table.transfers.list thead td {
           padding-top: 30px; }
+      .guests_page table.guests.list th, .guests_page table.transfers.list th {
+        text-align: left; }
       .guests_page table.guests.list tr, .guests_page table.transfers.list tr {
         display: table;
         width: calc(100% - 60px);
@@ -3041,6 +3000,10 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
   border-radius: 10px;
   padding: 20px 15px; }
   .ui-dialog .ui-widget-content {
+    font-size: 14px;
+    line-height: 18px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 400;
     border: 0; }
     .ui-dialog .ui-widget-content p, .ui-dialog .ui-widget-content div {
       font-size: 14px;
@@ -3107,17 +3070,294 @@ a.ui-button, a:link.ui-button, a:visited.ui-button, .ui-button {
   #footer p {
     color: #808282; }
 
+:root {
+  --logoUrl: url(/images/fabrique/logo/filesender_logo_zwart.svg);
+  --addFilesUrl: url(/images/fabrique/logo/add_files.svg);
+  --checkSmallUrl: url(/images/fabrique/logo/check-small.svg);
+  --checkUrl: url(/images/fabrique/logo/check.svg);
+  --dragDropUrl: url(/images/fabrique/logo/drag_drop_button.svg);
+  --infoIconUrl: url(/images/fabrique/logo/information-icon.svg);
+  --removeUrl: url(/images/fabrique/logo/remove_files.svg);
+  --viewMoreUrl:  url(/images/fabrique/logo/arrow_down.svg);
+  --arrowLeftUrl: url(/images/fabrique/logo/arrow.svg);
+  --arrowRightUrl: url(/images/fabrique/logo/arrow-right.svg); }
+
+#notifications .notification {
+  font-size: 14px;
+  line-height: 18px;
+  font-family: "Source Sans Pro", sans-serif;
+  font-weight: 400;
+  background-color: #FFF3EB;
+  border: 1px solid #F07527;
+  background-image: var(--checkUrl);
+  padding: 10px 40px;
+  border-radius: 10px; }
+
+:root {
+  --logoUrl: url(/images/fabrique/logo/filesender_logo_zwart.svg);
+  --addFilesUrl: url(/images/fabrique/logo/add_files.svg);
+  --checkSmallUrl: url(/images/fabrique/logo/check-small.svg);
+  --checkUrl: url(/images/fabrique/logo/check.svg);
+  --dragDropUrl: url(/images/fabrique/logo/drag_drop_button.svg);
+  --infoIconUrl: url(/images/fabrique/logo/information-icon.svg);
+  --removeUrl: url(/images/fabrique/logo/remove_files.svg);
+  --viewMoreUrl:  url(/images/fabrique/logo/arrow_down.svg);
+  --arrowLeftUrl: url(/images/fabrique/logo/arrow.svg);
+  --arrowRightUrl: url(/images/fabrique/logo/arrow-right.svg); }
+
 #langmenu {
   border-radius: 0;
   margin: 0px 0px 30px 50px; }
+  #langmenu label::after {
+    content: "";
+    background: var(--viewMoreUrl) no-repeat;
+    width: 13px;
+    height: 13px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-size: 100%;
+    pointer-events: none; }
   #langmenu #language_selector {
     font-size: 14px;
     line-height: 18px;
     font-family: "Source Sans Pro", sans-serif;
     font-weight: 400;
-    display: block; }
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin-top: 5px;
+    display: block;
+    background-color: #FFF3EB;
+    border-left: 0;
+    border-top: 0;
+    border-right: 0;
+    border-bottom: 1px solid #040608;
+    cursor: pointer; }
   #langmenu li {
     border: 0; }
+
+:root {
+  --logoUrl: url(/images/fabrique/logo/filesender_logo_zwart.svg);
+  --addFilesUrl: url(/images/fabrique/logo/add_files.svg);
+  --checkSmallUrl: url(/images/fabrique/logo/check-small.svg);
+  --checkUrl: url(/images/fabrique/logo/check.svg);
+  --dragDropUrl: url(/images/fabrique/logo/drag_drop_button.svg);
+  --infoIconUrl: url(/images/fabrique/logo/information-icon.svg);
+  --removeUrl: url(/images/fabrique/logo/remove_files.svg);
+  --viewMoreUrl:  url(/images/fabrique/logo/arrow_down.svg);
+  --arrowLeftUrl: url(/images/fabrique/logo/arrow.svg);
+  --arrowRightUrl: url(/images/fabrique/logo/arrow-right.svg); }
+
+#transferDetails {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 2;
+  overflow-y: scroll; }
+  #transferDetails #popup_wrapper {
+    position: fixed;
+    top: 50%;
+    text-align: center;
+    -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+    left: 50%; }
+    #transferDetails #popup_wrapper [colspan="8"] {
+      padding: 30px;
+      margin-bottom: 20px;
+      display: -webkit-flex;
+      display: flex;
+      min-width: 450px;
+      width: 50vw;
+      max-width: 900px;
+      margin: 0 auto;
+      -webkit-flex-direction: column;
+              flex-direction: column;
+      max-height: calc(100vh - 200px);
+      overflow: auto; }
+  #transferDetails .detail_popup_title {
+    font-size: 17px;
+    line-height: 18px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 700;
+    margin-bottom: 10px;
+    background-color: white;
+    text-align: left;
+    -webkit-order: 1;
+            order: 1;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    padding: 30px 0; }
+  #transferDetails .title-popup-details, #transferDetails .title-popup-options, #transferDetails .title-popup-transferlog {
+    padding-top: 30px; }
+  #transferDetails .collapse {
+    margin-bottom: 1em; }
+  #transferDetails td {
+    background-color: white;
+    border-radius: 10px;
+    text-align: left; }
+    #transferDetails td input {
+      width: 100%; }
+    #transferDetails td .desc {
+      text-align: left;
+      padding-left: 0; }
+  #transferDetails .detail_fileslist_title {
+    -webkit-order: 3;
+            order: 3; }
+    #transferDetails .detail_fileslist_title h2 {
+      font-size: 17px;
+      line-height: 18px;
+      font-family: "Source Sans Pro", sans-serif;
+      font-weight: 700;
+      margin-bottom: 10px; }
+    #transferDetails .detail_fileslist_title div {
+      font-size: 14px;
+      line-height: 18px;
+      font-family: "Source Sans Pro", sans-serif;
+      font-weight: 400;
+      padding: 15px 0;
+      border-bottom: 1px solid #CCCCCC; }
+    #transferDetails .detail_fileslist_title div:last-child {
+      margin-bottom: 20px; }
+    #transferDetails .detail_fileslist_title [data-action="remind"] {
+      float: right; }
+  #transferDetails .files {
+    -webkit-order: 2;
+            order: 2; }
+    #transferDetails .files h2 {
+      font-size: 17px;
+      line-height: 18px;
+      font-family: "Source Sans Pro", sans-serif;
+      font-weight: 700;
+      margin-bottom: 10px; }
+    #transferDetails .files div {
+      font-size: 14px;
+      line-height: 18px;
+      font-family: "Source Sans Pro", sans-serif;
+      font-weight: 400;
+      padding: 15px 0;
+      border-bottom: 1px solid #CCCCCC; }
+    #transferDetails .files div:last-child {
+      margin-bottom: 20px; }
+    #transferDetails .files .file {
+      display: -webkit-flex;
+      display: flex; }
+      #transferDetails .files .file .popupList_fileName {
+        max-width: 80%; }
+      #transferDetails .files .file .popupList_downloadCount {
+        margin-left: auto; }
+      #transferDetails .files .file #deleteTransferFile {
+        margin-left: 10px;
+        cursor: pointer; }
+        #transferDetails .files .file #deleteTransferFile::before {
+          content: "";
+          background: var(--removeUrl) no-repeat;
+          background-size: 10px;
+          display: inline-block;
+          width: 10px;
+          height: 10px; }
+  #transferDetails .recipients {
+    padding-top: 20px; }
+    #transferDetails .recipients .recipient {
+      display: -webkit-flex;
+      display: flex; }
+      #transferDetails .recipients .recipient .popupList_fileName {
+        max-width: 50%; }
+      #transferDetails .recipients .recipient .popupList_downloadCount {
+        margin-left: auto; }
+      #transferDetails .recipients .recipient #remindRecipient {
+        margin-left: 10px;
+        font-size: 14px;
+        line-height: 15px;
+        font-family: "Source Sans Pro", sans-serif;
+        font-weight: 600;
+        color: #F07527; }
+      #transferDetails .recipients .recipient #deleteRecipient {
+        margin-left: 10px; }
+        #transferDetails .recipients .recipient #deleteRecipient::before {
+          content: "";
+          background: var(--removeUrl) no-repeat;
+          background-size: 10px;
+          display: inline-block;
+          width: 10px;
+          height: 10px; }
+  #transferDetails #addRecipient {
+    margin-top: 10px; }
+  #transferDetails #addRecipient, #transferDetails #deleteTransfer, #transferDetails #extendTransfer, #transferDetails .seeTransferLogs {
+    font-size: 14px;
+    line-height: 15px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 600;
+    color: #F07527;
+    cursor: pointer;
+    padding: 0 0 5px 0;
+    display: inline-block;
+    text-decoration: none; }
+  #transferDetails table {
+    -webkit-order: 4;
+            order: 4;
+    font-size: 14px;
+    line-height: 18px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 400;
+    width: 100%;
+    position: relative; }
+  #transferDetails .ui-button {
+    margin: 10px 0; }
+  #transferDetails .download_link td {
+    padding-left: 0; }
+    #transferDetails .download_link td input {
+      margin-top: 15px;
+      border-left: 0;
+      border-right: 0;
+      border-top: 0;
+      border-bottom: 1px solid #F07527; }
+  #transferDetails .download_link a {
+    font-size: 15px;
+    line-height: 24px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 600;
+    background-color: #F07527;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 30px;
+    display: inline-block;
+    text-decoration: none; }
+    #transferDetails .download_link a:hover {
+      font-size: 15px;
+      line-height: 24px;
+      font-family: "Source Sans Pro", sans-serif;
+      font-weight: 600;
+      background-color: #040608;
+      color: white;
+      border: 0px;
+      cursor: pointer;
+      line-height: 40px; }
+    #transferDetails .download_link a:focus {
+      border: 0;
+      font-weight: 600; }
+  #transferDetails .auditlog .ui-widget {
+    font-size: 14px;
+    line-height: 18px;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 400;
+    font-weight: bold;
+    margin: 10px 0;
+    display: inline-block; }
+  #transferDetails .transferLogsDiv {
+    position: absolute;
+    width: 100%;
+    margin-bottom: 30px; }
+  #transferDetails .transferLogTableRow .date {
+    padding-left: 0; }
 
 :root {
   --logoUrl: url(/images/fabrique/logo/filesender_logo_zwart.svg);
@@ -3208,3 +3448,4 @@ body {
   padding-bottom: 0;
   -webkit-align-items: baseline;
           align-items: baseline; }
+
