@@ -588,6 +588,10 @@ window.filesender.transfer = function() {
     this.options = {};
     this.time = 0;
     this.encryption = 0;
+
+    this.encryption_password_encoding = 'none';
+    this.encryption_password_version  = 1;
+
     this.encryption_password = '';
     this.encryption_key_version = 0;
     this.encryption_salt = '';
