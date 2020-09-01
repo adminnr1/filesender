@@ -664,6 +664,8 @@ window.filesender.transfer = function() {
     this.getEncryptionMetadata = function() {
 	return {
             password:    this.encryption_password,
+            password_encoding: this.encryption_password_encoding,
+            password_version:  this.encryption_password_version,
             key_version: this.encryption_key_version,
             salt:        this.encryption_salt
         };
