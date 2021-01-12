@@ -47,6 +47,16 @@ $(function() {
         return false;
     });
 
+    $('.export_client_logs a').button().on('click', function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+
+        window.filesender.logger.log('user profile page / export client logs');
+        window.filesender.logger.export();
+        
+        return false;
+    });
+    
     $('.clear_client_logs a').button().on('click', function(e) {
         e.stopPropagation();
         e.preventDefault();
@@ -116,7 +126,14 @@ $(function() {
         
         return false;
     });
-    
+
+    $('.change_password a').button().on('click', function(e) {
+
+        var saml_id = '@me';
+        filesender.client.changeLocalAuthDBPassword( saml_id );
+        
+        
+    });    
     
     page.find(':input').on('change', function() {
         var i = $(this);
@@ -163,4 +180,6 @@ $(function() {
             filesender.ui.goToPage('home');
         });
     }
+
+    window.filesender.log("window.filesender.log() from user page ");    
 });

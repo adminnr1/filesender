@@ -14,7 +14,7 @@ subject: (files no longer available) {transfer.subject}
 
 Dear Sir or Madam,
 
-The file shipment n°{transfer.id} has expired and is no longer available for download.
+The transfer n°{transfer.id} has expired and is no longer available for download.
 
 Best regards,
 {cfg:site_name}

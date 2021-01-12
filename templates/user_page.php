@@ -10,6 +10,18 @@
         echo "<h2>".Lang::tr('admin_page')."</h2>\n";
         echo " <p>".Lang::tr('profile_page_text_linking_to_admin_page')."</p>\n";
     }
+
+    if(Config::get('using_local_saml_dbauth'))
+    {
+        echo "<h2>".Lang::tr('password')."</h2>\n";
+        echo <<<EOF
+                   <div class="change_password">
+                      <a href="#">
+                         {tr:change_password}
+                      </a>
+                   </div>
+EOF;
+    }
     
     $readonly = function($info) {
         $extraclass = 'readonly';
@@ -179,6 +191,13 @@ EOT;
         </a>
     </div>
 
+    <div class="export_client_logs">
+        <a href="#">
+            <span class="fa fa-lg fa-save"></span>
+            {tr:export_client_logs}
+        </a>
+    </div>
+    
     <div class="clear_client_logs">
         <a href="#">
             <span class="fa fa-lg fa-times"></span>

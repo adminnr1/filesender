@@ -154,7 +154,12 @@ window.filesender.config = {
 		file_encryption_enter_password : "<?php echo Lang::tr('file_encryption_enter_password')->out(); ?>",
 		file_encryption_need_password : "<?php echo Lang::tr('file_encryption_need_password')->out(); ?>",
 		storage_filesystem_file_not_found : "<?php echo Lang::tr('storage_filesystem_file_not_found')->out(); ?>",
-		user_hit_guest_limit : "<?php echo Lang::tr('user_hit_guest_limit')->out(); ?>"
+		user_hit_guest_limit : "<?php echo Lang::tr('user_hit_guest_limit')->out(); ?>",
+		rest_roundtrip_token_invalid : "<?php echo Lang::tr('rest_roundtrip_token_invalid')->out(); ?>",
+                file_encryption_show_password : "<?php echo Lang::tr('file_encryption_show_password')->out(); ?>"
+                , guest_reminder_rate_limit_reached : "<?php echo Lang::tr('guest_reminder_rate_limit_reached')->out(); ?>"
+                , user_hit_guest_rate_limit : "<?php echo Lang::tr('user_hit_guest_rate_limit')->out(); ?>"
+
 	},
     
     clientlogs: {
@@ -169,6 +174,9 @@ window.filesender.config = {
 
     tr_dp_date_format:   "<?php echo Config::get('tr_dp_date_format') ?>",
     tr_dp_date_format_hint:   "<?php echo Config::get('tr_dp_date_format_hint') ?>",
+
+    internal_use_only_running_on_ci:  <?php echo value_to_TF(Config::get('internal_use_only_running_on_ci')) ?>,
+    guest_reminder_limit_per_day:  <?php echo Config::get('guest_reminder_limit_per_day') ?>,
 };
 
 <?php if(Config::get('force_legacy_mode')) { ?>
