@@ -91,7 +91,7 @@ $(function() {
         var id = $(this).closest('[data-transfer]').attr('data-id');
         if(!id || isNaN(id)) return;
         
-        if($(this).closest('table').filter('[data-mode="admin"][data-status="available"]')) {
+        if($(this).closest('table').is('[data-mode="admin"][data-status="available"]')) {
             var d = filesender.ui.chooseAction(['delete_transfer_nicely', 'delete_transfer_roughly'], function(choosen) {
                 var done = function() {
                     $('[data-transfer][data-id="' + id + '"]').remove();
@@ -110,7 +110,7 @@ $(function() {
                         break;
                 }
             });
-        } else if($(this).closest('table').filter('[data-mode="admin"][data-status="uploading"]')) {
+        } else if($(this).closest('table').is('[data-mode="admin"][data-status="uploading"]')) {
             filesender.ui.confirm(lang.tr('stop_transfer_upload'), function() {
                 filesender.client.deleteTransfer(id, function() {
                     $('[data-transfer][data-id="' + id + '"]').remove();
@@ -337,6 +337,18 @@ $(function() {
             
             // Reset popup position as we may have added lengthy content
             filesender.ui.relocatePopup(popup);
+        });
+    });
+
+    // Transfer options
+    $('.transfer_options [data-action="remove"]').on('click', function() {
+        var id = $(this).closest('[data-transfer]').attr('data-id');
+        if(!id || isNaN(id)) return;
+        
+        filesender.ui.confirm(lang.tr('confirm_remove_daily_stats_transfer'), function() {
+            filesender.client.removeTransferOption(id, 'email_daily_statistics', function() {
+                filesender.ui.notify('success', lang.tr('transfer_option_modified'));
+            });
         });
     });
     

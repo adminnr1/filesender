@@ -13,7 +13,7 @@ subject: Guest ended to upload files
 
 Dear Sir or Madam,
 
-The following guest ended to upload files from your voucher :
+The following guest ended file uploads from your voucher:
 
 Guest: {guest.email}
 Voucher link: {cfg:site_url}?s=upload&vid={guest.token}
@@ -29,7 +29,7 @@ Best regards,
 <tr><td><img src="{cfg:site_url}images/banner800.png" alt="SURFfilesender Logo" />
 
 <p style="font-family:Arial, sans-serif; font-size:14px; text-decoration:none; font-style:normal">
-    The following guest ended to upload files from your voucher :
+    The following guest ended file uploads from your voucher :
 </p>
 
 <table rules="rows">

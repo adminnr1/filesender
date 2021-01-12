@@ -46,7 +46,6 @@ Best regards,
 
 <table style="width:800" align="center" rules="rows">
         <tr>
-
             <th colspan="2">Transaction details</th>
         </tr>
         <tr>
