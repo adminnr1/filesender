@@ -12,7 +12,7 @@ subject: (reminder) {guest.subject}
 
 {alternative:plain}
 
-Dear Sir or Madam,
+Hello,
 
 This is a reminder, please find below a voucher which grants access to {cfg:site_name}. You can use this voucher to upload one set of files and make it available for download to a group of people.
 
@@ -28,10 +28,11 @@ Best regards,
 
 {alternative:html}
 
-<table style="width:800" align="left" border="4" padding="40">
-<tr><td><img src="{cfg:site_url}images/banner800.png" alt="SURFfilesender Logo" />
+<p>
+    Hello,
+</p>
 
-<p style="font-family:Arial, sans-serif; font-size:14px; text-decoration:none; font-style:normal">
+<p>
     This is a reminder, please find below a voucher which grants access to <a href="{cfg:site_url}">{cfg:site_name}</a>. You can use this voucher to upload one set of files and make it available for download to a group of people.
 </p>
 
@@ -66,16 +67,7 @@ Best regards,
 </p>
 {endif}
 
-</td></tr>
-
- <tr style="border-style:none">
-    <td align="center">
-       <p style="font-size:12px; text-decoration:none">
-       More information about the SURFfilesender service can be found at
-       <a rel="nofollow" href="https://www.surffilesender.nl/en/" target="_blank">www.surffilesender.nl/en</a>
-       </p>
-       <p style="font-size:10px; text-decoration:none"> SURFfilesender is powered by <a rel="nofollow" href="https://www.surf.nl/en/" target="_blank">SURF</a>.
-       </p>
-    </td>
-</tr>
-</table>
+<p>
+    Best regards,<br />
+    {cfg:site_name}
+</p>
