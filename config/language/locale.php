@@ -1,8 +1,11 @@
 <?php
 
-// Local SURFfilesender overrides for system languages
+//
+// SURFfilesender language customizations
+//
 
 $locales  =  array(
-    'en-us'=>  array('name' => 'English', 'path' => 'en_AU'),
-    'nl-nl'  => array('name' => 'Nederlands', 'path' => 'nl_NL')
+    'en' =>  array('name' => 'English', 'path' => 'en_AU'),
+    'nl' => array('name' => 'Nederlands', 'path' => 'nl_NL')
 );
+
