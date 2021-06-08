@@ -12,9 +12,9 @@ subject: (automatic reminders sent) {transfer.subject}
 
 {alternative:plain}
 
-Dear Sir or Madam,
+Hello,
 
-An automatic reminder was sent to recipients that did not download files from your transfer n°{transfer.id} on {cfg:site_name} ({transfer.link}) :
+An automatic reminder was sent to recipients that did not download files from transfer n°{transfer.id} on {cfg:site_name} ({transfer.link}) :
 
 {each:recipients as recipient}
   - {recipient.email}
@@ -25,11 +25,12 @@ Best regards,
 
 {alternative:html}
 
-<table style="width:800" align="left" border="4" padding="40">
-<tr><td><img src="{cfg:site_url}images/banner800.png" alt="SURFfilesender Logo" />
+<p>
+    Hello,
+</p>
 
-<p style="font-family:Arial, sans-serif; font-size:14px; text-decoration:none; font-style:normal">
-    An automatic reminder was sent to recipients that did not download files from your <a href="{transfer.link}">transfer n°{transfer.id}</a> on <a href="{cfg:site_url}">{cfg:site_name}</a> :
+<p>
+    An automatic reminder was sent to recipients that did not download files from <a href="{transfer.link}">transfer n°{transfer.id}</a> on <a href="{cfg:site_url}">{cfg:site_name}</a> :
 </p>
 
 <p>
@@ -40,16 +41,7 @@ Best regards,
     </ul>
 </p>
 
-</td></tr>
-
- <tr style="border-style:none">
-    <td align="center">
-       <p style="font-size:12px; text-decoration:none">
-       More information about the SURFfilesender service can be found at
-       <a rel="nofollow" href="https://www.surffilesender.nl/en/" target="_blank">www.surffilesender.nl/en</a>
-       </p>
-       <p style="font-size:10px; text-decoration:none"> SURFfilesender is powered by <a rel="nofollow" href="https://www.surf.nl/en/" target="_blank">SURF</a>.
-       </p>
-    </td>
-</tr>
-</table>
+<p>
+    Best regards,<br />
+    {cfg:site_name}
+</p>
