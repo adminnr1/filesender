@@ -199,6 +199,7 @@ function downloadSingleFile($transfer, $recipient, $file_id, $recently_downloade
     $ranges = null;
     if (array_key_exists('HTTP_RANGE', $_SERVER) && $_SERVER['HTTP_RANGE']) {
         try {
+            Logger::info('User restarted download of '.$file.' with explicit range '.$_SERVER['HTTP_RANGE']);
             if (preg_match('/bytes\s*=\s*(.+)$/i', $_SERVER['HTTP_RANGE'], $m)) {
                 $parts = array_map('trim', explode(',', $m[1]));
                 foreach ($parts as $part) {
@@ -262,6 +263,7 @@ function downloadSingleFile($transfer, $recipient, $file_id, $recently_downloade
 
         if($transfer->options['encryption'] == 1){
             $end = $file->encrypted_size;
+            $chunk_size = (int) Config::get('upload_crypted_chunk_size');
         }else{
             $end = $file->size;
         }
@@ -293,12 +295,19 @@ function downloadSingleFile($transfer, $recipient, $file_id, $recently_downloade
     
     if ($ranges)
         header('HTTP/1.1 206 Partial Content'); // Must send HTTP header before anything else
+
+    $etagranges = '';
+    if ($ranges) {
+        foreach ($ranges as $range) {
+            $etagranges .= '__rs_' . $range['start'] . '_e_' . $range['end'];
+        }
+    }
     
     header('Content-Transfer-Encoding: binary');
     header('Last-Modified: ' . gmdate('D, d M Y H:i:s', $transfer->created));
-    header('ETag: t' . $transfer->id . '_f' . $file->id . '_s' . $file->size);
+    header('ETag: "t' . $transfer->id . '_f' . $file->id . '_s' . $file->size . '_ranges_' . $etagranges . '"' );
     header('Connection: close');
-    header('Cache-control: private');
+    header('Cache-control: no-store, max-age=0');
     header('Pragma: private');
     header('Expires: 0');
     
@@ -310,7 +319,7 @@ function downloadSingleFile($transfer, $recipient, $file_id, $recently_downloade
         
         if (count($ranges) == 1) { // Single range
             $range = array_shift($ranges);
-            
+
             header('Content-Type: ' . $file->mime_type);
             header('Content-Length: ' . ($range['end'] - $range['start'] + 1));
             header('Content-Range: bytes ' . $range['start'] . '-' . $range['end'] . '/' . $file->size);

@@ -76,6 +76,7 @@ A note about colours;
 * [email_return_path](#email_return_path)
 * [email_use_html](#email_use_html)
 * [email_newline](#email_newline)
+* [email_headers](#email_headers)
 * [relay_unknown_feedbacks](#relay_unknown_feedbacks)
 
 ## General UI
@@ -92,6 +93,8 @@ A note about colours;
 * [crypto_pbkdf2_delay_to_show_dialog](#crypto_pbkdf2_delay_to_show_dialog)
 * [crypto_pbkdf2_expected_secure_to_year](#crypto_pbkdf2_expected_secure_to_year)
 * [crypto_pbkdf2_dialog_custom_webasm_delay](#crypto_pbkdf2_dialog_custom_webasm_delay)
+* [upload_page_password_can_not_be_part_of_message_handling](#upload_page_password_can_not_be_part_of_message_handling)
+
 
 ## Transfers
 
@@ -103,6 +106,7 @@ A note about colours;
 * [default_transfer_days_valid](#default_transfer_days_valid)
 * [max_transfer_days_valid](#max_transfer_days_valid)
 * [allow_transfer_expiry_date_extension](#allow_transfer_expiry_date_extension)
+* [allow_transfer_expiry_date_extension_admin](#allow_transfer_expiry_date_extension_admin)
 * [force_legacy_mode](#force_legacy_mode)
 * [legacy_upload_progress_refresh_period](#legacy_upload_progress_refresh_period)
 * [max_legacy_file_size](#max_legacy_file_size)
@@ -114,16 +118,29 @@ A note about colours;
 * [user_quota](#user_quota)
 * [max_transfer_file_size](#max_transfer_file_size)
 * [max_transfer_encrypted_file_size](#max_transfer_encrypted_file_size)
+* [encryption_enabled](#encryption_enabled)
+* [encryption_mandatory](#encryption_mandatory)
 * [encryption_min_password_length](#encryption_min_password_length)
+* [encryption_password_must_have_upper_and_lower_case](#encryption_password_must_have_upper_and_lower_case)
+* [encryption_password_must_have_numbers](#encryption_password_must_have_numbers)
+* [encryption_password_must_have_special_characters](#encryption_password_must_have_special_characters)
 * [encryption_generated_password_length](#encryption_generated_password_length)
 * [encryption_key_version_new_files](#encryption_key_version_new_files)
 * [encryption_random_password_version_new_files](#encryption_random_password_version_new_files)
 * [encryption_password_hash_iterations_new_files](#encryption_password_hash_iterations_new_files)
+* [encryption_encode_encrypted_chunks_in_base64_during_upload](#encryption_encode_encrypted_chunks_in_base64_during_upload)
 * [automatic_resume_number_of_retries](#automatic_resume_number_of_retries)
 * [automatic_resume_delay_to_resume](#automatic_resume_delay_to_resume)
 * [transfer_options_not_available_to_export_to_client](#transfer_options_not_available_to_export_to_client)
 * [chunk_upload_roundtriptoken_check_enabled](#chunk_upload_roundtriptoken_check_enabled)
 * [chunk_upload_roundtriptoken_check_accept_before](#chunk_upload_roundtriptoken_check_accept_before)
+* [streamsaver_enabled](#streamsaver_enabled)
+* [streamsaver_on_unknown_browser](#streamsaver_on_unknown_browser)
+* [streamsaver_on_firefox](#streamsaver_on_firefox)
+* [streamsaver_on_chrome](#streamsaver_on_chrome)
+* [streamsaver_on_edge](#streamsaver_edge)
+* [streamsaver_on_safari](#streamsaver_safari)
+
 
 ## Graphs
 
@@ -155,6 +172,8 @@ A note about colours;
 * [user_can_only_view_guest_transfers_shared_with_them](#user_can_only_view_guest_transfers_shared_with_them)
 * [guest_create_limit_per_day](#guest_create_limit_per_day)
 * [guest_reminder_limit_per_day](#guest_reminder_limit_per_day)
+* [allow_guest_expiry_date_extension](#allow_guest_expiry_date_extension)
+* [allow_guest_expiry_date_extension_admin](#allow_guest_expiry_date_extension_admin)
 
 ## Authentication
 
@@ -217,6 +236,11 @@ A note about colours;
 
 * [host_quota](#host_quota)
 * [config_overrides](#config_overrides) (experimental feature, not tested)
+
+## Data Protection
+
+* [data_protection_user_frequent_email_address_disabled](#data_protection_user_frequent_email_address_disabled)
+* [data_protection_user_transfer_preferences_disabled](#data_protection_user_transfer_preferences_disabled)
 
 ---
 
@@ -560,7 +584,7 @@ A note about colours;
 ## Language and internationalisation
 
 ---
-FileSender includes a translation engine which allows for flexible user language detection and customisation.  For more details check the [Translating FileSender 2.0 documentation](https://www.assembla.com/spaces/file_sender/wiki/Translating_FileSender)
+FileSender includes a translation engine which allows for flexible user language detection and customisation.  For more details check the [Translating FileSender 2.0 documentation](https://docs.filesender.org/v2.0/i18n/)
 
 User language detection is done in the following order:
 
@@ -708,6 +732,15 @@ User language detection is done in the following order:
 * __comment:__ the default value in version 1.x was "\n".
 * __comment:__ Make sure you use double quotes to configure this value in the config file.  If you use single quotes the \r and \n will NOT be interpreted!
 
+### email_headers
+
+* __description:__ specify additional RFC 822 (today RFC 5322) headers to be added to outgoing emails sent by FileSender.
+* __mandatory:__ no
+* __type:__ array of 2-tuples (header name, header value)
+* __default:__ false
+* __available:__ since version 2.x
+* __comment:__ E.g. add to your `$config['email_headers'] = array('Auto-Submitted' => 'auto-generated', 'X-Auto-Response-Suppress' => 'All');` to add these 2 headers with their respective values to all outgoing emails.
+
 ### relay_unknown_feedbacks
 
 * __description:__ tells the bounce handler where to forward those messages it can not identify as email bounces but can be related to a specific target (recipient, guest). The received message is forwarded as message/rfc822 attachment. Updated in 2.6.
@@ -831,7 +864,16 @@ User language detection is done in the following order:
 * __available:__ since version 2.14
 
 
+### upload_page_password_can_not_be_part_of_message_handling
+* __description:__ Can be one of 'none', 'warning', or 'error'. If the string does not match a known valid value it is reset to 'warning'. If this is 'warning' and the user is performing an encrypted upload and types their password into the message field then a warning message is displayed until the user removes the password from the message. If this is 'error' then a more stern message is displayed informing the user that they will not be allowed to continue until the password is removed from the message text. If this is 'none' then no checks are performed and the test is effectively disabled.
+* __mandatory:__ no
+* __type:__ string
+* __default:__ 'warning'
+* __available:__ since version 2.22
 
+
+
+* [upload_page_password_can_not_be_part_of_message_handling](#upload_page_password_can_not_be_part_of_message_handling)
 
 
 
@@ -922,7 +964,7 @@ If you want to find out the expiry timer for your SAML Identity Provider install
 
 ### allow_transfer_expiry_date_extension
 
-* __description:__ allows a user to extend the expiry date.
+* __description:__ allows a user to extend the expiry date. See also allow_transfer_expiry_date_extension_admin to allow admins special extension ability.
 * __mandatory:__
 * __type:__ an array of integers containing possible extensions in days.
 * __default:__ - (= not activated)
@@ -935,6 +977,18 @@ If you want to find out the expiry timer for your SAML Identity Provider install
 	$config['allow_transfer_expiry_date_extension'] = 5; // Same as above
 	$config['allow_transfer_expiry_date_extension'] = array(5, 3); // Allows 2 successive extensions, the first is by 5 days the second is by 3 days
 	$config['allow_transfer_expiry_date_extension'] = array(5, 3, 1, true); // Allows infinite extensions, the first is by 5 days the second is by 3 days, the third and above are by 1 day
+
+### allow_transfer_expiry_date_extension_admin
+
+* __description:__ allows an admin to extend the expiry date. This is similiar to allow_transfer_expiry_date_extension but is only used if you are logged in as an admin on the system. If you are an admin this schedule will overwrite the allow_transfer_expiry_date_extension for you. So you can set both and this will be used in preference if you are logged in as admin, otherwise allow_transfer_expiry_date_extension will be used if it is set. As you might only like to use this option and not allow users to extend transfers this option may offer a second UI element to allow extension, where there are two ways to extend a transfer they will both perform the same action and follow the admin configuration if you are logged in as admin.
+* __mandatory:__
+* __type:__ an array of integers containing possible extensions in days.
+* __default:__ - (= not activated)
+* __available:__ since version 2.21
+* __Examples:__
+
+        // Allows infinite extensions, the first is by 30 days then 90 days 
+	$config['allow_transfer_expiry_date_extension_admin'] = array(30, 90, true); 
 
 ## force_legacy_mode
 
@@ -1015,7 +1069,8 @@ If you want to find out the expiry timer for your SAML Identity Provider install
 	* __email\_download\_complete:__ notify the sender (owner) of a transfer that someone has downloaded it immediately after the download completes.
 	* __email\_daily\_statistics:__ send the sender an overview of all activity on that sender's transfers.  Who downloaded what when.
 	* __email\_report\_on\_closing:__ send the sender an overview of all activity on this particular transfer after that transfer is closed.  This is the audit report for that particular transfer.  When a sender receives this, the server's audit logs can (in principle) be purged for the records pertaining to this particular transfer thus reducing FileSender's privacy footprint.
-	* __enable\_recipient\_email\_download\_complete:__ this gives the downloader a tick box in the download window which in turn lets the downloader indicate they would like to receive an email once the download is finished.  If you want this option available for all downloaders and do not want to bother the uploader with it, simply configure it with 'default' => false as the only parameter. __Warning:__ if the recipient of a file is a mailinglist and someone ticks the "send me a message on download complete" box, then all members of that mailinglist will receive that message.  That might be a reason why you don't want to make this option available to your users.
+	* __email\_recipient\_when\_transfer\_expires:__ As of release 2.21 this is a global default setting to email users when a transfer expires during cron execution. The default is true to maintain the previous functionality as it was. Setting this to false will not send out emails to intended recipients as transfers are expired by the cron job. This is set here because it may be able to be adjusted by a user in the UI in the future for each transfer.
+	* __enable\_recipient\_email\_download\_complete:__ this gives the downloader a tick box in the download window which in turn lets the downloader indicate they would like to receive an email once the download is finished.  If you want this option available for all downloaders and do not want to bother the uploader with it, simply configure it with 'default' => false as the only parameter. __Warning:__ if the recipient of a file is a mailinglist and someone ticks the "send me a message on download complete" box, then all members of that mailinglist will receive that message.  That might be a reason why you don't want to make this option available to your users.        
 	* __add\_me\_to\_recipients:__ include the sender as one of the recipients.
 	* __get\_a\_link:__ if checked it will not send any emails, only present the uploader with a download link once the upload is complete.  This is useful when sending files to mailinglists, newsletters etc.  When ticked the message subject and message text box disappear from the UI.  Under the hood it creates an anonymous recipient with a token for download.  You can se the download count, but not who downloaded it (obviously, as there are no recipients defined).
 	* __redirect_url_on_complete:__ When the transfer upload completes, instead of showing a success message, redirect the user to a URL. This interferes with __get\_a\_link__ in that the uploader will not see the link after the upload completes. Additionally, if the uploader is a guest, there is no way straightforward way for the uploader to learn the download link, although this must not be used as a security feature.
@@ -1074,6 +1129,24 @@ If you want to find out the expiry timer for your SAML Identity Provider install
 * __comment:__ 
 
 
+### encryption_enabled
+* __description:__ set to false to disable. If set to true an option to enable file encryption of a transfer becomes available in the web-UI.
+* __mandatory:__ no
+* __type:__ boolean
+* __default:__ true
+* __available:__ since version 2.0
+* __comment:__
+
+### encryption_mandatory
+* __description:__ If set to true then every file uploaded must be encrypted.
+* __mandatory:__ no
+* __type:__ boolean
+* __default:__ false
+* __available:__ since version 2.23
+* __comment:__
+
+
+
 ### encryption_min_password_length
 * __description:__ set to 0 to disable. If set to a positive value it is the minimum number of characters needed in a password for encryption. Note that since the encryption is fully client side, this value could be ignored by a determined user, though they would do that at the loss of their own security not of others.
 * __mandatory:__ no 
@@ -1081,6 +1154,32 @@ If you want to find out the expiry timer for your SAML Identity Provider install
 * __default:__ 0
 * __available:__ since version 2.0
 * __comment:__ 
+
+### encryption_password_must_have_upper_and_lower_case
+* __description:__ set to true to force a user entered password to contain uPPer and LoWer case characters.
+* __mandatory:__ no 
+* __type:__ boolean
+* __default:__ false
+* __available:__ since version 2.23
+* __comment:__ 
+
+### encryption_password_must_have_numbers
+* __description:__ set to true to force a user entered password to contain numbers 453543.
+* __mandatory:__ no 
+* __type:__ boolean
+* __default:__ false
+* __available:__ since version 2.23
+* __comment:__ 
+
+### encryption_password_must_have_special_characters
+* __description:__ set to true to force a user entered password to contain special characters (%$^@ etc).
+* __mandatory:__ no 
+* __type:__ boolean
+* __default:__ false
+* __available:__ since version 2.23
+* __comment:__ 
+
+
 
 ### encryption_generated_password_encoding
 * __description:__ which encoding to use to encode generated passwords. Since the random information obtained during password generation is completely random it is useful to encode that into text characters, for example in the range a,b,c etc. By doing this one single byte of random data (0 to 255 inclusive) will likely be encoded to more than one character of output. The base64 encoding turns x bytes of input into 1.33 times as long output. Because ascii85 uses more possible characters it turns each 4 bytes into 5 bytes. This means that for the same length of encoded string the ascii85 will have more entropy. Note that the ascii85 used is the Z85 from ZeroMQ to avoid the use of the quote character in output.
@@ -1154,6 +1253,15 @@ these iteration counts take to perform on your local machine.
 * __available:__ since version 2.9
 * __comment:__
 
+
+
+### encryption_encode_encrypted_chunks_in_base64_during_upload
+* __description:__ This allows fallback to the older base64 PUT that was used in version 2.22. The encoding is quite costly and if there are no issues this parameter together with the fallback to using base64 on the PUT contents will be removed in a future version. 
+* __mandatory:__ no 
+* __type:__ boolean
+* __default:__ false
+* __available:__ since version 2.23
+* __comment:__ This is to allow fallbacks to older code. The default should be left unless you experience issues. If this fallback is not needed it will be removed in a future release and the __default__ will become the only choice in the code.
 
 
 
@@ -1244,11 +1352,67 @@ This is only for old, existing transfers which have no roundtriptoken set.
 
 
 
+### streamsaver_enabled
+* __description:__ Allow the use of StreamSaver to perform streaming download of encrypted files on supported browsers.
+* __mandatory:__ no 
+* __recommend_leaving_at_default:__ true
+* __type:__ boolean
+* __default:__ true
+* __available:__ since version 2.19
+* __comment:__ 
+
+### streamsaver_on_unknown_browser
+* __description:__ If streamsaver_enabled and the browser does not match any known browser with explicit configuration (eg streamsaver_on_firefox) then this is the default if the site should try to use streamsaver on that unknown environment.
+* __mandatory:__ no 
+* __recommend_leaving_at_default:__ true
+* __type:__ boolean
+* __default:__ false
+* __available:__ since version 2.19
+* __comment:__ 
+
+### streamsaver_on_firefox
+* __description:__ If streamsaver_enabled is true then this controls if streamsaver is used on Firefox.
+* __mandatory:__ no 
+* __recommend_leaving_at_default:__ false
+* __type:__ boolean
+* __default:__ false
+* __available:__ since version 2.19
+* __comment:__ 
+
+
+### streamsaver_on_chrome
+* __description:__ If streamsaver_enabled is true then this controls if streamsaver is used on Google Chrome.
+* __mandatory:__ no 
+* __recommend_leaving_at_default:__ true
+* __type:__ boolean
+* __default:__ true
+* __available:__ since version 2.19
+* __comment:__ 
+
+### streamsaver_on_edge
+* __description:__ If streamsaver_enabled is true then this controls if streamsaver is used on Microsoft Edge.
+* __mandatory:__ no 
+* __recommend_leaving_at_default:__ true
+* __type:__ boolean
+* __default:__ true
+* __available:__ since version 2.19
+* __comment:__ 
+
+### streamsaver_on_safari
+* __description:__ If streamsaver_enabled is true then this controls if streamsaver is used on Safari.
+* __mandatory:__ no 
+* __recommend_leaving_at_default:__ true
+* __type:__ boolean
+* __default:__ true
+* __available:__ since version 2.19
+* __comment:__ 
 
 
 
 
-* [transfer_options_not_available_to_export_to_client](#transfer_options_not_available_to_export_to_client)
+
+
+
 
 
 ---
@@ -1503,6 +1667,31 @@ This is only for old, existing transfers which have no roundtriptoken set.
   If the user tries to send a reminder to a specific guest more than this number of times a day then
   the action will be denied and logged. Note that this is an inclusive value, for example, a setting of 5
   will allow 5 reminders to be sent to a guest but not 6.
+
+
+### allow_guest_expiry_date_extension
+
+* __description:__ This is an untested matching config option to allow_guest_expiry_date_extension_admin. It is best to reserve this config keyword now to allow future versions to allow some users to extend their guests if desired. Extending guest expire time is only available via the admin page as at release 2.23.
+* __mandatory:__
+* __type:__ an array of integers containing possible extensions in days.
+* __default:__ - (= not activated)
+* __available:__ since version 2.23
+* __1.x name:__
+* __comment:__
+* __Examples:__
+
+
+### allow_guest_expiry_date_extension_admin
+
+* __description:__ allows an admin to extend the expiry date of a guest. This is only used if you are logged in as an admin on the system. If you are an admin this schedule will overwrite the allow_guest_expiry_date_extension for you. 
+* __mandatory:__
+* __type:__ an array of integers containing possible extensions in days.
+* __default:__ array(31, true)
+* __available:__ since version 2.23
+* __Examples:__
+
+        // Allows infinite extensions, the first is by 30 days then 90 days 
+	$config['allow_guest_expiry_date_extension_admin'] = array(30, 90, true); 
 
 
 
@@ -2129,6 +2318,37 @@ $config['rest_allow_jsonp'] = array(
 	In this example the "site_name_in_header" is a checkbox in the UI.  For the override "site_name", type string: displays a text field, and runs validator "is_string".  You can use existing validators or any other function. The override "terasender_start_mode" displays a dropdown in which you can choose from different predefined values.
 
 Changes are saved in config_overrides.json in the config directory.  The config.php file is NOT modified.  This keeps overrides separated from the site config.  is_string, is_numeric (standard php validators) or a function of your own which returns a boolean indicating if the value is good or not.
+
+###
+
+---
+
+## Data Protection
+
+---
+
+### data_protection_user_frequent_email_address_disabled
+
+* __description:__ if set to true then frequent email addresses are not cached for a user. These are used for example when sending files to email addresses or inviting a guest to the system. Note that the user may delete the frequent email addresses on the my profile page at any time, but with this option set to true such email addresses will not be cached in the database at all.
+* __mandatory:__ no
+* __type:__ boolean
+* __default:__ false
+* __available:__ since version 2.22
+* __1.x name:__
+* __comment:__
+
+
+### data_protection_user_transfer_preferences_disabled
+
+* __description:__ if set to true then the options a user selects when creating an upload are not stored in the database to set the same options for the next upload.
+* __mandatory:__ no
+* __type:__ boolean
+* __default:__ false
+* __available:__ since version 2.23
+* __1.x name:__
+* __comment:__
+
+
 
 ###
 

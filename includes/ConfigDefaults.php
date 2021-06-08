@@ -97,9 +97,15 @@ $default = array(
     'download_chunk_size' => 5 * 1024 * 1024,
     
     'encryption_enabled' => true,
+    'encryption_mandatory' => false,
     'encryption_min_password_length' => 0,
+    'encryption_password_must_have_upper_and_lower_case' => false,
+    'encryption_password_must_have_numbers' => false,
+    'encryption_password_must_have_special_characters' => false,
     'encryption_generated_password_length' => 30,
     'encryption_generated_password_encoding' => 'base64',
+    'encryption_encode_encrypted_chunks_in_base64_during_upload' => false,
+    
     'upload_crypted_chunk_padding_size' => 16 + 16, // CONST the 2 times 16 are the padding added by the crypto algorithm, and the IV needed
     'upload_crypted_chunk_size' => 5 * 1024 * 1024 + 16 + 16, // the 2 times 16 are the padding added by the crypto algorithm, and the IV needed
     'crypto_iv_len' => 16, // i dont think this will ever change, but lets just leave it as a config
@@ -141,6 +147,10 @@ $default = array(
     'storage_filesystem_df_command' => 'df {path}',
     'storage_filesystem_tree_deletion_command' => 'rm -rf {path}',
     'storage_filesystem_ignore_disk_full_check' => false,
+    'storage_filesystem_hash_check' => false, //used by filesystemChunked
+    'storage_filesystem_read_retry' => 10, //used by filesystemChunked
+    'storage_filesystem_write_retry' => 10, //used by filesystemChunked
+    'storage_filesystem_retry_sleep' => 400000, //400ms //used by filesystemChunked
     'storage_filesystem_external_script' => FILESENDER_BASE.'/scripts/StorageFilesystemExternal/external.py',
 
     'storage_filesystem_shred_path' => FILESENDER_BASE.'/shredfiles',
@@ -148,6 +158,7 @@ $default = array(
     'email_from' => 'sender',
     'email_return_path' => 'sender',
     'email_subject_prefix' => '{cfg:site_name}:',
+    'email_headers' => false,
     
     'report_bounces' => 'asap',
     'report_bounces_asap_then_daily_range' => 15 * 60,
@@ -162,7 +173,8 @@ $default = array(
     
     'report_format' => ReportFormats::INLINE,
 
-    'valid_filename_regex' => '^[ \\/\\p{L}\\p{N}_\\.,;:!@#$%^&*)(\\]\\[_-]+$',
+    // Note that this must not have a fixed end of string '$' as the last character in the match 
+    'valid_filename_regex' => '^[ \\/\\p{L}\\p{N}_\\.,;:!@#$%^&*)(\\]\\[_-]+',
     'message_can_not_contain_urls_regex' => '',
 //    'message_can_not_contain_urls_regex' => '(ftp:|http[s]*:|[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})',
 
@@ -259,6 +271,21 @@ $default = array(
     // This allows authentication against password hashes in the local filesender db
     // with the right SAML setup.
     'using_local_saml_dbauth' => 0,
+
+    'streamsaver_enabled' => true,
+    'streamsaver_on_unknown_browser' => false,
+    'streamsaver_on_firefox' => false,
+    'streamsaver_on_chrome' => true,
+    'streamsaver_on_edge'   => true,
+    'streamsaver_on_safari' => true,
+
+    'upload_page_password_can_not_be_part_of_message_handling' => 'warning',
+
+    'data_protection_user_frequent_email_address_disabled' => false,
+    'data_protection_user_transfer_preferences_disabled' => false,
+
+    'allow_guest_expiry_date_extension' => 0,
+    'allow_guest_expiry_date_extension_admin' => array(31, true),
     
     
     'transfer_options' => array(
@@ -289,6 +316,11 @@ $default = array(
         ),
         'email_report_on_closing' => array(
             'available' => true,
+            'advanced' => false,
+            'default' => true
+        ),
+        'email_recipient_when_transfer_expires' => array(
+            'available' => false,
             'advanced' => false,
             'default' => true
         ),

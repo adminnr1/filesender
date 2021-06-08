@@ -19,7 +19,10 @@
     
     </tbody>
         <?php foreach($guests as $guest) { ?>
-        <tr class="guest" data-id="<?php echo $guest->id ?>" data-errors="<?php echo count($guest->errors) ? '1' : '' ?>">
+            <tr class="guest objectholder"
+                data-id="<?php echo $guest->id ?>" 
+                data-expiry-extension="<?php echo $guest->expiry_date_extension ?>"
+                data-errors="<?php echo count($guest->errors) ? '1' : '' ?>">
             <td class="to">
                 <a href="mailto:<?php echo Template::sanitizeOutputEmail($guest->email) ?>"><?php echo Template::sanitizeOutputEmail($guest->email) ?></a>
                 
@@ -32,7 +35,7 @@
             
             <td class="subject">
                 <?php if(strlen($guest->subject) > 15) { ?>
-                <span class="short"><?php echo Template::sanitizeOutput(substr($guest->subject, 0, 15)) ?></span>
+                <span class="short"><?php echo Template::sanitizeOutput(mb_substr($guest->subject, 0, 15)) ?></span>
                 <span class="clickable expand">[...]</span>
                 <div class="full"><?php echo Template::sanitizeOutput($guest->subject) ?></div>
                 <?php } else echo Template::sanitizeOutput($guest->subject) ?>
@@ -40,7 +43,7 @@
             
             <td class="message">
                 <?php if(strlen($guest->message) > 15) { ?>
-                <span class="short"><?php echo Template::sanitizeOutput(substr($guest->message, 0, 15)) ?></span>
+                <span class="short"><?php echo Template::sanitizeOutput(mb_substr($guest->message, 0, 15)) ?></span>
                 <span class="clickable expand">[...]</span>
                 <div class="full"><?php echo Template::sanitizeOutput($guest->message) ?></div>
                 <?php } else echo Template::sanitizeOutput($guest->message) ?>
@@ -48,7 +51,9 @@
             
             <td class="created"><?php echo Utilities::formatDate($guest->created) ?></td>
             
-            <td class="expires"><?php echo $guest->getOption(GuestOptions::DOES_NOT_EXPIRE) ? Lang::tr('never') : Utilities::formatDate($guest->expires) ?></td>
+            <td class="expires" data-rel="expires">
+                <?php echo $guest->getOption(GuestOptions::DOES_NOT_EXPIRE) ? Lang::tr('never') : Utilities::formatDate($guest->expires) ?>
+            </td>
             
             <td class="actions"></td>
         </tr>

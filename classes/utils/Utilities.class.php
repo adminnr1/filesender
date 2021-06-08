@@ -170,7 +170,7 @@ class Utilities
      */
     public static function isValidFileName($filename)
     {
-        return preg_match('/' .  Config::get('valid_filename_regex') . '/u', $filename);
+        return preg_match('/' .  Config::get('valid_filename_regex') . '$/u', $filename);
     }
 
     
@@ -436,6 +436,13 @@ class Utilities
     public static function isTrue($v)
     {
         return $v == '1' || $v == 'true';
+    }
+    public static function boolToString($v)
+    {
+        if( $v == '1' || $v == 'true' ) {
+            return 'true';
+        }
+        return 'false';
     }
 
     /**

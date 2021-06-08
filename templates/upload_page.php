@@ -1,6 +1,9 @@
 <?php
 
 $guest_can_only_send_to_creator = false;
+$encryption_mandatory = Principal::isEncryptionMandatory();
+$encryption_checkbox_checked = '';
+$encryption_checkbox_classes = '';
 
 $files_actions_div_extra_class = "div3";
 $upload_directory_button_enabled = false;
@@ -49,6 +52,11 @@ if(Auth::isGuest()) {
     if($guest->getOption(GuestOptions::CAN_ONLY_SEND_TO_ME)) {
         $guest_can_only_send_to_creator = true;
     }
+}
+
+if( $encryption_mandatory ) {
+    $encryption_checkbox_checked = ' checked="checked"  disabled="disabled" ';
+    $encryption_checkbox_classes = '';
 }
 
 ?>
@@ -182,13 +190,17 @@ if(Auth::isGuest()) {
                     <div class="fieldcontainer" data-related-to="message">
                         <label for="message">{tr:message} ({tr:optional}) : </label>
                         <label class="invalid" id="message_can_not_contain_urls" style="display:none;">{tr:message_can_not_contain_urls}</label>                        
+                        <label class="invalid" id="password_can_not_be_part_of_message_warning" style="display:none;">
+                            {tr:password_can_not_be_part_of_message_warning}</label>                        
+                        <label class="invalid" id="password_can_not_be_part_of_message_error" style="display:none;">
+                            {tr:password_can_not_be_part_of_message_error}</label>                        
                         <textarea id="message" name="message" rows="4"></textarea>
                     </div>
                     <?php } ?> <!-- closing if($allow_recipients) -->
                     
-                    <?php if(Config::get('encryption_enabled')) {  ?>
-                        <div class="fieldcontainer" id="encrypt_checkbox" data-related-to="encryption">
-                            <input id="encryption" name="encryption" type="checkbox">
+                    <?php if(Config::get('encryption_enabled')) { ?>
+                        <div class="fieldcontainer <?php echo $encryption_checkbox_classes ?>" id="encrypt_checkbox" data-related-to="encryption">
+                            <input id="encryption" name="encryption" type="checkbox" <?php echo $encryption_checkbox_checked ?> >
                             <label for="encryption" style="cursor: pointer;">{tr:file_encryption}</label>
                         </div>
                         <div class="fieldcontainer" id="encryption_password_container">  
@@ -198,8 +210,24 @@ if(Auth::isGuest()) {
                         <div class="fieldcontainer" id="encryption_password_container_too_short_message">
                             {tr:file_encryption_password_too_short}
                         </div>
+                        <div class="fieldcontainer" id="encryption_password_container_must_have_numbers_message">
+                            {tr:file_encryption_password_must_have_numbers}
+                        </div>
+                        <div class="fieldcontainer" id="encryption_password_container_must_have_upper_and_lower_case_message">
+                            {tr:file_encryption_password_must_have_upper_and_lower_case}
+                        </div>
+                        <div class="fieldcontainer" id="encryption_password_container_must_have_special_characters_message">
+                            {tr:file_encryption_password_must_have_special_characters}
+                        </div>
                         <div class="fieldcontainer" id="encryption_password_container_generate">
-                            <a id='encryption_generate_password' href="#">{tr:file_encryption_generate_password}</a>
+                            <input id="encryption_use_generated_password"  name="encryption_use_generated_password" type="checkbox">  
+                            <label for="encryption_use_generated_password" style="cursor: pointer;">{tr:file_encryption_generate_password}</label>
+                            
+                        </div>
+                        <div class="fieldcontainer" id="encryption_password_container_generate_again">
+                            <a href="#" id="encryption_generate_password" class="">
+                                <span class="fa fa-refresh"></span>&nbsp;{tr:generate_a_different_password}
+                            </a>
                         </div>
                         <div class="fieldcontainer" id="encryption_password_show_container">  
                             <input id="encryption_show_password" name="encryption_show_password" type="checkbox">  

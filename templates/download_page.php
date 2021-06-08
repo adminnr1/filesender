@@ -40,10 +40,16 @@
 
     $isEncrypted = isset($transfer->options['encryption']) && $transfer->options['encryption'];
     $canDownloadArchive = count($transfer->files) > 1;
+    $canDownloadAsTar = true;
+    $canDownloadAsZip = true;
     if($isEncrypted) {
-        // It is not possible to download archives of the encrypted files. 
-        // since there is no unzip -> decrypt -> zip process in the current filesender 
+        // Streaming to a local decrypted archive requires StreamSaver feature
         $canDownloadArchive = false;
+        // no stream to tar file support yet.
+        $canDownloadAsTar = false;
+        if( Browser::instance()->allowStreamSaver ) {
+            $canDownloadArchive = true;
+        }
     }
     ?>
     
@@ -62,6 +68,16 @@
     <div class="crypto_not_supported_message">
          {tr:file_encryption_disabled}
     </div>
+
+    <?php if( Browser::instance()->allowStreamSaver ) { ?>
+
+        <div class="fieldcontainer" data-option="options">
+            <input id="streamsaverenabled" name="streamsaverenabled" type="checkbox" checked="checked" />
+            <label for="streamsaverenabled">{tr:use_streamsaver_for_download}</label>
+        </div>
+    <?php } ?>
+                            
+    
     
     <div class="general box" data-transfer-size="<?php echo $transfer->size ?>">
         <div class="from">{tr:from} : <?php echo Template::sanitizeOutputEmail($transfer->user_email) ?></div>
@@ -85,7 +101,8 @@
             </div>
         <?php } ?>
     </div>
-    <div class="files box" data-count="<?php echo ($isEncrypted)?'1':count($transfer->files) ?>">
+    <div class="files box" data-count="<?php echo ($canDownloadArchive)?count($transfer->files):'1' ?>">
+        <?php if($canDownloadArchive) { ?>
         <div class="select_all">
             <span class="fa fa-lg fa-mail-reply fa-rotate-270"></span>
             <span class="select clickable">
@@ -93,11 +110,14 @@
                 <span>{tr:select_all_for_archive_download}</span>
             </span>
         </div>
+        <?php } ?>
     <?php foreach($transfer->files as $file) { ?>
         <div class="file" data-id="<?php echo $file->id ?>"
              data-encrypted="<?php echo isset($transfer->options['encryption'])?$transfer->options['encryption']:'false'; ?>"
              data-mime="<?php echo $file->mime_type; ?>"
              data-name="<?php echo $file->path; ?>"
+             data-size="<?php echo $file->size; ?>"
+             data-encrypted-size="<?php echo $file->encrypted_size; ?>"
              data-key-version="<?php echo $transfer->key_version; ?>"
              data-key-salt="<?php echo $transfer->salt; ?>"
              data-password-version="<?php echo $transfer->password_version; ?>"
@@ -108,7 +128,9 @@
              data-fileaead="<?php echo $file->aead; ?>"
         >
             
-            <span class="select clickable fa fa-2x fa-square-o" title="{tr:select_for_archive_download}"></span>
+            <?php if($canDownloadArchive) { ?>
+                <span class="select clickable fa fa-2x fa-square-o" title="{tr:select_for_archive_download}"></span>
+            <?php } ?>
             <span class="name"><?php echo Utilities::sanitizeOutput($file->path) ?></span>
             <span class="size"><?php echo Utilities::formatBytes($file->size) ?></span>
             <span class="download_decryption_disabled"><br/>{tr:file_encryption_disabled}</span>
@@ -116,7 +138,7 @@
                 <span class="fa fa-2x fa-download"></span>
                 {tr:download}
             </a>
-            <span class="downloadprogress"></span>
+            <span class="downloadprogress"/>
         </div>
     <?php } ?>
         <?php if($canDownloadArchive) { ?>
@@ -133,13 +155,15 @@
                 {tr:archive_download}
             </a>
             </div>
+            <?php if($canDownloadAsTar) { ?>
             <div class="archive_tar_download_frame">
             <a rel="nofollow" href="<?php echo Utilities::sanitizeOutput($archiveDownloadLink) ?>" class="archive_tar_download" title="{tr:archive_tar_download}">
                 <span class="fa fa-2x fa-download"></span>
                 {tr:archive_tar_download}
             </a>
             </div>
-            <span class="downloadprogress"></span>
+            <?php } ?>    
+            <span class="downloadprogress"/>
         </div>
     <?php } ?>    
         <div class="transfer" data-id="<?php echo $transfer->id ?>"></div>

@@ -24,6 +24,38 @@ $transfers_page = function($status) {
             $selector .= " AND id >= $idmin AND id <= $idmax ";
         }
     }
+    $senderemail_full_match = Utilities::arrayKeyOrDefault( $_GET, 'senderemail_full_match', '', FILTER_VALIDATE_BOOLEAN );
+    $senderemail = Utilities::arrayKeyOrDefault( $_GET, 'senderemail', '' );
+    // if this is a full match then we can filter the email string.
+    if( $senderemail_full_match ) 
+        $senderemail = Utilities::arrayKeyOrDefault( $_GET, 'senderemail', '', FILTER_VALIDATE_EMAIL );
+    
+    if( $status == 'search' ) {
+        
+        if( $senderemail != '' && strlen($senderemail) ) {
+            // Note that we are using semi validated data from above
+            // and that this is an admin only page, so hacking is less likely.
+            if( $senderemail_full_match ) {
+                $selector .= " AND user_email = '$senderemail' ";
+            } else {
+                if( substr_compare($senderemail, '%', 0, 1 )) {
+                    $senderemail = '%'.$senderemail;
+                }
+                if( substr_compare($senderemail, '%', -1, 1 )) {
+                    $senderemail = $senderemail.'%';
+                }
+                
+                $selector .= " AND user_email LIKE '$senderemail' ";
+            }
+        } else {
+            if( $senderemail_full_match ) {
+                if( strlen(Utilities::arrayKeyOrDefault( $_GET, 'senderemail', '' ))) {
+                    // the email didn't validate so show no search results.
+                    $selector .= ' and id < 0 ';
+                }
+            }
+        }
+    }
         
     $offset = array_key_exists($status.'_tpo', $_REQUEST) ? (int)$_REQUEST[$status.'_tpo'] : 0;
     $offset = max(0, $offset);
@@ -107,6 +139,7 @@ $idmax = Utilities::arrayKeyOrDefault( $_GET, 'idmax', -1, FILTER_VALIDATE_INT  
 if( $idmax == -1 ) {
     $idmax = '';
 }
+
 ?>
 <fieldset class="search">
     <label for="idmin" class="mandatory">{tr:minimum}</label>
@@ -114,6 +147,29 @@ if( $idmax == -1 ) {
     <label for="idmax" class="mandatory">{tr:maximum}</label>
     <input type="text" name="idmax" value="<?php echo $idmax ?>" />
     <input type="button" name="idbutton" value="{tr:search}" />
+</fieldset>
+
+
+<?php
+$senderemail_full_match = Utilities::arrayKeyOrDefault( $_GET, 'senderemail_full_match', '', FILTER_VALIDATE_BOOLEAN );
+$senderemail = Utilities::arrayKeyOrDefault( $_GET, 'senderemail', '' );
+if( $senderemail_full_match ) 
+    $senderemail = Utilities::arrayKeyOrDefault( $_GET, 'senderemail', '', FILTER_VALIDATE_EMAIL );
+
+$senderemail_full_match_extra = '';
+if( $senderemail_full_match ) {
+    $senderemail_full_match_extra = ' checked ';
+}
+echo "<p>{tr:search_transfer_by_sender_email_description}</p>\n";
+?>
+<fieldset class="search">
+    <input id="senderemail_full_match" name="senderemail_full_match" type="checkbox" <?php echo $senderemail_full_match_extra ?>>  
+    <label for="senderemail_full_match" style="cursor: pointer;">{tr:email_full_match_search}</label>
+</fieldset>
+<fieldset class="search">
+    <label for="senderemail" class="mandatory">{tr:sender_email_search}</label>
+    <input type="text" name="senderemail" size="60" value="<?php echo $senderemail ?>" />
+    <input type="button" name="idbuttonse" value="{tr:search}" />
 </fieldset>
 <?php 
 $transfers_page('search');

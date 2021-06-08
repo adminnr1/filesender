@@ -189,7 +189,15 @@ class RestEndpointUser extends RestEndpoint
         }
         
         if ($property == 'frequent_recipients') {
-            throw new RestUsePOSTException();
+            // Throwing an exception for this bad access case is
+            // a bit of overkill, frequent_recipients are not a
+            // critical feature so it might be better to fallback
+            // to just offering nothing if they access things via
+            // GET instead of POST.
+            return array(
+                'path' => '/user/user',
+                'data' => ''
+            );
         }
         
         if ($property == 'quota') {
@@ -318,7 +326,22 @@ class RestEndpointUser extends RestEndpoint
                 $user->authSecretDelete();
             }
         }
-        
+        if( $data->clear_frequent_recipients ) {
+            $user->frequent_recipients = null;
+            $user->save();
+        }
+        if( $data->clear_user_transfer_preferences ) {
+            $user->transfer_preferences = null;
+            $user->save();
+        }
+        if( $data->exists('guest_expiry_default_days')) {
+            if (!Auth::isAdmin()) {
+                throw new RestAdminRequiredException();
+            }
+            $user->guest_expiry_default_days = $data->guest_expiry_default_days;
+            $user->save();
+            
+        }
         return true;
     }
 

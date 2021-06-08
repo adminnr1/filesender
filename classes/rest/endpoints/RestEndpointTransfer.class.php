@@ -443,6 +443,7 @@ class RestEndpointTransfer extends RestEndpoint
                     }
                 }
             }
+
             
             // Must have files ...
             if (!count($data->files)) {
@@ -463,6 +464,7 @@ class RestEndpointTransfer extends RestEndpoint
             $options = array(
                 TransferOptions::GET_A_LINK => $allOptions[TransferOptions::GET_A_LINK]['default'],
                 TransferOptions::ADD_ME_TO_RECIPIENTS => $allOptions[TransferOptions::ADD_ME_TO_RECIPIENTS]['default'],
+                TransferOptions::EMAIL_RECIPIENT_WHEN_TRANSFER_EXPIRES => $allOptions[TransferOptions::EMAIL_RECIPIENT_WHEN_TRANSFER_EXPIRES]['default'],
             );
             
             foreach ($allOptions as $name => $dfn) {
@@ -480,6 +482,14 @@ class RestEndpointTransfer extends RestEndpoint
             }
             
             $options['encryption'] = $data->encryption;
+
+            // check if encryption is mandatory but the user tried to disable it
+            if( Principal::isEncryptionMandatory()) {
+                if( !$data->encryption ) {
+                    throw new TransferMustBeEncryptedException();
+                }
+            }
+
 
             Logger::info($options);
             // Get_a_link transfers have no recipients so mail related options make no sense, remove them if set
@@ -585,10 +595,33 @@ class RestEndpointTransfer extends RestEndpoint
                     throw new TransferUserQuotaExceededException();
                 }
             }
+
+            // See if the user who invited this guest should be able to see
+            // this particular transfer from the guest.
+            $guest_transfer_shown_to_user_who_invited_guest = true;
+            if (Auth::isGuest()) {
+
+                $user_can_only_view_guest_transfers_shared_with_them = Config::get('user_can_only_view_guest_transfers_shared_with_them');
+                if( $user_can_only_view_guest_transfers_shared_with_them ) {
+                    if( !$guest->getOption(GuestOptions::CAN_ONLY_SEND_TO_ME)) {
+                        $user_who_invited_guest_in_recipients = false;
+                        foreach ($data->recipients as $email) {
+                            if( $email == $guest->user_email ) {
+                                $user_who_invited_guest_in_recipients = true;
+                                break;
+                            }
+                        }
+                        $guest_transfer_shown_to_user_who_invited_guest = $user_who_invited_guest_in_recipients;
+                    }
+                }
+            }
+            
             
             // Every check went well, create the transfer
             $expires = $data->expires ? $data->expires : Transfer::getDefaultExpire();
             $transfer = Transfer::create($expires, $guest ? $guest->email : $data->from);
+
+            $transfer->guest_transfer_shown_to_user_who_invited_guest = $guest_transfer_shown_to_user_who_invited_guest;
             
             // Set additional data
             if ($data->subject) {
@@ -659,6 +692,18 @@ class RestEndpointTransfer extends RestEndpoint
                 $file = $transfer->addFile($filedata->name, $filedata->size, $filedata->mime_type,
                                            $filedata->iv, $filedata->aead );
                 $files_cids[$file->id] = $filedata->cid;
+            }
+
+            // recheck that get_a_link is not being attempted
+            // if the guest can_only_send_to_me.
+            if ($transfer->getOption(TransferOptions::GET_A_LINK)) {
+                if($guest && $guest->getOption(GuestOptions::CAN_ONLY_SEND_TO_ME)) {
+                    
+                    Logger::warn("nefarious activity suspected: A guest with id " . $guest->id
+                               . " has sent a request without get_a_link=true and they"
+                               . " are only allowed to send to the user who invited them.");
+                    throw new TransferRejectedException('{invalid_options}');
+                }
             }
             
             // Add recipient(s) depending on options
@@ -795,7 +840,7 @@ class RestEndpointTransfer extends RestEndpoint
             
             // Need to extend expiry date
             if ($data->extend_expiry_date) {
-                $transfer->extendExpiryDate();
+                $transfer->extendObjectExpiryDate();
             }
             
             // Need to remind the transfer's availability to its recipients ?
