@@ -177,9 +177,7 @@ EOT;
     
     ?>
     
-    <!-- <h2>Python CLI Client</h2>
-    <a href="clidownload.php" target="_blank">{tr:download} Python CLI Client</a> -->
-  
+
     <h2>{tr:actions}</h2>
 
         {tr:user_profile_send_client_logs_description_text}

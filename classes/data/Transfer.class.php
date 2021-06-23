@@ -497,14 +497,7 @@ class Transfer extends DBObject
              . " g.userid   = :userid AND (g.expires is null or g.expires > :date) AND "
              . " t.guest_id = g.id    AND t.status  = 'available' ";
         if( $user_can_only_view_guest_transfers_shared_with_them ) {
-            // filter back to only transfers that are can_only_send_to_me for the user
-            // or that the guest explicitly included the email of the user in the recipients
-            // Note Frans: Still a bug in the mastercode. You have to change te table name to Recipients
-            $sql .= " AND ( ";
-            $sql .= " g.options like '%". '"can_only_send_to_me":true' . "%'  ";
-            $sql .= "    or t.id in ( select transfer_id from " . Recipient::getDBTable() . " ";
-            $sql .= "                 where transfer_id = t.id and email = g.user_email ) ";
-            $sql .= " ) ";
+            $sql .= " and t.guest_transfer_shown_to_user_who_invited_guest ";
         }
         $sql .= " order by t.created desc ";
         $statement = DBI::prepare($sql);
