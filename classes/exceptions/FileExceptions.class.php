@@ -91,6 +91,8 @@ class FileInvalidMimeTypeException extends DetailedException
     }
 }
 
+
+
 /**
  * Generic identified file exception
  */
