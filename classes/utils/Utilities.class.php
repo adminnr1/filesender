@@ -713,10 +713,7 @@ class Utilities
         return $v;
     }
 
-<<<<<<< HEAD
-=======
 
->>>>>>> master-filesender-2.30
     /**
      * Ensure that $v passes the regex from $config_key_for_regex 
      * or throw the $excep exception
@@ -744,8 +741,5 @@ class Utilities
         }
         return $v;
     }
-<<<<<<< HEAD
-=======
 
->>>>>>> master-filesender-2.30
 }

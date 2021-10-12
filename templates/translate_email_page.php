@@ -1,4 +1,4 @@
-<div class="box-trans">
+<div class="box">
 <?php
     if(!array_key_exists('token', $_REQUEST))
         throw new TokenIsMissingException();

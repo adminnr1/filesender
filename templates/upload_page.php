@@ -177,14 +177,14 @@ if( $encryption_mandatory ) {
                         <?php } else { ?>
                         <div class="recipients"></div>
                         
-                        <input name="to" id="to" type="email" multiple title="{tr:email_separator_msg}" value="" placeholder="{tr:enter_to_email}" size="58"/>
+                        <input name="to" id="to" type="email" multiple title="{tr:email_separator_msg}" value="" placeholder="{tr:enter_to_email}" />
                         <?php } ?>
                     </div>
                     
                     <div class="fieldcontainer" data-related-to="message">
                         <label for="subject">{tr:subject} ({tr:optional}) :</label>
                         
-                        <input id="subject" name="subject" type="text" size="58"/>
+                        <input id="subject" name="subject" type="text"/>
                     </div>
                     
                     <div class="fieldcontainer" data-related-to="message">
