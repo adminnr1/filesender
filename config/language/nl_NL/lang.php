@@ -11,3 +11,5 @@ $lang['undergoing_maintenance'] = 'Deze dienst is op dit moment in onderhoud. Pr
 $lang['service_aup_body_version_1'] = '<a href="https://www.surf.nl/huisregels-surffilesender" target="_blank">Ik ga akkoord met de huisregels wanneer ik deze dienst gebruik.</a><p>';
 $lang['must_be_logged_in_to_download'] = 'Gebruiker moet aanmelden om te downloaden';
 $lang['service_aup_header'] = '{cfg:site_name} huisregels';
+$lang['crypto_pbkdf2_dialog_with_expected'] = '{cfg:site_name} genereert een sleutel uit uw wachtwoord, dit dialoogvenster zal automatisch sluiten wanneer de sleutel wordt gemaakt. Het genereren van een sleutel is een computationeel dure operatie om mensen af te schrikken van het proberen om wachtwoorden te raden. <br/>De verwachte vertraging is {seconds} seconden.';
+
