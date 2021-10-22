@@ -68,7 +68,7 @@
                                 $opts[] = '<option value="'.$id.'" '.$selected.'>'.Utilities::sanitizeOutput($dfn['name']).'</option>';
                             }
                         
-                            echo '<li><label>'.Lang::tr('user_lang').'</label><select id="language_selector">'.implode('', $opts).'</select></li>';
+                            echo '<li><label>'.Lang::tr('user_lang').' </label><select id="language_selector">'.implode('', $opts).'</select></li>';
                             echo '</ul></div></div>';
                         }
                         ?>
