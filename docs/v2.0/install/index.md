@@ -31,7 +31,7 @@ you can report issues with and update the documentation.
 
 ### Dependencies
 
-* Apache (or nginx) and PHP version 7.2 or later.
+* Apache (or nginx) and PHP version 7.3 or later.
 * A PostgreSQL or MariaDB database (10.0 or above, 10.2 or later recommended).
 * A big filesystem (or cloud backed).
 * [SimpleSamlPhp](https://simplesamlphp.org/download) 1.17.1 or newer.
@@ -277,7 +277,11 @@ edit config/config.php
   'showerrors' => false,
   'errorreporting' => false,
    ...
-  'session.cookie.secure' => true, // https site only!
+  'session.cookie.secure' => true,        // https site only!
+  'session.cookie.samesite' => 'Strict',  // cookie option SameSite=Strict
+  'session.phpsession.httponly' => true,  // cookie option HttpOnly
+  
+  
    ...
   'admin.protectindexpage' => true,
   'admin.protectmetadata' => true,
@@ -302,7 +306,7 @@ cd config
 SALT=$(LC_CTYPE=C tr -c -d '0123456789abcdefghijklmnopqrstuvwxyz' </dev/urandom | dd bs=32 count=1 2>/dev/null;echo);
 sed -i -e "s@'secretsalt' => 'defaultsecretsalt'@'secretsalt' => '$SALT'@g" config.php
 
-HASH=$(echo $PASS | ../bin/pwgen.php | tail -2 | head -1 | cut -c3-200);
+HASH=$(echo $PASSWORD | ../bin/pwgen.php | tail -2 | head -1 | cut -c3-200);
 sed -i -e "s@'auth.adminpassword' => '123'@'auth.adminpassword' => '$HASH'@g" config.php
 
 ```
@@ -673,11 +677,13 @@ Ensure the php temporary upload directory points to a location with enough space
 
 Turn on logging:
 
-	log_errors = on error_log = syslog
+        log_errors = on
+        error_log = syslog
 
 Enable secure cookie handling to protect sessions:
 
-	session.cookie_secure = On session.cookie_httponly = On
+        session.cookie_secure = On
+        session.cookie_httponly = On
 
 Reload your Apache server to activate the changes to your php.ini.
 
@@ -711,6 +717,29 @@ Run:
 # cp config-templates/cron/filesender /etc/cron.daily/filesender
 # chmod +x /etc/cron.daily/filesender
 ```
+
+# Step 10b - Install some python dependancies if you wish to use the filesender.py command line client
+
+The filesender.py script uses some extra libraries. These can be installed either
+through your distribution packages or directly with the pip command as shown below.
+
+```
+pip3 install requests urllib3
+```
+
+On a Fedora based distribution you might install these with:
+```
+dnf install python3-requests python3-urllib3
+```
+
+On a Debian based distribution you might install these with:
+```
+apt-get install python3-requests python3-urllib3
+```
+
+
+
+
 
 # Step 11 - Optional local about, help, and landing pages
 
@@ -817,9 +846,9 @@ If you don't want your users to have to type `/filesender` after the hostname, y
 
 	RedirectMatch ^/(?!filesender/|simplesaml/)(.*) https://filesender.example.org/filesender/$1
 
-# Support and Feedback
 
-See [Support and Mailing
-lists](https://www.assembla.com/wiki/show/file_sender/Support_and_Mailinglists)
-and [Feature
-requests](https://www.assembla.com/wiki/show/file_sender/Feature_requests).
+## Issues and Bugs
+
+Please inspect and report bugs on the [GitHub Issue
+Tracker](https://github.com/filesender/filesender/issues)
+

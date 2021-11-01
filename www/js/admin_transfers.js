@@ -34,10 +34,13 @@ $(function() {
     var section = $('#page.admin_page .transfers_section');
     if(!section.length) return;
 
-    var idbutton = section.find('.search [name="idbutton"]').prop('disabled', true);
-    var idmin    = section.find('.search [name="idmin"]');
-    var idmax    = section.find('.search [name="idmax"]');
+    var idbutton   = section.find('.search [name="idbutton"]').prop('disabled', true);
+    var idmin      = section.find('.search [name="idmin"]');
+    var idmax      = section.find('.search [name="idmax"]');
 
+    var idbuttonse  = section.find('.search [name="idbuttonse"]').prop('disabled', false);
+    var senderemail = section.find('.search [name="senderemail"]');
+    var senderemail_full_match = section.find('.search [name="senderemail_full_match"]');
     
     var idsearch = function() {
         //alert(idmin.val());
@@ -69,6 +72,25 @@ $(function() {
             idsearch();
     });
 
-    idbutton.on('click', function() { idsearch(); });
+    idbutton.on('click',   function() { idsearch(); });
+
+
+    var search_senderemail = function() {
+        var full_match = senderemail_full_match.is(':checked');
+        
+        filesender.ui.redirect( filesender.config.base_path
+                                + '?s=admin&as=transfers'
+                                + '&senderemail=' + senderemail.val()
+                                + '&senderemail_full_match=' + full_match
+                              );
+    }
+    
+    idbuttonse.on('click', function() { search_senderemail(); } );
+    senderemail.keypress(function (e) {
+        if (e.which == 13) {
+            search_senderemail();
+            return false;
+        }
+    });    
     ideval();
 });

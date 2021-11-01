@@ -63,6 +63,7 @@ class RestEndpointGuest extends RestEndpoint
             'created' => RestUtilities::formatDate($guest->created),
             'expires' => RestUtilities::formatDate($guest->expires),
             'upload_url' => $guest->upload_link,
+            'expiry_date_extension' => $guest->expiry_date_extension,
             'errors' => array_values(array_map(function ($error) {
                 return array(
                     'type' => $error->type,
@@ -165,6 +166,10 @@ class RestEndpointGuest extends RestEndpoint
         // User who is creating the new guest
         $user = Auth::user();
 
+        if(!Config::get('guest_support_enabled')) {
+            throw new GuestSystemDisabledException($user);
+        }
+
         // Raw guest data
         $data = $this->request->input;
 
@@ -235,15 +240,26 @@ class RestEndpointGuest extends RestEndpoint
                 }
             }
         }
+        // ensure that this option is explicit in the transfer options
+        // based on the guest options.
+        if( $guest->getOption(GuestOptions::CAN_ONLY_SEND_TO_ME)) {
+            $transfer_options[TransferOptions::GET_A_LINK] = false;
+        }
+        
         $guest->transfer_options = $transfer_options;
         
         // Set expiry date
-        $expires = $data->expires ? $data->expires : Guest::getDefaultExpire();
+        $expires = $guest->getDefaultExpire();
+        if( $data->expires ) {
+            $expires = max( $expires, $data->expires );
+        }
         $guest->expires = $expires;
-        
+
         if($guest->does_not_expire) {
             $guest->expires = null;
         }
+
+
         
         // Make guest available, this saves the object and send email to the guest
         $guest->makeAvailable();
@@ -299,6 +315,16 @@ class RestEndpointGuest extends RestEndpoint
         if ($data->remind) {
             $guest->remind();
         }
+
+        // Need to extend expiry date
+        if ($data->extend_expiry_date) {
+            if( !Auth::isAdmin()) {
+                throw new RestAdminRequiredException();
+            }
+            $guest->extendObjectExpiryDate();
+            return self::cast($guest);
+        }
+        
         
         return true;
     }

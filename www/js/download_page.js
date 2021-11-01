@@ -63,8 +63,9 @@ $(function() {
         selectors.push(el.find('.fa'));
         selectors.toggleClass('fa-square-o', !selected).toggleClass('fa-check-square-o', selected);
     });
+
     
-    
+   
     // Get recipient token
     var m = window.location.search.match(/token=([0-9a-f-]+)/);
     var token = m[1];
@@ -91,31 +92,127 @@ $(function() {
                     filesender.ui.alert('error', lang.tr('file_encryption_description_disabled'));
                     return;
                 }
-                
-                var filename    = $($this).find("[data-id='" + ids[0] + "']").attr('data-name');
-                var mime        = $($this).find("[data-id='" + ids[0] + "']").attr('data-mime');
-                var key_version = $($this).find("[data-id='" + ids[0] + "']").attr('data-key-version');
-                var salt        = $($this).find("[data-id='" + ids[0] + "']").attr('data-key-salt');
-                var password_version  = $($this).find("[data-id='" + ids[0] + "']").attr('data-password-version');
-                var password_encoding = $($this).find("[data-id='" + ids[0] + "']").attr('data-password-encoding');
-                var password_hash_iterations = $($this).find("[data-id='" + ids[0] + "']").attr('data-password-hash-iterations');
-                var client_entropy = $($this).find("[data-id='" + ids[0] + "']").attr('data-client-entropy');
-                var fileiv   = $($this).find("[data-id='" + ids[0] + "']").attr('data-fileiv');
-                var fileaead = $($this).find("[data-id='" + ids[0] + "']").attr('data-fileaead');
-                if( fileaead.length ) {
-                    fileaead = atob(fileaead);
+
+                var crypto_app = window.filesender.crypto_app();
+
+                if( window.filesender.config.use_streamsaver ) {
+                    var streamsaverenabled = page.find('#streamsaverenabled').is(':checked');
+                    crypto_app.disable_streamsaver = !streamsaverenabled;
                 }
-                window.filesender.crypto_app().decryptDownload( filesender.config.base_path
-                                                                + 'download.php?token=' + token
-                                                                + '&files_ids=' + ids.join(','),
-                                                                mime, filename, key_version, salt,
-                                                                password_version, password_encoding,
-                                                                password_hash_iterations,
-                                                                client_entropy,
-                                                                window.filesender.crypto_app().decodeCryptoFileIV(fileiv),
-                                                                fileaead,
-                                                                progress);
-            }else{
+                console.log("download page has worked out if streamsaver should be disabled: " , crypto_app.disable_streamsaver );
+
+                if( archive_format || ids.length > 1 ) {
+                    //
+                    // Stream encrypted files to browser and add the decrypted content
+                    // into a zip64 file in the browser.
+                    //
+                    var onFileOpen = function( blobSink, fileid )
+                    {
+                        var progress = $($this).find("[data-id='" + fileid + "']").find('.downloadprogress');
+                        progress.html("");
+                        blobSink.progress = progress;
+
+                        var overall = $($this).find(".archive_message");
+
+
+                        var msg = lang.tr('encrypted_archive_download_overall_progress').r(
+                            {
+                                id: 0
+                                , currentfilenumber:    blobSink.currentFileNumber+1
+                                , totalfilestodownload: blobSink.totalFilesToDownload
+                            }).out();
+                        overall.html(msg);
+                    };
+                    var onFileClose = function( blobSink, fileid )
+                    {
+                        var progress = $($this).find("[data-id='" + fileid + "']").find('.downloadprogress');
+                        progress.html(window.filesender.config.language.download_complete);
+                        
+                    };
+                    var onComplete = function( blobSink )
+                    {
+                        var overall = $($this).find(".archive_message");
+                        overall.html(window.filesender.config.language.download_complete);
+                    };
+
+                    // generate zip in browser from decrypted files.
+                    var selectedFiles = [];
+                    var i = 0;
+                    for(; i < ids.length; i++ ) {
+
+                        var fileaead = $($this).find("[data-id='" + ids[i] + "']").attr('data-fileaead');
+                        var key_version = $($this).find("[data-id='" + ids[i] + "']").attr('data-key-version');
+                        var fileivcoded = $($this).find("[data-id='" + ids[i] + "']").attr('data-fileiv');
+                        var transferid = $('.transfer').attr('data-id');
+                        
+                        selectedFiles.push({
+                            fileid:ids[i]
+                            , filename:$($this).find("[data-id='" + ids[i] + "']").attr('data-name')
+                            , filesize:$($this).find("[data-id='" + ids[i] + "']").attr('data-size')
+                            , encrypted_filesize:$($this).find("[data-id='" + ids[i] + "']").attr('data-encrypted-size')
+                            , mime:$($this).find("[data-id='" + ids[i] + "']").attr('data-mime')
+                            , key_version:$($this).find("[data-id='" + ids[i] + "']").attr('data-key-version')
+                            , salt:$($this).find("[data-id='" + ids[i] + "']").attr('data-key-salt')
+                            , password_version:$($this).find("[data-id='" + ids[i] + "']").attr('data-password-version')
+                            , password_encoding:$($this).find("[data-id='" + ids[i] + "']").attr('data-password-encoding')
+                            , password_hash_iterations:$($this).find("[data-id='" + ids[i] + "']").attr('data-password-hash-iterations')
+                            , client_entropy:$($this).find("[data-id='" + ids[i] + "']").attr('data-client-entropy')
+                            , fileiv:window.filesender.crypto_app().decodeCryptoFileIV(fileivcoded,key_version)
+                            , fileaead:fileaead.length?atob(fileaead):null
+                            , transferid:transferid
+                        });
+
+                        // clear any previous progress message
+                        var progress = $($this).find("[data-id='" + ids[i] + "']").find('.downloadprogress');
+                        progress.html("");
+                    }
+                    crypto_app.decryptDownloadToZip( filesender.config.base_path
+                                                     + 'download.php?token=' + token
+                                                     + '&files_ids='
+                                                     , transferid
+                                                     , selectedFiles
+                                                     , progress
+                                                     , onFileOpen, onFileClose, onComplete
+                                                   );
+
+                    
+                }
+                else
+                {
+                    // single file download
+                    var transferid  = $('.transfer').attr('data-id');
+                    var filename    = $($this).find("[data-id='" + ids[0] + "']").attr('data-name');
+                    var filesize    = $($this).find("[data-id='" + ids[0] + "']").attr('data-size');
+                    var encrypted_filesize=$($this).find("[data-id='" + ids[0] + "']").attr('data-encrypted-size');
+                    var mime        = $($this).find("[data-id='" + ids[0] + "']").attr('data-mime');
+                    var key_version = $($this).find("[data-id='" + ids[0] + "']").attr('data-key-version');
+                    var salt        = $($this).find("[data-id='" + ids[0] + "']").attr('data-key-salt');
+                    var password_version  = $($this).find("[data-id='" + ids[0] + "']").attr('data-password-version');
+                    var password_encoding = $($this).find("[data-id='" + ids[0] + "']").attr('data-password-encoding');
+                    var password_hash_iterations = $($this).find("[data-id='" + ids[0] + "']").attr('data-password-hash-iterations');
+                    var client_entropy = $($this).find("[data-id='" + ids[0] + "']").attr('data-client-entropy');
+                    var fileiv   = $($this).find("[data-id='" + ids[0] + "']").attr('data-fileiv');
+                    var fileaead = $($this).find("[data-id='" + ids[0] + "']").attr('data-fileaead');
+                    if( fileaead.length ) {
+                        fileaead = atob(fileaead);
+                    }
+                    
+                    crypto_app.decryptDownload( filesender.config.base_path
+                                                + 'download.php?token=' + token
+                                                + '&files_ids=' + ids.join(','),
+                                                transferid,
+                                                mime, filename, filesize, encrypted_filesize,
+                                                key_version, salt,
+                                                password_version, password_encoding,
+                                                password_hash_iterations,
+                                                client_entropy,
+                                                window.filesender.crypto_app().decodeCryptoFileIV(fileiv,key_version),
+                                                fileaead,
+                                                progress );
+                }
+            }
+            else
+            {
                 var notify = false;
                 dlcb( notify ).call();
             }
@@ -127,15 +224,15 @@ $(function() {
         var id = $(this).closest('.file').attr('data-id');
         var encrypted = $(this).closest('.file').attr('data-encrypted');
         var progress = $(this).closest('.file').find('.downloadprogress');
+        
         var transferid = $('.transfer').attr('data-id');
 
         filesender.client.getTransferOption(transferid, 'enable_recipient_email_download_complete', token, function(dl_complete_enabled){
-            dl(id, dl_complete_enabled, encrypted, progress);
-        });
-        
+            dl(id, dl_complete_enabled, encrypted, progress );
+        });        
         return false;
     });
-
+    
     var dlArchive = function( archive_format ) {
         var ids = [];
         page.find('.file[data-selected="1"]').each(function() {
@@ -150,9 +247,10 @@ $(function() {
         
         
         var transferid = $('.transfer').attr('data-id');
+        var encrypted = $('.transfer_is_encrypted').text()==1;
         
         filesender.client.getTransferOption(transferid, 'enable_recipient_email_download_complete', token, function(dl_complete_enabled){
-            dl(ids, dl_complete_enabled, null, null, archive_format );
+            dl(ids, dl_complete_enabled, encrypted, null, archive_format );
         });
         
         return false;

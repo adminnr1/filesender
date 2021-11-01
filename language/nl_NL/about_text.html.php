@@ -7,28 +7,4 @@
 // 
 // 
 ?>
-<h1>Welkome bij {cfg:site_name}</h1>
-<div style="padding: 5px; text-align: left;">
-<p>
-    {cfg:site_name} is een installatie van 
-    het FileSender project (<a rel="nofollow" href="http://filesender.org/" target="_blank">filesender.org</a>).
-    {cfg:site_name} is een webgebaseerde applicatie waarmee 
-    geauthenticeerde gebruikers veilig en gemakkelijk willekeurig 
-    grote bestanden naar andere gebruikers kunnen verzenden. 
-</p>
-<p>
-    Verificatie van gebruikers vindt plaats via <a rel="nofollow" href="http://simplesamlphp.org/" target="_blank">
-    SimpleSAMLphp</a>, en ondersteunt SAML2, LDAP en RADIUS en meer. 
-    Gebruikers zonder account kunnen een gastvoucher ontvangen van een 
-    geverifieerde gebruiker. 
-    {cfg:site_name} is ontwikkeld volgens de wensen en eisen van 
-    onderwijs en onderzoek.
-</p>
-<p>
-    Het doel van de software is om een ​​groot bestand naar iemand te versturen, 
-    dat bestand beschikbaar te stellen voor download voor een bepaald 
-    aantal downloads en / of een bepaalde hoeveelheid tijd, en daarna het 
-    bestand automatisch te verwijderen. De software is niet bedoeld als een 
-    permanent platform voor het ter beschikking stellen van bestanden.
-</p>
-</div>
+<div style="padding: 5px; text-align: left;">{cfg:site_name} is een instantie van FileSender (<a rel="nofollow" href="http://filesender.org/" target="_blank">filesender.org</a>), ontwikkeld om te voldoen aan de eisen van de hoger onderwijs- en onderzoeksgemeenschap.</div>

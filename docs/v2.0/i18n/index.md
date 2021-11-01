@@ -175,13 +175,13 @@ of day is not included.
 
 In March 2019 the format of date_format and datetime_format was
 changed from using the old
-[https://www.php.net/manual/en/function.date.php](php date format) to
-using the [https://www.php.net/manual/en/function.strftime.php](php
-strftime format). You can know which format your configuration is
+[php date format](https://www.php.net/manual/en/function.date.php) to
+using the [php
+strftime format](https://www.php.net/manual/en/function.strftime.php). You can know which format your configuration is
 using because the newer format uses the % sign to select items to
 format. This move was done to allow improved formatting in non English
 languages as recommended by the
-[https://www.php.net/manual/en/function.date.php](php date page).
+[php date page](https://www.php.net/manual/en/function.date.php).
 One advantage as an example is being able to use '%A' to display
 the day of week in the current language. 
 
@@ -190,8 +190,7 @@ experience will be improved if the date_format and dp_date_format
 both present dates in the same way for a locale. 
 For the datepicker jquery item the dp_date_format is used. The format
 for dp_date_format follows the information for the
-[http://api.jqueryui.com/datepicker/#utility-formatDate](jquery
-datepicker widget).
+[jquery datepicker widget](http://api.jqueryui.com/datepicker/#utility-formatDate).
 
 ```
 $lang['date_format'] = '%d/%m/%Y';
@@ -657,6 +656,11 @@ Once you are happy with the update, by using git diff for example, you
 should commit the branch and push to github to make a pull request to
 merge the changes to the main repository.
 
+The translations from poeditor can also be brought into the ./language
+directory for all languages using the scripts in scripts/language in
+particular the import-all-from-poeditor.sh script.
+
+
 ### Adding more single translation files
 
 Some translations are stored in the lang.php file and some are stored
@@ -716,7 +720,15 @@ cd scripts/language
 ./export-terms-to-new-and-deleted-lists.sh
 ```
 
-The newterms.json file can them be imported using the "Import terms"
+If you have setup ~/.filesender/poeditor-apikey to allow write access to poeditor
+then the newterms.json file can be imported using the command line. See the README.md file
+in scripts/language for information about setting up the ~/.filesender/poeditor-apikey file.
+
+```
+send-newterms-json-to-poeditor.sh 48000 /tmp/newterms.json
+```
+
+The newterms.json file can also be imported using the "Import terms"
 menu item on poeditor. This option is about the third icon on the
 right menu of the poeditor web site as of 2018. After selecting the
 newterms.json file you will see how many terms were parsed and how

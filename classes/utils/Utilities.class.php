@@ -170,7 +170,7 @@ class Utilities
      */
     public static function isValidFileName($filename)
     {
-        return preg_match('/' .  Config::get('valid_filename_regex') . '/u', $filename);
+        return preg_match('/' .  Config::get('valid_filename_regex') . '$/u', $filename);
     }
 
     
@@ -437,6 +437,23 @@ class Utilities
     {
         return $v == '1' || $v == 'true';
     }
+    public static function isFalse($v)
+    {
+        return !self::isTrue($v);
+    }
+    public static function boolToString($v)
+    {
+        if( $v == '1' || $v == 'true' ) {
+            return 'true';
+        }
+        return 'false';
+    }
+    public static function toInt($v, $def) {
+        if(!is_numeric($v)) {
+            return $def;
+        }
+        return intval($v);
+    }
 
     /**
      * This is a wrapper around the PHP http_build_query with some
@@ -687,4 +704,42 @@ class Utilities
         }
         return $ret;
     }
+
+    public static function clampMin( $v, $min ) 
+    {
+        $v = self::toInt($v,$min);
+        if( $v < $min ) 
+            return $min;
+        return $v;
+    }
+
+
+    /**
+     * Ensure that $v passes the regex from $config_key_for_regex 
+     * or throw the $excep exception
+     *
+     */
+    public static function valuePassesConfigRegexOrThrow( $v, $config_key_for_regex, $excep )
+    {
+        $r = Config::get($config_key_for_regex);
+        if ($r != '' && preg_match('`'.$r.'`', $v) === 0) {
+            throw new $excep($v);
+        }
+        return $v;
+    }
+
+    /**
+     * Ensure that $v passes the regex from $config_key_for_regex or return $def.
+     * If things go well return $v. 
+     *
+     */
+    public static function valuePassesConfigRegexOrDefault( $v, $config_key_for_regex, $def )
+    {
+        $r = Config::get($config_key_for_regex);
+        if ($r != '' && preg_match('`'.$r.'`', $v) === 0) {
+            return $def;
+        }
+        return $v;
+    }
+
 }

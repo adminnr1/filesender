@@ -83,13 +83,17 @@ class GUI
 
     public static function browser_is_ie11()
     {
-        return preg_match("@MSIE@i", $_SERVER['HTTP_USER_AGENT'] )
-          ||   preg_match("@Trident/@i", $_SERVER['HTTP_USER_AGENT'] );
+        if (isset($_SERVER['HTTP_USER_AGENT'])) {
+            return preg_match("@MSIE@i", $_SERVER['HTTP_USER_AGENT'] )
+              ||   preg_match("@Trident/@i", $_SERVER['HTTP_USER_AGENT'] );
+        }
     }
     
     public static function browser_is_edge()
     {
-        return preg_match("@ Edge/@i", $_SERVER['HTTP_USER_AGENT'] );
+        if (isset($_SERVER['HTTP_USER_AGENT'])) {
+            return preg_match("@ Edge/@i", $_SERVER['HTTP_USER_AGENT'] );
+        }
     }
 
     public static function use_webasm_pbkdf2_implementation()
@@ -104,24 +108,37 @@ class GUI
      */
     public static function scripts()
     {
-        $sources = array(
-            'lib/jquery/jquery.min.js',
-            'lib/jquery-ui/jquery-ui.min.js',
-            'lib/promise-polyfill/polyfill.min.js',
-            'lib/webcrypto-shim/webcrypto-shim.min.js',
-            'js/filesender.js',
-            'js/lang.js',
-            'js/client.js',
-            'js/transfer.js',
-            'js/logger.js',
-            'js/ui.js',
-            'js/FileSaver.js',
-            'js/crypter/crypto_common.js',
-            'js/crypter/crypto_blob_reader.js',
-            'js/crypter/crypto_app.js',
-            'js/pbkdf2dialog.js',
-            'lib/xregexp/xregexp-all.js'
+        $sources = array();
+        
+        if( Browser::instance()->allowStreamSaver ) {
+            array_push( $sources,
+                        'lib/streamsaver/StreamSaver.js',
+                        'js/crypter/streamsaver_sink.js',
+                        'js/crc32handler.js',
+                        'js/zip64handler.js'
+            );
+        }
+
+        array_push( $sources,
+                    'lib/jquery/jquery.min.js',
+                    'lib/jquery-ui/jquery-ui.min.js',
+                    'lib/promise-polyfill/polyfill.min.js',
+                    'lib/web-streams-polyfill/dist/ponyfill.js',
+                    'lib/webcrypto-shim/webcrypto-shim.min.js',
+                    'js/filesender.js',
+                    'js/lang.js',
+                    'js/client.js',
+                    'js/transfer.js',
+                    'js/logger.js',
+                    'js/ui.js',
+                    'js/FileSaver.js',
+                    'js/crypter/crypto_common.js',
+                    'js/crypter/crypto_blob_reader.js',
+                    'js/crypter/crypto_app.js',
+                    'js/pbkdf2dialog.js',
+                    'lib/xregexp/xregexp-all.js'
         );
+
         
         if (Config::get('terasender_enabled')) {
             $sources[] = 'js/terasender/terasender.js';
@@ -400,7 +417,34 @@ class GUI
         if (!GUIPages::isValidValue($page)) {
             throw new GUIUnknownPageException($page);
         }
+
+        // no guests page if disabled
+        if(!Config::get('guest_support_enabled') && $page == 'guests') {
+            throw new GUIUnknownPageException($page);
+        }
+        
         
         return in_array($page, self::allowedPages());
+    }
+
+    /**
+     * Make a login button with css class $addedClass. If present, the $target
+     * should be the result of a call to Utilities::http_build_query()
+     * which may wish to use the 's' parameter to set the page to use after login
+     * as well as any other state that page might want.
+     */
+    public static function getLoginButton($target = null,$addedClass=null)
+    {
+        if(!$addedClass) {
+            $addedClass = '';
+        }
+        
+        $embed = Config::get('auth_sp_embed');
+        
+        if(!$embed) {
+            $embed = '<a class="'.$addedClass.'" id="btn_logon" href="'.AuthSP::logonURL($target).'">'.Lang::tr('logon').'</a>';
+        }
+        
+        return $embed;
     }
 }

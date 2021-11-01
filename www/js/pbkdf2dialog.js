@@ -124,13 +124,22 @@ window.filesender.pbkdf2dialog = {
         };
     },
 
+    /*
+     * This will call onPBKDF2AllEnded() if it has not already been called.
+     **/
+    ensure_onPBKDF2AllEnded: function() {
+        if( $this.already_complete && !$this.dialog ) {
+            return;
+        }
+        window.filesender.onPBKDF2AllEnded();
+    },
 
     onPBKDF2Over: function() {
         $this = this;
         $this.time_end = Date.now();
         window.filesender.log("pbkdf2dialog onPBKDF2Over()");
         $this.already_complete = true;
-        if( $this.dialog ) {
+        if( $this.dialog && $this.dialog['0'].id!="" ) {
             $this.dialog.dialog('close');
             $this.dialog.remove();
             $this.dialog = null;

@@ -51,6 +51,7 @@ $default = array(
     'upload_considered_too_slow_if_no_progress_for_seconds' => 30, // seconds
     'force_ssl' => true,
     'client_ip_key' => 'REMOTE_ADDR',
+    'use_strict_csp' => true, // add a strict CSP header to the web pages
     
     'auth_sp_type' => 'saml',  // Authentification type
     'auth_sp_set_idp_as_user_organization' => false,
@@ -61,6 +62,7 @@ $default = array(
     'auth_sp_shibboleth_email_attribute' => 'mail', // Get email attribute from authentification service
     'auth_sp_shibboleth_name_attribute' => 'cn', // Get name attribute from authentification service
     'auth_sp_shibboleth_uid_attribute' => 'eduPersonTargetedID', // Get uid attribute from authentification service
+    'auth_sp_force_session_start_first' => false,  // maybe move session_start() forward.
     
     'auth_remote_user_autogenerate_secret' => false,
     'auth_remote_signature_algorithm' => 'sha1',
@@ -75,6 +77,9 @@ $default = array(
     'ban_extension' => 'exe,bat',
     'extension_whitelist_regex' => '^[a-zA-Z0-9]*$', // a valid file extension must match this regex
     'internal_use_only_running_on_ci' => false,
+
+    'mime_type_regex' => '^[-a-zA-Z0-9/; ]*$',
+    'mime_type_default' => 'application/octet-stream',
     
     'max_transfer_size' => 107374182400,
     'max_transfer_recipients' => 50,
@@ -97,9 +102,16 @@ $default = array(
     'download_chunk_size' => 5 * 1024 * 1024,
     
     'encryption_enabled' => true,
-    'encryption_min_password_length' => 0,
+    'encryption_mandatory' => false,
+    'encryption_min_password_length' => 12,
+    'encryption_password_must_have_upper_and_lower_case' => true,
+    'encryption_password_must_have_numbers' => true,
+    'encryption_password_must_have_special_characters' => true,
+    'encryption_password_text_only_min_password_length' => 40,
     'encryption_generated_password_length' => 30,
     'encryption_generated_password_encoding' => 'base64',
+    'encryption_encode_encrypted_chunks_in_base64_during_upload' => false,
+    
     'upload_crypted_chunk_padding_size' => 16 + 16, // CONST the 2 times 16 are the padding added by the crypto algorithm, and the IV needed
     'upload_crypted_chunk_size' => 5 * 1024 * 1024 + 16 + 16, // the 2 times 16 are the padding added by the crypto algorithm, and the IV needed
     'crypto_iv_len' => 16, // i dont think this will ever change, but lets just leave it as a config
@@ -141,6 +153,10 @@ $default = array(
     'storage_filesystem_df_command' => 'df {path}',
     'storage_filesystem_tree_deletion_command' => 'rm -rf {path}',
     'storage_filesystem_ignore_disk_full_check' => false,
+    'storage_filesystem_hash_check' => false, //used by filesystemChunked
+    'storage_filesystem_read_retry' => 10, //used by filesystemChunked
+    'storage_filesystem_write_retry' => 10, //used by filesystemChunked
+    'storage_filesystem_retry_sleep' => 400000, //400ms //used by filesystemChunked
     'storage_filesystem_external_script' => FILESENDER_BASE.'/scripts/StorageFilesystemExternal/external.py',
 
     'storage_filesystem_shred_path' => FILESENDER_BASE.'/shredfiles',
@@ -148,6 +164,7 @@ $default = array(
     'email_from' => 'sender',
     'email_return_path' => 'sender',
     'email_subject_prefix' => '{cfg:site_name}:',
+    'email_headers' => false,
     
     'report_bounces' => 'asap',
     'report_bounces_asap_then_daily_range' => 15 * 60,
@@ -162,10 +179,12 @@ $default = array(
     
     'report_format' => ReportFormats::INLINE,
 
-    'valid_filename_regex' => '^[ \\/\\p{L}\\p{N}_\\.,;:!@#$%^&*)(\\]\\[_-]+$',
+    // Note that this must not have a fixed end of string '$' as the last character in the match 
+    'valid_filename_regex' => '^[ \\/\\p{L}\\p{N}_\\.,;:!@#$%^&*)(\\]\\[_-]+',
     'message_can_not_contain_urls_regex' => '',
 //    'message_can_not_contain_urls_regex' => '(ftp:|http[s]*:|[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})',
 
+    'guest_support_enabled' => true,
     'guest_limit_per_user' => 50,
     'guest_create_limit_per_day' => 0,
     'guest_reminder_limit' => 50,
@@ -236,6 +255,7 @@ $default = array(
     ),
 
     'header_x_frame_options' => 'sameorigin',
+    'header_add_hsts_duration' => 63072000,
     'owasp_csrf_protector_enabled' => false,
 
     'theme' => '',
@@ -259,7 +279,29 @@ $default = array(
     // This allows authentication against password hashes in the local filesender db
     // with the right SAML setup.
     'using_local_saml_dbauth' => 0,
+
+    'streamsaver_enabled' => true,
+    'streamsaver_on_unknown_browser' => false,
+    'streamsaver_on_firefox' => false,
+    'streamsaver_on_chrome' => true,
+    'streamsaver_on_edge'   => true,
+    'streamsaver_on_safari' => true,
+
+    'upload_page_password_can_not_be_part_of_message_handling' => 'warning',
+
+    'data_protection_user_frequent_email_address_disabled' => false,
+    'data_protection_user_transfer_preferences_disabled' => false,
+
+    'allow_guest_expiry_date_extension' => 0,
+    'allow_guest_expiry_date_extension_admin' => array(31, true),
+
+    'avprogram_list' => array(),
+    'avprogram_max_size_to_scan' => 100*1024*1024,
     
+    'logs_limit_messages_from_same_ip_address' => false,
+
+
+    'service_aup_min_required_version' => 0,
     
     'transfer_options' => array(
         'email_me_copies' => array(
@@ -292,6 +334,11 @@ $default = array(
             'advanced' => false,
             'default' => true
         ),
+        'email_recipient_when_transfer_expires' => array(
+            'available' => false,
+            'advanced' => false,
+            'default' => true
+        ),
         'enable_recipient_email_download_complete' => array(
             'available' => true,
             'advanced' => true,
@@ -311,6 +358,11 @@ $default = array(
             'available' => false,
             'advanced' => true,
             'default' => ''
+        ),
+        'must_be_logged_in_to_download' => array(
+            'available' => true,
+            'advanced' => false,
+            'default' => false
         ),
     ),
 

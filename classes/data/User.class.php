@@ -110,6 +110,24 @@ class User extends DBObject
             'size' => 'big',
             'null' => true
         ),
+        'guest_expiry_default_days' => array(
+            'type' => 'uint',
+            'size' => 'medium',
+            'null' => true,
+            'default' => null
+        ),
+
+        // Shared guest/user Principal options
+        'service_aup_accepted_version' => array(
+            'type' => 'uint',
+            'size' => 'medium',
+            'null' => false,
+            'default' => 0
+        ),
+        'service_aup_accepted_time' => array(
+            'type' => 'datetime',
+            'null' => true
+        ),
     );
 
 
@@ -123,6 +141,7 @@ class User extends DBObject
                         . DBView::columnDefinition_is_encrypted('transfer_preferences', 'prefers_enceyption')
                         . DBView::columnDefinition_age($dbtype, 'last_activity', 'last_activity_days_ago')
                         . DBView::columnDefinition_age($dbtype, 'aup_last_ticked_date', 'aup_last_ticked_days_ago')
+                        . DBView::columnDefinition_age($dbtype, 'service_aup_accepted_time', 'service_aup_accepted_time_days_ago')
                         . ' , id as email_address '
                         . ' , id is not null as is_active '
                                 . '  from ' . self::getDBTable();
@@ -153,8 +172,17 @@ class User extends DBObject
     protected $auth_secret = null;
     protected $auth_secret_created = null;
     protected $quota = 0;
+    protected $guest_expiry_default_days = null;
+    protected $service_aup_accepted_version = 0;
+    protected $service_aup_accepted_time = null;
 
+    
+    /** 
+     * These are not real properties and are used by queries in the
+     * system to return additional data about a user from the query.
+     */
     private $eventcount = 0;
+    private $eventip = 0;
     
     /**
      * From Auth if it makes sense
@@ -388,6 +416,10 @@ class User extends DBObject
      */
     public function getFrequentRecipients($criteria = null)
     {
+        if( Config::get('data_protection_user_frequent_email_address_disabled')) {
+            return array();
+        }
+
         // Get max number of returned recipients from config
         $size = Config::get('autocomplete');
         if (!$size || !is_int($size) || $size <= 0) {
@@ -457,6 +489,11 @@ class User extends DBObject
         }
         
         $recipients = $size ? array_slice($recipients, 0, $size) : array();
+
+        // wipe it out if that is what the admin wants.
+        if( Config::get('data_protection_user_frequent_email_address_disabled')) {
+            $recipients = array();
+        }
         
         // Save if something changed
         if ($recipients !== $this->frequent_recipients) {
@@ -618,6 +655,7 @@ class User extends DBObject
             'auth_secret_created',
             'transfer_preferences', 'guest_preferences', 'frequent_recipients', 'created', 'last_activity',
             'email_addresses', 'name', 'quota', 'authid'
+          , 'guest_expiry_default_days', 'service_aup_accepted_version', 'service_aup_accepted_time'
         ))) {
             return $this->$property;
         }
@@ -645,6 +683,9 @@ class User extends DBObject
 
         if ($property == 'eventcount') {
             return $this->eventcount;
+        }
+        if ($property == 'eventip') {
+            return $this->eventip;
         }
         
         throw new PropertyAccessException($this, $property);
@@ -677,7 +718,12 @@ class User extends DBObject
         } elseif ($property == 'guest_preferences') {
             $this->guest_preferences = $value;
         } elseif ($property == 'frequent_recipients') {
-            $this->frequent_recipients = $value;
+            if( Config::get('data_protection_user_frequent_email_address_disabled')) {
+                // keep nothing.
+                $this->frequent_recipients = array();
+            } else {
+                $this->frequent_recipients = $value;
+            }
         } elseif ($property == 'email_addresses') {
             if (!is_array($value)) {
                 $value = array($value);
@@ -694,6 +740,17 @@ class User extends DBObject
             $this->quota = (int)$value;
         } elseif ($property == 'eventcount') {
             $this->eventcount = (int)$value;
+        } elseif ($property == 'eventip') {
+            $this->eventip = $value;
+        } elseif ($property == 'guest_expiry_default_days') {
+            $this->guest_expiry_default_days = (int)$value;
+            if( $this->guest_expiry_default_days == 0 ) {
+                $this->guest_expiry_default_days = null;
+            }
+        } elseif ($property == 'service_aup_accepted_version') {
+            $this->service_aup_accepted_version = $value;
+        } elseif ($property == 'service_aup_accepted_time') {
+            $this->service_aup_accepted_time = $value;
         } else {
             throw new PropertyAccessException($this, $property);
         }
@@ -725,10 +782,87 @@ class User extends DBObject
         }
     }
 
+    public function beforeSave()
+    {
+        if( Config::get('data_protection_user_frequent_email_address_disabled')) {
+            $this->frequent_recipients = array();
+        }
+        if( Config::get('data_protection_user_transfer_preferences_disabled')) {
+            $this->transfer_preferences = null;
+        }
+    }
+
     public function remindLocalAuthDBPassword( $password )
     {
         $user = $this;
         TranslatableEmail::quickSend('local_authdb_password_reminder', $user, array('password' => $password));
     }
-    
+
+    public function exportMyData()
+    {
+        $user = $this;
+        $ret = array();
+
+        $statement = DBI::prepare('SELECT * FROM '.User::getDBTable().' WHERE id = :id');
+        $statement->execute(array(':id' => $user->id));
+        $ret['user'] = $statement->fetch();
+
+        //
+        // My guests
+        //
+        $ret['guests'] = array();
+        $guests = Guest::fromUser($user);
+        foreach ($guests as $g) {
+            $id = $g->id;
+            $ret['guests'][$id] = $g;
+        }
+
+        //
+        // My transfers
+        //
+        $ret['transfers'] = array();
+        $statement = DBI::prepare('SELECT * FROM '.Transfer::getDBTable().' WHERE userid = :id and ( guest_id is null or guest_transfer_shown_to_user_who_invited_guest )');
+        $statement->execute(array(':id' => $user->id));
+        $records = $statement->fetchAll();
+        foreach ($records as $r) {
+            $tid = $r['id'];
+            $ret['transfers'][$tid] = $r;
+            $transfer = Transfer::fromId($tid);
+
+            //
+            // Files in this transfer
+            //
+            $files = File::fromTransfer( $transfer );
+            foreach ($files as $file) {
+                $ret['transfers'][$tid]['file'] = $file;
+            }
+
+            //
+            // AuditLogs
+            //
+            foreach (AuditLog::fromTransfer($transfer) as $log) {
+                $lid = $log->id;
+                $ret['transfers'][$tid]['log'][$lid] = $log;
+            }
+
+            //
+            // Recipients
+            //
+            foreach ($transfer->recipients as $recipient) {
+                $rid = $recipient->id;
+                $ret['transfers'][$tid]['recipient'][$rid] = $recipient;
+            }
+
+            //
+            // Emails
+            //
+            foreach (TranslatableEmail::fromContext($transfer) as $translatable_email) {
+                $id = $translatable_email->id;
+                $ret['transfers'][$tid]['translated_email'][$id] = $translatable_email;
+            }
+        }
+        
+
+        return $ret;
+    }
 }

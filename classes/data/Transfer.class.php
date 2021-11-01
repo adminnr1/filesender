@@ -155,6 +155,13 @@ class Transfer extends DBObject
             'size'    => '44',
             'null'    => true,
         ),
+
+        'guest_transfer_shown_to_user_who_invited_guest' => array(
+            'type'    => 'bool',
+            'null'    => true,
+            'default' => true,
+        ),
+        
     );
 
     /**
@@ -221,10 +228,11 @@ class Transfer extends DBObject
                                           . call_user_func('File::getDBTable').' f '
                                           . " where  f.transfer_id=t.id  "
                                           . "   and a.target_id=" .  DBLayer::toViewVarCharCast("f.id",255)
-                                                                           . "   and target_type = 'File'  ";
+                                                                            . "   and target_type = 'File'  ";
+            
             $auditlogsviewdlcss[$dbtype] = 'select id,count(*) as count from transfersauditlogsview where  '
                                              . " ( event = 'download_ended' or event = 'archive_download_ended' ) group by id ";
-
+                
             $auditlogsviewdlc[$dbtype] = 'select t.*,count from '
                                        . self::getDBTable() . ' t '
                                              . " left outer join transfersauditlogsdlsubselectcountview zz "
@@ -244,9 +252,20 @@ class Transfer extends DBObject
     protected static $secondaryIndexMap = array(
         'userid' => array(
             'userid' => array()
+        ),
+        'user_email' => array(
+            'user_email' => array()
+        ),
+        'expires' => array(
+            'expires' => array()
         )
     );
 
+    /**
+     * Config variables
+     */
+    const OBJECT_EXPIRY_DATE_EXTENSION_CONFIGKEY = "allow_transfer_expiry_date_extension";
+    
     /**
      * Set selectors
      */
@@ -263,8 +282,8 @@ class Transfer extends DBObject
     const UPLOADING_NO_ORDER = "status = 'uploading' ";
     const AVAILABLE_NO_ORDER = "status = 'available' ";
     const CLOSED_NO_ORDER = "status = 'closed' ";
-    const FROM_USER_NO_ORDER = "userid = :userid AND status='available' ";
-    const FROM_USER_CLOSED_NO_ORDER = "userid = :userid AND status='closed' ";
+    const FROM_USER_NO_ORDER        = "userid = :userid AND status='available' and ( guest_id is null or guest_transfer_shown_to_user_who_invited_guest ) ";
+    const FROM_USER_CLOSED_NO_ORDER = "userid = :userid AND status='closed'    and ( guest_id is null or guest_transfer_shown_to_user_who_invited_guest ) ";
 
     const ROUNDTRIPTOKEN_ENTROPY_BYTE_COUNT = 16;
     
@@ -293,6 +312,7 @@ class Transfer extends DBObject
     protected $password_hash_iterations = 150000;
     protected $client_entropy = '';
     protected $roundtriptoken = '';
+    protected $guest_transfer_shown_to_user_who_invited_guest = true;
     
     /**
      * Related objects cache
@@ -480,14 +500,7 @@ class Transfer extends DBObject
              . " g.userid   = :userid AND (g.expires is null or g.expires > :date) AND "
              . " t.guest_id = g.id    AND t.status  = 'available' ";
         if( $user_can_only_view_guest_transfers_shared_with_them ) {
-            // filter back to only transfers that are can_only_send_to_me for the user
-            // or that the guest explicitly included the email of the user in the recipients
-            // Note Frans: Still a bug in the mastercode. You have to change te table name to Recipients
-            $sql .= " AND ( ";
-            $sql .= " g.options like '%". '"can_only_send_to_me":true' . "%'  ";
-            $sql .= "    or t.id in ( select transfer_id from " . Recipient::getDBTable() . " ";
-            $sql .= "                 where transfer_id = t.id and email = g.user_email ) ";
-            $sql .= " ) ";
+            $sql .= " and t.guest_transfer_shown_to_user_who_invited_guest ";
         }
         $sql .= " order by t.created desc ";
         $statement = DBI::prepare($sql);
@@ -673,6 +686,16 @@ class Transfer extends DBObject
         
         Logger::info($this.' deleted');
     }
+
+    public function userCanSeeTransfer()
+    {
+        if( !$this->guest_id )
+            return true;
+        if( $this->guest_transfer_shown_to_user_who_invited_guest ) {
+            return true;
+        }
+        return false;
+    }
     
     /**
      * Close the transfer
@@ -705,17 +728,29 @@ class Transfer extends DBObject
         
         // Log action
         Logger::logActivity($manualy ? LogEventTypes::TRANSFER_CLOSED : LogEventTypes::TRANSFER_EXPIRED, $this);
-        
+
         if (!$this->getOption(TransferOptions::GET_A_LINK)) {
-            // Send notification to all recipients
-            foreach ($this->recipients as $recipient) {
-                $this->sendToRecipient($manualy ? 'transfer_deleted' : 'transfer_expired', $recipient);
+
+            $email_message_type = 'transfer_expired';
+            if( $manualy ) {
+                $email_message_type = 'transfer_deleted';
+            }
+            
+            // always email deleted transfers
+            //     or optionally notify when a transfer has expired.
+            if( $manualy || $this->getOption(TransferOptions::EMAIL_RECIPIENT_WHEN_TRANSFER_EXPIRES)) {
+                // Send notification to all recipients
+                foreach ($this->recipients as $recipient) {
+                    $this->sendToRecipient( $email_message_type, $recipient );
+                }
             }
         }
         
         // Send notification to owner
-        if ($this->getOption(TransferOptions::EMAIL_ME_ON_EXPIRE)) {
-            TranslatableEmail::quickSend($manualy ? 'transfer_deleted_receipt' : 'transfer_expired_receipt', $this->owner, $this);
+        if( $this->userCanSeeTransfer() ) {
+            if ($this->getOption(TransferOptions::EMAIL_ME_ON_EXPIRE)) {
+                TranslatableEmail::quickSend($manualy ? 'transfer_deleted_receipt' : 'transfer_expired_receipt', $this->owner, $this);
+            }
         }
       
         // Send report if needed
@@ -963,7 +998,7 @@ class Transfer extends DBObject
             'subject', 'message', 'created', 'made_available',
             'expires', 'expiry_extensions', 'options', 'lang', 'key_version', 'userid',
             'password_version', 'password_encoding', 'password_encoding_string', 'password_hash_iterations'
-            , 'client_entropy', 'roundtriptoken'
+            , 'client_entropy', 'roundtriptoken', 'guest_transfer_shown_to_user_who_invited_guest'
         ))) {
             return $this->$property;
         }
@@ -990,10 +1025,16 @@ class Transfer extends DBObject
         }
 
         if ($property == 'is_encrypted') {
+            if (!array_key_exists('encryption', $this->options)) {
+                return false;
+            }
             return $this->options['encryption'];
         }
         if ($property == "get_a_link") {
             return $this->getOption(TransferOptions::GET_A_LINK);
+        }
+        if ($property == "must_be_logged_in_to_download") {
+            return $this->getOption(TransferOptions::MUST_BE_LOGGED_IN_TO_DOWNLOAD);
         }
         
         if ($property == 'size') {
@@ -1038,7 +1079,7 @@ class Transfer extends DBObject
         }
         
         if ($property == 'expiry_date_extension') {
-            return $this->expiryDateExtension(false);
+            return $this->getObjectExpiryDateExtension(false);
         } // No throw
         
         if ($property == 'made_available_time') {
@@ -1162,6 +1203,8 @@ class Transfer extends DBObject
             $this->password_hash_iterations = $value;
         } elseif ($property == 'client_entropy') {
             $this->client_entropy = $value;
+        } elseif ($property == 'guest_transfer_shown_to_user_who_invited_guest') {
+            $this->guest_transfer_shown_to_user_who_invited_guest = $value;
         } else {
             throw new PropertyAccessException($this, $property);
         }
@@ -1340,7 +1383,7 @@ class Transfer extends DBObject
             $this->recipientsCache[$recipient->id] = $recipient;
         }
         
-        Logger::info($recipient.' added to '.$this);
+        Logger::info($recipient.' added to '.$this.' with token '.$recipient->token);
         
         return $recipient;
     }
@@ -1425,10 +1468,12 @@ class Transfer extends DBObject
             $guest = AuthGuest::getGuest();
             
             $guest->transfer_count++;
-            
-            // Send notification if required
-            if ($this->getOption(TransferOptions::EMAIL_UPLOAD_COMPLETE)) {
-                TranslatableEmail::quickSend('guest_upload_complete', $guest->owner, $guest);
+
+            if( $this->guest_transfer_shown_to_user_who_invited_guest ) {
+                // Send notification if required
+                if ($this->getOption(TransferOptions::EMAIL_UPLOAD_COMPLETE)) {
+                    TranslatableEmail::quickSend('guest_upload_complete', $guest->owner, $guest);
+                }
             }
 
             // Let the guest know the upload is complete too
@@ -1526,7 +1571,7 @@ class Transfer extends DBObject
             $recipients_downloaded_ids = array_map(function ($l) {
                 return $l->author_id;
             }, $transfer->downloads);
-            print_r($recipients_downloaded_ids);
+            
             // Get recipients that did not download
             $recipients_no_download = array_filter(
                 $transfer->recipients,
@@ -1534,7 +1579,7 @@ class Transfer extends DBObject
                     return !in_array($recipient->id, $recipients_downloaded_ids) && (bool)$recipient->email;
                 }
             );
-            print_r($recipients_no_download);
+            
             if (!count($recipients_no_download)) {
                 continue;
             } // Nothing to notify
@@ -1554,16 +1599,26 @@ class Transfer extends DBObject
             foreach ($recipients_no_download as $recipient) {
                 $recipient->remind();
             }
-            
-            // Send receipt to owner
-            ApplicationMail::quickSend(
-                'transfer_autoreminder_receipt',
-                $transfer->owner,
-                $transfer,
-                array(
-                    'recipients' => $recipients_no_download
-                )
-            );
+
+            $send_owner_autoreminder = true;
+
+            // no not leak this transfer in a reminder if the system wants
+            // private guests
+            if( !$transfer->userCanSeeTransfer()) {
+                $send_owner_autoreminder = false;
+            }
+
+            if( $send_owner_autoreminder ) {
+                // Send receipt to owner
+                ApplicationMail::quickSend(
+                    'transfer_autoreminder_receipt',
+                    $transfer->owner,
+                    $transfer,
+                    array(
+                        'recipients' => $recipients_no_download
+                    )
+                );
+            }
         }
     }
     
@@ -1578,9 +1633,11 @@ class Transfer extends DBObject
         if (Auth::isGuest()) {
             // Send upload started notification if guest and guest owner required it
             $guest = AuthGuest::getGuest();
-            
-            if ($guest->getOption(GuestOptions::EMAIL_UPLOAD_STARTED)) {
-                TranslatableEmail::quickSend('guest_upload_start', $guest->owner, $guest);
+
+            if( $this->guest_transfer_shown_to_user_who_invited_guest ) {            
+                if ($guest->getOption(GuestOptions::EMAIL_UPLOAD_STARTED)) {
+                    TranslatableEmail::quickSend('guest_upload_start', $guest->owner, $guest);
+                }
             }
         }
         
@@ -1603,75 +1660,6 @@ class Transfer extends DBObject
         Logger::info($this.' upload started');
     }
     
-    /**
-     * Check if transfer expiry date can be extended
-     *
-     * @param bool $throw throw on error
-     *
-     * @return int number of days the transfer expiry date can be extended by
-     *
-     * @throws TransferExpiryExtensionNotAllowedException
-     * @throws TransferExpiryExtensionCountExceededException
-     */
-    public function expiryDateExtension($throw = true)
-    {
-        $pattern = Config::get('allow_transfer_expiry_date_extension');
-        
-        if (!$pattern) {
-            if ($throw) {
-                throw new TransferExpiryExtensionNotAllowedException($this);
-            }
-            return 0;
-        }
-        
-        if (!is_array($pattern)) {
-            $pattern = array($pattern);
-        }
-        
-        // Get nth
-        $index = (int)$this->expiry_extensions;
-        
-        if ($index < count($pattern)) {
-            $duration = (int)$pattern[$index];
-        } else {
-            $last = array_pop($pattern);
-            
-            if (count($pattern) && is_bool($last) && $last) {
-                $duration = array_pop($pattern);
-            } else {
-                if ($throw) {
-                    throw new TransferExpiryExtensionCountExceededException($this);
-                }
-                return 0;
-            }
-        }
-        
-        if ((count($pattern) == 2) && is_bool($pattern[0]) && $pattern[0]) { // Infinite
-            return (int)$pattern[1];
-        }
-            
-        return $duration;
-    }
-    
-    /**
-     * Extend transfer expiry date (if enabled)
-     *
-     * @throws TransferExpiryExtensionNotAllowedException
-     */
-    public function extendExpiryDate()
-    {
-        $duration = $this->expiryDateExtension(); // throws
-        
-        if (!$duration) { // Should not happend unless config is garbled
-            throw new TransferExpiryExtensionNotAllowedException($this);
-        }
-        
-        $this->expires += $duration * 24 * 3600;
-        
-        $this->expiry_extensions++;
-        
-        $this->save();
-    }
     
     /**
      * Send message to recipient, handling options
@@ -1727,4 +1715,5 @@ class Transfer extends DBObject
                $this->status == TransferStatuses::STARTED ||
                $this->status == TransferStatuses::UPLOADING;
     }
+
 }

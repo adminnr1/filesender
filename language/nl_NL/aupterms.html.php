@@ -7,6 +7,4 @@
 // 
 // 
 ?>
-<a href="https://www.surf.nl/huisregels-surffilesender" target="_blank"> 
-Ik ga akkoord met de huisregels wanneer ik deze dienst gebruik.
-</a>
+Algemene voorwaarden

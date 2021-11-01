@@ -122,5 +122,5 @@ class DBLayer
             'SQLUNIMP toViewVarChar() called on unsupported backend'
         );
     }
+    
 }
-

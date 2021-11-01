@@ -525,6 +525,15 @@ window.filesender.client = {
         
         return this.put('/transfer/' + id, data, callback);
     },
+
+    extendObject: function(className, id, remind, callback) {
+        var data = {extend_expiry_date: true};
+        if(remind) data.remind = true;
+        return this.put('/' + className + '/' + id, data, callback);
+    },
+    extendGuest: function( id, remind, callback ) {
+        return this.extendObject('guest',id,remind, callback);
+    },
     
     /**
      * Close a transfer
@@ -540,6 +549,19 @@ window.filesender.client = {
         
         return this.put('/transfer/' + id, {closed: true}, callback, opts);
     },
+
+    /**
+     * Decryption failed for a transfer, possibly by bad password
+     * 
+     * @param object transfer
+     */
+    decryptionFailedForTransfer: function(transfer) {
+        var id = (typeof transfer == 'object') ? transfer.id : transfer;
+        var opts = {};
+        var callback = function() {} ;
+        return this.put('/transfer/' + id, {decryptfailed: true}, callback, opts);
+    },
+
     
     /**
      * Delete a transfer (admin / owner if in early statuses)
@@ -732,6 +754,17 @@ window.filesender.client = {
     updateUserIDPreferences: function(id, preferences, callback) {
         return this.put('/user/' + id + '/', preferences, callback);
     },
+    serviceAUPAccept: function(version, callback) {
+        var p = {};
+        p['service_aup_version'] = version;
+        
+        var url = new URL(location);
+        var tailer = '';
+        if( url.searchParams.get("vid")) {
+            tailer = '?vid=' + url.searchParams.get("vid");
+        }
+        return this.put('/principal'+tailer, p, callback );
+    },
     
     getUserQuota: function(callback, onerror) {
         this.get('/user/@me/quota', callback, {ignore_authentication_required: true});
@@ -788,4 +821,23 @@ window.filesender.client = {
         return this.put('/transfer/' + id, {'optionremove':true, option: tropt}, callback);
     },
 
+
+    setUserSpecificExpireDaysForNewGuesst: function(id,callback) {
+
+        var $this = this;
+        var prompt = window.filesender.ui.prompt(
+            lang.tr('set_user_guest_expiry_default_days'),
+            function (obj) {
+                var expires = $(this).find('input').val();
+
+                var data = {guest_expiry_default_days: expires};
+                return $this.put('/user/' + id, data, callback);
+            });
+        
+        // Add a field to the prompt
+        var input = $('<input type="text" class="wide" />').appendTo(prompt);
+        $('<p>' + lang.tr('reset_per_user_guest_expire_setting') + '</p>').appendTo(prompt);
+        input.focus();
+    },
+    
 };

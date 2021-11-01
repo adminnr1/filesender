@@ -1,8 +1,6 @@
 /tmp
 /files
 /config/config.php
-/config/templates
-/config/language
 /docs/_book
 /docs/_site
 /log
@@ -14,3 +12,9 @@
 /push.sh
 /sync.sh
 composer.phar
+bak/
+git-switch-to-current-latest-development.sh
+import-all-poeditor-langs-and-push.sh
+scripts/client/test.php
+scripts/testing/test1.php
+

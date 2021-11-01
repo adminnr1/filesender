@@ -141,6 +141,7 @@ var terasender_worker = {
         
         var blob = file.blob[slicer](this.job.chunk.start, this.job.chunk.end);
 
+        
         var xhr = this.createXhr();
 
         var worker = this;
@@ -153,6 +154,7 @@ var terasender_worker = {
         xhr.onreadystatechange = function() {
             worker.uploadRequestChange(xhr);
         };
+
         
         xhr.ontimeout = function() {
             worker.timeout();
@@ -174,7 +176,7 @@ var terasender_worker = {
         xhr.setRequestHeader('csrfptoken', this.csrfptoken);
         
         try {
-            
+
 	    if (job.encryption) { //MD
 			var cryptedBlob = null;
 			var $this = this;
@@ -220,7 +222,7 @@ var terasender_worker = {
         
         this.progress_reported = now;
         
-        this.log('Job file:' + this.job.file.id + '[' + this.job.chunk.start + '...' + this.job.chunk.end + '] is ' + (100 * ratio).toFixed(1) + '% done');
+        this.log('Job file:' + this.job.file.id + '[' + this.job.chunk.start + '...' + this.job.chunk.end + '] is ' + (100 * ratio).toFixed(1) + '% done ' + loaded + '/' + total);
         if (this.job.encryption) { 
             this.job.fine_progress = Math.floor(ratio * (this.job.chunk.end - this.job.chunk.start));
         } else {
@@ -349,6 +351,21 @@ var terasender_worker = {
                     }, 60 * 1000);
                     
                     return;
+                }
+                if(error.message == 'file_integrity_check_failed' ) {
+                    this.log("Warning: Server sent back integrity_check_failed, so this worker will try to reupload the chunk");
+
+                    var worker = this; // if in a method for example.
+                    if( worker.send_attempts < window.filesender.config.terasender_worker_max_chunk_retries ) {
+                        // try, try again
+                        worker.send_attempts++;
+                        worker.log('worker attempt ' + worker.send_attempts + ' to retry chunk upload at offset ' + worker.job.chunk.start);
+                        worker.executeJob(worker.job);                    
+                    }
+                    else {
+                        // Let the manager know something has really hit the fan
+                        worker.sendCommand('jobFailed', worker.job);
+                    }
                 }
                 
                 if(!error.details) error.details = {};

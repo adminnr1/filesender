@@ -275,6 +275,10 @@ class Config
         if (self::get('encryption_min_password_length') > self::get('encryption_generated_password_length')) {
             throw new ConfigBadParameterException('Generated password length must be equal or greater than encryption_min_password_length');
         }
+        if (self::get('encryption_password_text_only_min_password_length') > 0
+            && self::get('encryption_min_password_length') >= self::get('encryption_password_text_only_min_password_length') ) {
+            throw new ConfigBadParameterException('The encryption_password_text_only_min_password_length setting must be greater than encryption_min_password_length');
+        }
 
         // If the admin has very small chunks then they will have a smaller max file size.
         self::$parameters['crypto_gcm_max_file_size'] = 4294967296 * self::$parameters['upload_chunk_size'];
@@ -323,13 +327,36 @@ class Config
         if( self::get('api_secret_aup_enabled')) {
             self::$parameters['auth_remote_user_autogenerate_secret'] = false;
         }
-        
+
+        $v = self::get('upload_page_password_can_not_be_part_of_message_handling');
+        if( !$v || ($v != '' && $v != 'none' && $v != 'warning' && $v != 'error' )) {
+            self::$parameters['upload_page_password_can_not_be_part_of_message_handling'] = 'warning';
+        }
+
+        // force to bool
+        $v = Utilities::isTrue(self::get('data_protection_user_frequent_email_address_disabled'));
+        self::$parameters['data_protection_user_frequent_email_address_disabled'] = $v;
+
+        self::forceLoadedToBool('guest_support_enabled');
+
         
         // verify classes are happy
         Guest::validateConfig();
         ClientLog::validateConfig();
     }
 
+   /**
+    * This makes sure the value for $k is a boolean using isTrue() to coerce.
+    *
+    * @return the updated value for Config::get($k) which is also assigned internally.
+    */
+    private static function forceLoadedToBool($k)
+    {
+        $v = Config::get($k);
+        $v = Utilities::isTrue($v);
+        self::$parameters[$k] = $v;
+        return $v;
+    }
     
     public static function performLongerValidation()
     {
@@ -468,6 +495,11 @@ class Config
         self::$cached_parameters[] = $key;
         
         return $value;
+    }
+
+    public static function getArray($key)
+    {
+        return Utilities::ensureArray(Config::get($key));
     }
     
     /**
@@ -617,6 +649,7 @@ class Config
             }
         }
     }
+
 }
 
 /**

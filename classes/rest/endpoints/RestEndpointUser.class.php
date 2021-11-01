@@ -62,6 +62,7 @@ class RestEndpointUser extends RestEndpoint
             'lang' => $user->lang,
             'frequent_recipients' => $user->frequent_recipients,
             'eventcount' => $user->eventcount,
+            'eventip' => $user->eventip
         );
     }
     
@@ -131,6 +132,7 @@ class RestEndpointUser extends RestEndpoint
         }
         
         $user = Auth::user();
+
         
         // Check ownership
         if ($id && $id != '@me') {
@@ -173,6 +175,15 @@ class RestEndpointUser extends RestEndpoint
                     return self::cast($user);
                 }, array_values(AuditLog::findUsersOrderedByCount($s,'User',$since)));
             }
+            if (array_key_exists('decryptfailed', $_REQUEST)) {
+                $s = Utilities::sanitizeInput($_REQUEST['decryptfailed']);
+
+                $logs = AuditLog::getUsersForTargetTypeSince( LogEventTypes::TRANSFER_DECRYPT_FAILED, 'Transfer', $since );
+
+                return array_map(function ($user) {
+                    return self::cast($user);
+                }, array_values( $logs ));
+            }
             
             if (!array_key_exists('match', $_REQUEST)) {
                 throw new RestMissingParameterException('match');
@@ -189,7 +200,15 @@ class RestEndpointUser extends RestEndpoint
         }
         
         if ($property == 'frequent_recipients') {
-            throw new RestUsePOSTException();
+            // Throwing an exception for this bad access case is
+            // a bit of overkill, frequent_recipients are not a
+            // critical feature so it might be better to fallback
+            // to just offering nothing if they access things via
+            // GET instead of POST.
+            return array(
+                'path' => '/user/user',
+                'data' => ''
+            );
         }
         
         if ($property == 'quota') {
@@ -273,7 +292,7 @@ class RestEndpointUser extends RestEndpoint
             if (!Auth::user()->is($user) && !Auth::isAdmin()) {
                 throw new RestOwnershipRequiredException(Auth::user()->id, 'user = '.$user->id);
             }
-        } else {
+        } else {        
             $user = Auth::user();
         }
         
@@ -318,7 +337,22 @@ class RestEndpointUser extends RestEndpoint
                 $user->authSecretDelete();
             }
         }
-        
+        if( $data->clear_frequent_recipients ) {
+            $user->frequent_recipients = null;
+            $user->save();
+        }
+        if( $data->clear_user_transfer_preferences ) {
+            $user->transfer_preferences = null;
+            $user->save();
+        }
+        if( $data->exists('guest_expiry_default_days')) {
+            if (!Auth::isAdmin()) {
+                throw new RestAdminRequiredException();
+            }
+            $user->guest_expiry_default_days = $data->guest_expiry_default_days;
+            $user->save();
+            
+        }
         return true;
     }
 

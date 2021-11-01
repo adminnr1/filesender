@@ -16,6 +16,21 @@ if(!isset($trsort))  $nosort = true;
     $havePrev = 0;
 
 
+    $isAdmin = false;
+    $showAdminExtend = false;
+    if (Auth::isAuthenticated()) {
+        if (Auth::isAdmin()) {
+
+            $isAdmin = true;
+            
+            if(Config::get('allow_transfer_expiry_date_extension_admin')) {
+                $showAdminExtend = true;
+            }
+        }
+    }
+
+
+
     $cgiuid = "";
     if (Auth::isAuthenticated()) {
         if (Auth::isAdmin()) {
@@ -176,7 +191,7 @@ if (!function_exists('clickableHeader')) {
     
     <tbody>
         <?php foreach($transfers as $transfer) { ?>
-        <tr class="transfer" id="transfer_<?php echo $transfer->id ?>"
+        <tr class="transfer objectholder" id="transfer_<?php echo $transfer->id ?>"
             data-id="<?php echo $transfer->id ?>"
             data-recipients-enabled="<?php echo $transfer->getOption(TransferOptions::GET_A_LINK) ? '' : '1' ?>"
             data-errors="<?php echo count($transfer->recipients_with_error) ? '1' : '' ?>"
@@ -193,7 +208,12 @@ if (!function_exists('clickableHeader')) {
             </td>
             
             <td class="transfer_id">
-                <?php echo $transfer->id ?>
+                <?php
+                    echo $transfer->id;
+                    if( $transfer->is_encrypted ) {
+                        echo '&nbsp;<span class="fa fa-lock" title="{tr:file_encryption}"></span>';
+                    }
+                ?>
             </td>
             
             <?php if($show_guest) { ?>
@@ -231,10 +251,10 @@ if (!function_exists('clickableHeader')) {
                 $items = array();
                 foreach(array_slice($transfer->files, 0, 3) as $file) {
                     $name = $file->path;
-                    $name_shorten_by = (int) (strlen((string) count($transfer->downloads))+strlen(Lang::tr('see_all'))+3)/2;
-                    if(strlen($name) > 28-$name_shorten_by) {
-                        if(count($transfer->downloads)) $name = substr($name, 0, 23-$name_shorten_by).'...';
-                        else $name = substr($name, 0, 23).'...';
+                    $name_shorten_by = (int) (mb_strlen((string) count($transfer->downloads))+mb_strlen(Lang::tr('see_all'))+3)/2;
+                    if(mb_strlen($name) > 28-$name_shorten_by) {
+                        if(count($transfer->downloads)) $name = mb_substr($name, 0, 23-$name_shorten_by).'...';
+                        else $name = mb_substr($name, 0, 23).'...';
                     }
                     $items[] = '<span title="'.Template::sanitizeOutput($file->path).'">'.Template::sanitizeOutput($name).'</span>';
                 }
@@ -255,29 +275,31 @@ if (!function_exists('clickableHeader')) {
             </td>
 
             <td class="actions">
-                <div style="margin:3px">
+                <div id="marg3">
                     <span data-action="delete" class="fa fa-lg fa-trash-o" title="{tr:delete}"></span>
                     <?php if($extend) { ?><span data-action="extend" class="fa fa-lg fa-calendar-plus-o"></span><?php } ?>
                     <span data-action="add_recipient" class="fa fa-lg fa-envelope-o" title="{tr:add_recipient}"></span>
                 </div>
-                <div style="margin:3px">
+                <div id="marg3">
                     <span data-action="remind" class="fa fa-lg fa-repeat" title="{tr:send_reminder}"></span>
-                    <?php if($audit) { ?><span data-action="auditlog" class="fa fa-lg fa-history" title="{tr:open_auditlog}"></span><?php } ?>
+                    <?php if($audit)           { ?><span data-action="auditlog"      class="fa fa-lg fa-history" title="{tr:open_auditlog}"></span><?php } ?>
+                    <?php if($showAdminExtend) { ?><span data-action="extendexpires" class="fa fa-lg fa-clock-o adminaction" title="{tr:extend_expires}"></span><?php } ?>
                 </div>
             </td>
         </tr>
         
-        <tr class="transfer_details" data-id="<?php echo $transfer->id ?>">
+        <tr class="transfer_details objectholder" data-id="<?php echo $transfer->id ?>">
             <td colspan="8">
                 <div class="actions">
-                    <div style="margin:3px">
+                    <div id="marg3">
                         <span data-action="delete" class="fa fa-lg fa-trash-o" title="{tr:delete}"></span>
                         <?php if($extend) { ?><span data-action="extend" class="fa fa-lg fa-calendar-plus-o"></span><?php } ?>
                         <span data-action="add_recipient" class="fa fa-lg fa-envelope-o" title="{tr:add_recipient}"></span>
                     </div>
-                    <div style="margin:3px">
+                    <div id="marg3">
                         <span data-action="remind" class="fa fa-lg fa-repeat" title="{tr:send_reminder}"></span>
-                        <?php if($audit) { ?><span data-action="auditlog" class="fa fa-lg fa-history" title="{tr:open_auditlog}"></span><?php } ?>
+                        <?php if($audit)           { ?><span data-action="auditlog"      class="fa fa-lg fa-history" title="{tr:open_auditlog}"></span><?php } ?>
+                        <?php if($showAdminExtend) { ?><span data-action="extendexpires" class="fa fa-lg fa-clock-o" title="{tr:extend_expires}"></span><?php } ?>
                     </div>
                 </div>
                 
@@ -299,7 +321,13 @@ if (!function_exists('clickableHeader')) {
                     <tbody>
                         <tr>
                             <td class="desc">{tr:transfer_id}</td>
-                            <td><?php echo $transfer->id ?></td>
+                            <td><?php
+                                echo $transfer->id;
+                                if( $transfer->is_encrypted ) {
+                                    echo '&nbsp;<span class="fa fa-lock" title="{tr:file_encryption}"></span>';
+                                }
+                                ?>
+                            </td>
                         </tr>
                         <tr>
                             <td class="desc">{tr:created}</td>
@@ -361,7 +389,7 @@ if (!function_exists('clickableHeader')) {
                     
                         <?php if($transfer->getOption(TransferOptions::GET_A_LINK)) { ?>
                             <tr class="download_link desc">
-                                <td><a href="<?php echo $transfer->first_recipient->download_link ?>">{tr:download_link}</a></td>
+                                <td><a class="download_href" href="<?php echo $transfer->first_recipient->download_link ?>">{tr:download_link}</a></td>
                                 <td><input readonly="readonly" type="text" value="<?php echo $transfer->first_recipient->download_link ?>" /></td>
                             </tr>
                         <?php } ?>
@@ -423,6 +451,7 @@ if (!function_exists('clickableHeader')) {
                              data-client-entropy="<?php echo $transfer->client_entropy; ?>"
                              data-fileiv="<?php echo $file->iv; ?>"
                              data-fileaead="<?php echo $file->aead; ?>"
+                             data-transferid="<?php echo $transfer->id; ?>"
                         >
                             <?php echo Template::sanitizeOutput($file->path) ?> (<?php echo Utilities::formatBytes($file->size) ?>) : <?php echo count($file->downloads) ?> {tr:downloads}
                             
@@ -433,6 +462,8 @@ if (!function_exists('clickableHeader')) {
                                         data-encrypted="<?php echo isset($transfer->options['encryption'])?$transfer->options['encryption']:'false'; ?>" 
                                         data-mime="<?php echo Template::sanitizeOutput($file->mime_type); ?>" 
                                         data-name="<?php echo Template::sanitizeOutput($file->path); ?>"
+                                        data-size="<?php echo $file->size; ?>"
+                                        data-encrypted-size="<?php echo $file->encrypted_size; ?>"
                                         data-key-version="<?php echo $transfer->key_version; ?>"
                                         data-key-salt="<?php echo $transfer->salt; ?>"
                                         data-password-version="<?php echo $transfer->password_version; ?>"
@@ -441,7 +472,7 @@ if (!function_exists('clickableHeader')) {
                                         data-client-entropy="<?php echo $transfer->client_entropy; ?>"
                                         data-fileiv="<?php echo $file->iv; ?>"
                                         data-fileaead="<?php echo $file->aead; ?>"
-                                      
+                                        data-transferid="<?php echo $transfer->id; ?>"
                                 ></span>
                                         
                                 <?php } else {?>

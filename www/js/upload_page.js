@@ -246,7 +246,11 @@ filesender.ui.files = {
                     node.addClass('invalid');
                     node.addClass(error.message);
                     $('<span class="invalid fa fa-exclamation-circle fa-lg" />').prependTo(node.find('.info'))
-                    $('<div class="invalid_reason" />').text(lang.tr(error.message)).appendTo(node);
+                    var invalidreason = lang.tr(error.message);
+                    if(error.message == 'invalid_file_name') {
+                        invalidreason += ' ' + lang.tr('starting_at') + ' ' + error.details.badEnding;
+                    }
+                    $('<div class="invalid_reason" />').text( invalidreason ).appendTo(node);
                 }, source_node);
                 
                 filesender.ui.nodes.files.clear.button('enable');
@@ -265,7 +269,12 @@ filesender.ui.files = {
                 change: function() {
                     var bar = $(this);
                     var v = bar.progressbar('value');
-                    bar.find('.progress-label').text((v / 10).toFixed(1) + '%');
+                    if (v === false) {
+                        // stop progress showing 0.0% when the value is false
+                        bar.find('.progress-label').text('');
+                    } else {
+                        bar.find('.progress-label').text((v / 10).toFixed(1) + '%');
+                    }
                 },
                 complete: function() {
                     var bar = $(this);
@@ -472,7 +481,16 @@ filesender.ui.files = {
             filesender.ui.nodes.stats.average_speed.find('.value').text(filesender.ui.formatSpeed(speed));
         
         var bar = filesender.ui.nodes.files.list.find('[data-cid="' + file.cid + '"] .progressbar');
-        bar.progressbar('value', Math.floor(1000 * (file.fine_progress ? file.fine_progress : file.uploaded) / file.size)); 
+        upload_progress = Math.floor(1000 * (file.fine_progress ? file.fine_progress : file.uploaded) / file.size);
+        // check to see if upload_progress is 100% or complete is true
+        // so that we don't mark it as complete before the
+        // upload is validated
+        if (upload_progress < 1000 || complete === true) {
+            bar.progressbar('value', upload_progress);
+        } else {
+            // Go stripey for validation
+            bar.progressbar('value', false);
+        }
     },
     
     // Clear the file box
@@ -491,37 +509,143 @@ filesender.ui.files = {
         filesender.ui.evalUploadEnabled();
     },
 
-    checkEncryptionPassword: function(input,slideMessage) {
-        input = $(input);
-        var crypto = window.filesender.crypto_app();
-
-        
-        var invalid = false;
-        if( filesender.ui.transfer.encryption_password_version == 
-            crypto.crypto_password_version_constants.v2018_text_password )
-        {
-        
-            var pass = input.val();
-            var minLength = filesender.config.encryption_min_password_length;
-            if( minLength > 0 ) {
-                if( !pass || pass.length < minLength ) {
-                    invalid = true;
-                }
-            }
-        }
+    updatePasswordMustHaveMessage: function(slideMessage,invalid,msg) {
 
         if( slideMessage ) {
-            var msg = $('#encryption_password_container_too_short_message');
+            
             if(invalid) {
-                input.addClass('invalid');
                 if( msg.css('display')=='none') {
                     msg.slideToggle( checkEncryptionPassword_slideToggleDelay );
                 }
             }else{
-                input.removeClass('invalid');
                 if( msg.css('display')!='none') {
                     msg.slideToggle( checkEncryptionPassword_slideToggleDelay );
                 }
+            }
+        }
+        
+    },
+    
+    checkEncryptionPassword: function(input,slideMessage) {
+        input = $(input);
+        var crypto = window.filesender.crypto_app();
+        var pass = input.val();
+        var invalid = false;
+        var msg = null;
+
+        var use_encryption = filesender.ui.nodes.encryption.toggle.is(':checked');
+        if( !use_encryption ) {
+            $('.passwordvalidation').each(function( index ) {
+                $((this)).hide();
+            });
+            return true;
+        }
+        
+        
+        if( filesender.ui.transfer.encryption_password_version == 
+            crypto.crypto_password_version_constants.v2018_text_password )
+        {
+            var minLength = filesender.config.encryption_min_password_length;
+            if( minLength > 0 ) {
+                var testInvalid = false;
+                if( !pass || pass.length < minLength ) {
+                    testInvalid = true;
+                    msg = $('#encryption_password_container_too_short_message');
+                    invalid = true;
+                }
+                filesender.ui.files.updatePasswordMustHaveMessage(
+                    slideMessage, testInvalid,
+                    $('#encryption_password_container_too_short_message'));
+            }
+        }
+
+        var v = filesender.ui.nodes.encryption.use_generated.is(':checked');
+        if( v ) {
+            $('.passwordvalidation').each(function( index ) {
+                $((this)).hide();
+            });
+            return true;
+        }
+  
+        //
+        // Very long text passwords might be allowed by sys admin.
+        //
+        var phrasePass = false;
+        if( filesender.config.encryption_password_text_only_min_password_length > 0 ) {
+            var phraseLen = filesender.config.encryption_password_text_only_min_password_length;
+            if( pass ) {
+                var passNonRepeating = !(/^(.)\1+$/.test(pass));
+                
+                if( passNonRepeating && pass.length >= phraseLen ) {
+                    phrasePass = true;
+
+                    filesender.ui.files.updatePasswordMustHaveMessage(
+                        slideMessage, false,
+                        $('#encryption_password_container_can_have_text_only_min_password_length_message'));
+                    
+                    testInvalid = false;
+                    filesender.ui.files.updatePasswordMustHaveMessage(
+                        slideMessage, testInvalid,
+                        $('#encryption_password_container_must_have_upper_and_lower_case_message'));
+                    filesender.ui.files.updatePasswordMustHaveMessage(
+                        slideMessage, testInvalid,
+                        $('#encryption_password_container_must_have_numbers_message'));
+                    filesender.ui.files.updatePasswordMustHaveMessage(
+                        slideMessage, testInvalid,
+                        $('#encryption_password_container_must_have_special_characters_message'));
+                } else {
+                    filesender.ui.files.updatePasswordMustHaveMessage(
+                        slideMessage, true,
+                        $('#encryption_password_container_can_have_text_only_min_password_length_message'));
+                }
+            } else {
+                filesender.ui.files.updatePasswordMustHaveMessage(
+                    slideMessage, true,
+                    $('#encryption_password_container_can_have_text_only_min_password_length_message'));
+            }
+        }
+
+        if( !phrasePass ) {
+            
+            if( filesender.config.encryption_password_must_have_upper_and_lower_case ) {
+                var testInvalid = false;
+                if(!pass.match(/[A-Z]/g) || !pass.match(/[a-z]/g)) {
+                    testInvalid = true;
+                    invalid = true;
+                }
+                filesender.ui.files.updatePasswordMustHaveMessage(
+                    slideMessage, testInvalid,
+                    $('#encryption_password_container_must_have_upper_and_lower_case_message'));
+                
+            }
+            if( filesender.config.encryption_password_must_have_numbers ) {
+                var testInvalid = false;
+                if(!pass.match(/[0-9]/g)) {
+                    testInvalid = true;
+                    invalid = true;
+                }
+                filesender.ui.files.updatePasswordMustHaveMessage(
+                    slideMessage, testInvalid,
+                    $('#encryption_password_container_must_have_numbers_message'));
+            }
+            if( filesender.config.encryption_password_must_have_special_characters ) {
+                var testInvalid = false;
+                if(!pass.match(/[@#!$%^&*()\[\]<>?\/\\]/g)) {
+                    testInvalid = true;
+                    invalid = true;
+                }
+                filesender.ui.files.updatePasswordMustHaveMessage(
+                    slideMessage, testInvalid,
+                    $('#encryption_password_container_must_have_special_characters_message'));
+            }
+        }
+        
+        if( slideMessage ) {
+            
+            if(invalid) {
+                input.addClass('invalid');
+            }else{
+                input.removeClass('invalid');
             }
         }
         return !invalid;
@@ -696,6 +820,19 @@ filesender.ui.recipients = {
     }
 };
 
+filesender.ui.doesUploadMessageContainPassword = function() {
+    if(filesender.ui.nodes.encryption.toggle.is(':checked')) {
+        var p = filesender.ui.nodes.encryption.password.val();
+        var m = filesender.ui.nodes.message.val();
+        if( p && m ) {
+            if( m.includes(p)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 filesender.ui.evalUploadEnabled = function() {
     var ok = true;
     
@@ -725,6 +862,12 @@ filesender.ui.evalUploadEnabled = function() {
 
     if(filesender.ui.nodes.encryption.toggle.is(':checked')) {
         ok = ok && filesender.ui.files.checkEncryptionPassword(filesender.ui.nodes.encryption.password,false );
+    }
+
+    if( filesender.ui.doesUploadMessageContainPassword()) {
+        if( filesender.config.upload_page_password_can_not_be_part_of_message_handling == 'error' ) {
+            ok = false;
+        }
     }
 
     var invalid_nodes = filesender.ui.nodes.files.list.find('.invalid');
@@ -782,7 +925,7 @@ filesender.ui.scheduleAutomaticResume = function(msg) {
         window.setTimeout(
             function() {
                 filesender.ui.automatic_resume_timer = 0;
-                window.clearTimeout(filesender.ui.automatic_resume_timer_countdown);
+                window.clearInterval(filesender.ui.automatic_resume_timer_countdown);
                 filesender.ui.automatic_resume_timer_countdown = 0;
 
                 window.filesender.log('scheduleAutomaticResume(calling retry) ' + msg );
@@ -792,7 +935,9 @@ filesender.ui.scheduleAutomaticResume = function(msg) {
         );
     filesender.ui.automatic_resume_timer_seconds = filesender.config.automatic_resume_delay_to_resume+1;
     var countDownFunc = function() {
-        filesender.ui.automatic_resume_timer_seconds--;
+        if (filesender.ui.automatic_resume_timer_seconds > 0) {
+            filesender.ui.automatic_resume_timer_seconds--;
+        }
         filesender.ui.nodes.auto_resume_timer.text(
             lang.tr('auto_resume_timer_seconds')
                 .r({seconds: filesender.ui.automatic_resume_timer_seconds}).out());
@@ -821,20 +966,22 @@ filesender.ui.retryingErrorHandler = function(error,callback) {
         });
     }
 
-    filesender.ui.automatic_resume_retries++;
-    if( filesender.ui.automatic_resume_retries > filesender.config.automatic_resume_number_of_retries ) {
-        window.filesender.log("The user has run out of automatic retries so we are going to report this as a fatal error");
-        pause( true );
-        filesender.ui.errorOriginal( error, callback );
-        return;
-    }
+    if (filesender.ui.resumeScheduled === false) {
+        filesender.ui.automatic_resume_retries++;
+        if( filesender.ui.automatic_resume_retries > filesender.config.automatic_resume_number_of_retries ) {
+            window.filesender.log("The user has run out of automatic retries so we are going to report this as a fatal error");
+            pause( true );
+            filesender.ui.errorOriginal( error, callback );
+            return;
+        }
 
-    filesender.ui.scheduleAutomaticResume( msg );
+        filesender.ui.scheduleAutomaticResume( msg );
+    }
 }
 
 filesender.ui.cancelAutomaticResume = function() {
     
-    window.clearTimeout(filesender.ui.automatic_resume_timer_countdown);
+    window.clearInterval(filesender.ui.automatic_resume_timer_countdown);
     filesender.ui.automatic_resume_timer_countdown = 0;
     window.clearTimeout(filesender.ui.automatic_resume_timer);
     filesender.ui.automatic_resume_timer = 0;
@@ -928,6 +1075,7 @@ filesender.ui.startUpload = function() {
     this.transfer.oncomplete = function(time) {
 
         filesender.ui.files.clear_crust_meter_all();
+        window.filesender.pbkdf2dialog.ensure_onPBKDF2AllEnded();
         
         var redirect_url = filesender.ui.transfer.options.redirect_url_on_complete;
         if(redirect_url) {
@@ -949,7 +1097,6 @@ filesender.ui.startUpload = function() {
             );
         };
 
-        
         var p = filesender.ui.alert('success', lang.tr('done_uploading'), close);
         
         var t = null;
@@ -1196,10 +1343,12 @@ $(function() {
         from: form.find('select[name="from"]'),
         subject: form.find('input[name="subject"]'),
         encryption: {
-                toggle: form.find('input[name="encryption"]'),
-                password: form.find('input[name="encryption_password"]'),
-                show_hide: form.find('#encryption_show_password'),
-                generate: form.find('#encryption_generate_password')
+            toggle: form.find('input[name="encryption"]'),
+            password: form.find('input[name="encryption_password"]'),
+            show_hide: form.find('#encryption_show_password'),
+            generate:      form.find('#encryption_generate_password'),
+            use_generated: form.find('#encryption_use_generated_password'),
+            generate_again: form.find('#encryption_password_container_generate_again')
         },
         uploading_actions_msg:form.find('.uploading_actions .msg'),
         auto_resume_timer:form.find('.uploading_actions .auto_resume_timer'),
@@ -1208,6 +1357,8 @@ $(function() {
         seconds_since_data_sent_info:form.find('#seconds_since_data_sent_info'),
         disable_terasender: form.find('input[name="disable_terasender"]'),
         message: form.find('textarea[name="message"]'),
+        message_contains_password_warning: form.find('#password_can_not_be_part_of_message_warning'),
+        message_contains_password_error:   form.find('#password_can_not_be_part_of_message_error'),
         guest_token: form.find('input[type="hidden"][name="guest_token"]'),
         lang: form.find('input[name="lang"]'),
         aup: form.find('input[name="aup"]'),
@@ -1353,6 +1504,33 @@ $(function() {
         $('#message_can_not_contain_urls'),
         filesender.config.message_can_not_contain_urls_regex );
 
+    // Bind encryption password events
+    var messageContainedPassword = false;
+    if( filesender.config.upload_page_password_can_not_be_part_of_message_handling == 'warning'
+        || filesender.config.upload_page_password_can_not_be_part_of_message_handling == 'error' )
+    {
+        filesender.ui.nodes.message.on(
+            'keyup',
+            function(e) {
+                if( filesender.ui.doesUploadMessageContainPassword()) {
+                    if( filesender.config.upload_page_password_can_not_be_part_of_message_handling == 'warning' ) {
+                        filesender.ui.nodes.message_contains_password_warning.show();
+                    }
+                    if( filesender.config.upload_page_password_can_not_be_part_of_message_handling == 'error' ) {
+                        filesender.ui.nodes.message_contains_password_error.show();
+                    }
+                    filesender.ui.evalUploadEnabled();
+                    messageContainedPassword = true;
+                } else if( messageContainedPassword ) {
+                    messageContainedPassword = false;
+                    filesender.ui.nodes.message_contains_password_warning.hide();
+                    filesender.ui.nodes.message_contains_password_error.hide();
+                    filesender.ui.evalUploadEnabled();
+                }
+            }
+        );
+    }
+    
     
     // Setup date picker
     $.datepicker.setDefaults({
@@ -1423,6 +1601,15 @@ $(function() {
         filesender.ui.evalUploadEnabled();
     });
 
+    if(filesender.ui.nodes.encryption.toggle.is(':checked')) {
+        $('#encryption_password_container').slideToggle();
+        $('#encryption_password_container_generate').slideToggle();
+        $('#encryption_password_show_container').slideToggle();
+        $('#encryption_description_container').slideToggle();
+        filesender.ui.transfer.encryption = filesender.ui.nodes.encryption.toggle.is(':checked');
+        filesender.ui.files.checkEncryptionPassword(filesender.ui.nodes.encryption.password, true );
+    }
+
     // Bind encryption
     filesender.ui.nodes.encryption.toggle.on('change', function() {
         $('#encryption_password_container').slideToggle();
@@ -1431,12 +1618,7 @@ $(function() {
         $('#encryption_description_container').slideToggle();
         filesender.ui.transfer.encryption = filesender.ui.nodes.encryption.toggle.is(':checked');
         
-        if( filesender.ui.transfer.encryption ) {
-            filesender.ui.files.checkEncryptionPassword(filesender.ui.nodes.encryption.password, true );
-        } else {
-            var msg = $('#encryption_password_container_too_short_message');
-            msg.hide();
-        }
+        filesender.ui.files.checkEncryptionPassword(filesender.ui.nodes.encryption.password, true );
         
         for(var i=0; i<filesender.ui.transfer.files.length; i++) {
             var file = filesender.ui.transfer.files[i];
@@ -1462,13 +1644,33 @@ $(function() {
         
         return false;
     });
+
+    filesender.ui.nodes.encryption.use_generated.on('change', function() {
+        var v = filesender.ui.nodes.encryption.use_generated.is(':checked');
+        if( v ) {
+            filesender.ui.nodes.encryption.generate_again.show();
+            
+            filesender.ui.nodes.encryption.password.attr('readonly', true);
+            filesender.ui.nodes.encryption.generate.click();
+        } else {
+            filesender.ui.nodes.encryption.generate_again.hide();
+            $('#encryption_password_show_container').show();
+            filesender.ui.nodes.encryption.password.attr('readonly', false);
+            
+            // plain text passwords have a specific version
+            // and encoding which may be used by key generation
+            // so we must reset that here if the user starts modifying the password.
+            filesender.ui.transfer.encryption_password_version = crypto.crypto_password_version_constants.v2018_text_password;
+            filesender.ui.transfer.encryption_password_encoding = 'none';            
+            filesender.ui.files.checkEncryptionPassword(filesender.ui.nodes.encryption.password, true );
+        }
+    });
     
     filesender.ui.nodes.encryption.generate.on('click', function() {
 
         var crypto = window.filesender.crypto_app();
         var encoded = crypto.generateRandomPassword();
         password = encoded.value;
-        filesender.ui.nodes.encryption.password.attr('readonly', true);
         filesender.ui.nodes.encryption.password.val(password);
         filesender.ui.transfer.encryption_password_encoding = encoded.encoding;
         filesender.ui.transfer.encryption_password_version  = encoded.version;
