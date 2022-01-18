@@ -43,6 +43,7 @@ A note about colours;
 * [crypto_gcm_max_file_size](#crypto_gcm_max_file_size)
 * [crypto_gcm_max_chunk_size](#crypto_gcm_max_chunk_size)
 * [crypto_gcm_max_chunk_count](#crypto_gcm_max_chunk_count)
+* [crypto_crypt_name](#crypto_crypt_name)
 * [upload_crypted_chunk_padding_size](#upload_crypted_chunk_padding_size)
 * [upload_crypted_chunk_size](#upload_crypted_chunk_size)
 
@@ -58,6 +59,7 @@ A note about colours;
 * [storage_filesystem_hashing](#storage_filesystem_hashing)
 * [storage_filesystem_ignore_disk_full_check](#storage_filesystem_ignore_disk_full_check)
 * [storage_filesystem_external_script](#storage_filesystem_external_script)
+* [cloud_s3_bucket](#cloud_s3_bucket)
 
 ## Shredding
 
@@ -565,6 +567,15 @@ $config['avprogram_list'] = array( 'always_pass',
 * __comment:__ It is recommended that you leave this setting as the default value and do not change the
      upload_chunk_size when using GCM cryptography. The default is 2^32-1.
 
+### crypto_crypt_name
+* __description:__ Internal use. The name of the cipher currently used. This is set from encryption_key_version_new_files for new transfers or the key version that was used for an existing transfer.
+* __mandatory:__ no
+* __type:__ string
+* __default:__ calculated
+* __available:__ since before version 2.30
+* __comment:__ This is an internal setting. It will be overridden in crypto_app based on the key version to be used for a transfer. The key version in that was set in encryption_key_version_new_files
+is stored as part of the metadata for each transfer when it is created. When a transfer is to be downloaded the key version used for that transfer will be used to set the crypto_crypt_name.
+This way the encryption_key_version_new_files can be updated and existing uploads will continue to be able to be downloaded.
 
 ### upload_crypted_chunk_size
 * __description:__ Internal only setting. This is the entire size of an encrypted chunk, including any padding for per chunk IV
@@ -681,6 +692,17 @@ $config['avprogram_list'] = array( 'always_pass',
 * __default:__ FILESENDER_BASE.'/scripts/StorageFilesystemExternal/external.py'
 * __available:__ since before version 2.30
 * __comment:__ The script at the given path should perform similar read/write operations as the example external.py script to maintain the storage.
+
+
+### cloud_s3_bucket
+
+* __description:__ Optional name of a single bucket to use for storing all files in on S3.
+* __mandatory:__ no.  
+* __type:__ string
+* __default:__ ''
+* __available:__ since version 2.31
+* __comment:__ If you wish to store all files in a single bucket set it's name in this configuration option.
+Ensure that the named bucket already exists if you use this setting.
 
 
 
