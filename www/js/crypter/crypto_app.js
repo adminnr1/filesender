@@ -94,6 +94,8 @@ window.filesender.crypto_app = function () {
         // for example, to respect a checkbox from the UI
         disable_streamsaver: false,
 
+
+
         /**
          * This turns a filesender chunkid into a 4 byte array
          * that can be used in GCM encryption. 
@@ -572,14 +574,16 @@ window.filesender.crypto_app = function () {
                         
                             var joinedData = window.filesender.crypto_common().joinIvAndData(iv, new Uint8Array(result));
 
-                        // this is the base64 variant. this will result in a larger string to send
-                            var btoaData = btoa(
-                                // This string contains all kind of weird characters
-                                window.filesender.crypto_common().convertArrayBufferViewtoString(
+                            var btoaData = joinedData;
+                            if( window.filesender.config.encryption_encode_encrypted_chunks_in_base64_during_upload ) {
+                                // this is the base64 variant. this will result in a larger string to send
+                                btoaData = btoa(
+                                    // This string contains all kind of weird characters
+                                    window.filesender.crypto_common().convertArrayBufferViewtoString(
                                         joinedData
                                     )
-                            );
-
+                                );
+                            }
                             callback(btoaData);
                         },
                     function (e) {
@@ -674,7 +678,15 @@ window.filesender.crypto_app = function () {
             var key_version = encryption_details.key_version;
             var blobArray = [];
 	    var wrongPassword = false;
+            var nonStreamed = false;
 
+            if( chunkid==0 ) {
+                if( !window.filesender.config.use_streamsaver ) {
+                    window.filesender.log("decryptBlob() first chunk of non streamed download");
+                    nonStreamed = true;
+                }
+            }
+            
             try {
                     
                 var value = encryptedChunk;
@@ -688,7 +700,7 @@ window.filesender.crypto_app = function () {
                                                             decryptParams,
                                                             callbackError );
 
-                window.filesender.log("decryptBlob()" );
+                window.filesender.log("decryptBlob() about to really decrypt() nonStreamed " + nonStreamed );
                 
                 crypto.subtle.decrypt(decryptParams, key, value.data).then(
                     function (result) {
@@ -709,10 +721,16 @@ window.filesender.crypto_app = function () {
                         }
                     },
                     function (e) {
-                        window.filesender.log("decrypt(e)");
+                        window.filesender.log("decrypt(e) nonStreamed " + nonStreamed );
                         window.filesender.log(e);
+                        if(nonStreamed) {
+                            e = new Error();
+                        }
                         if (!wrongPassword) {
                             wrongPassword=true;
+                            window.filesender.log("decrypt(e5) nonStreamed " + nonStreamed );
+                            window.filesender.log("decrypt(e5) msg " + e.message );
+                            filesender.client.decryptionFailedForTransfer( encryption_details.transferid );
                             callbackError(e);
                         }
                     }
@@ -814,11 +832,14 @@ window.filesender.crypto_app = function () {
                                       + " loaded " + evt.loaded + " of total " + evt.total );
                 if (evt.lengthComputable) {
                     var percentComplete = Math.round(evt.loaded / (1*$this.upload_crypted_chunk_size) *10000) / 100;
+                    var percentOfFileComplete = 100*((chunkid*$this.crypto_chunk_size + evt.loaded) / encryption_details.filesize );
+                    
                     if (progress) {
 
                         var msg = lang.tr('download_chunk_progress').r({chunkid: chunkid,
                                                                         chunkcount: encryption_details.chunkcount,
-                                                                        percentofchunkcomplete: percentComplete.toFixed(2)
+                                                                        percentofchunkcomplete: percentComplete.toFixed(2),
+                                                                        percentOffilecomplete: percentOfFileComplete.toFixed(2)
                                                                        }).out();
                         progress.html(msg);
                     }
@@ -886,6 +907,15 @@ window.filesender.crypto_app = function () {
             // start downloading this chunk
             oReq.send();
         },
+
+        /**
+         * Some functions like handleXHRError() want to call alert()
+         * but that can not happen from a web worker. By making this
+         * alert() a callback function it allows such an alert() call
+         * to be sent back to the main thread by an error() type message
+         * channel. The callback must match the alert() function signature.
+         */
+        alertcb: window.alert,
         
         /**
          * Display an error message to the user in has the XHR error
@@ -895,11 +925,13 @@ window.filesender.crypto_app = function () {
          */
         handleXHRError: function( xhr, link, defaultMsg )
         {
+            $this = this;
+            
             if(xhr.responseURL && xhr.responseURL.includes("/?s=exception&"))
             {
-                window.filesender.log("handleXHRError() XHR ERROR DETECTED");
-                window.filesender.log("link " + link );
-                window.filesender.log("got  " + xhr.responseURL );
+                window.filesender.log("handleXHRError(XHR ERROR DETECTED)");
+                window.filesender.log("handleXHRError link " + link );
+                window.filesender.log("handleXHRError got  " + xhr.responseURL );
 
                 var message = defaultMsg;
                 var url = new URL(xhr.responseURL);
@@ -907,6 +939,8 @@ window.filesender.crypto_app = function () {
                 if( c ) {
                     try {
                         var jc = JSON.parse(atob(c));
+                        window.filesender.log("handleXHRError jc " + jc );
+                        
                         if( jc ) {
                             message = jc.message;
                             window.filesender.log("have untranslated message: " + message );
@@ -915,11 +949,11 @@ window.filesender.crypto_app = function () {
                         // use default message if base64 decode failed.
                     }
                 }
-                
+
                 if( window.filesender.config.language[message] ) {
-                    alert( window.filesender.config.language[message] );
+                    $this.alertcb.call( window, window.filesender.config.language[message] );
                 } else {
-                    alert( window.filesender.config.language[defaultMsg] );
+                    $this.alertcb.call( window, window.filesender.config.language[defaultMsg] );
                 }                            
                 return true;
             }
@@ -936,7 +970,7 @@ window.filesender.crypto_app = function () {
          * 
          * @param fileiv is the decoded fileiv. Decoding can be done with decodeCryptoFileIV()
          */
-        decryptDownloadToBlobSink: function (blobSink, pass,
+        decryptDownloadToBlobSink: function (blobSink, pass, transferid,
                                              link, mime, name, filesize, encrypted_filesize,
                                              key_version, salt,
                                              password_version, password_encoding, password_hash_iterations,
@@ -955,7 +989,8 @@ window.filesender.crypto_app = function () {
                                        password_hash_iterations: password_hash_iterations,
                                        client_entropy:    client_entropy,
                                        fileiv:            fileiv,
-                                       fileaead:          fileaead
+                                       fileaead:          fileaead,
+                                       transferid:        transferid
                                      };
             // For GCM this will be the fileiv (96 bits of fixed entropy).
             encryption_details.expected_fixed_chunk_iv = new Uint8Array(16);
@@ -1057,15 +1092,34 @@ window.filesender.crypto_app = function () {
             // to assumed password failures.
             //
             callbackError = function (error) {
+                window.filesender.log("decryptDownloadToBlobSink() explicit error " + error);
                 window.filesender.log(error);
                 window.filesender.crypto_app_downloading = false;
-                alert( window.filesender.config.language.file_encryption_wrong_password );
+                var msg = window.filesender.config.language.file_encryption_wrong_password;
+                
+                if( error && error.message && error.message != "" ) {
+                    msg = error.message;
+                } 
+                alert( msg );
                 if (progress){
-                    progress.html(window.filesender.config.language.file_encryption_wrong_password);
+                    progress.html( msg );
+                }
+                if( msg == window.filesender.config.language.file_encryption_wrong_password ) {
+                    filesender.terasender.stop();
                 }
                 blobSink.error( error );
             };
 
+            onProgressCallback = function( ts, chunkid, totalrecv, percentComplete, percentOfFileComplete ) {
+
+                var msg = lang.tr('download_chunk_progress').r({chunkid: chunkid,
+                                                                chunkcount: encryption_details.chunkcount,
+                                                                percentofchunkcomplete: percentComplete.toFixed(2),
+                                                                percentOffilecomplete:  percentOfFileComplete.toFixed(2)
+                                                               }).out();
+                progress.html(msg);
+            }
+            
                 encryption_details.password = pass;
 
                 $this.obtainKey(
@@ -1093,11 +1147,48 @@ window.filesender.crypto_app = function () {
                             }
                         };
 
-                        window.filesender.crypto_app_downloading = true;                        
-                        $this.downloadAndDecryptChunk( chunkid, link, progress,
-                                                       encryption_details, key,
-                                                       blobSink,
-                                                       callbackDone, callbackProgress, callbackError );
+                        window.filesender.crypto_app_downloading = true;
+
+                        var transfer = new filesender.transfer();
+                        if (transfer.canUseTeraReceiver()) {
+
+                            transfer.id = transferid;
+                            transfer.encryption = 1;
+
+                            var decryptCallback = function( job ) {
+                                $this.decryptBlob(
+                                    job.chunkid,
+                                    job.encryptedChunk,
+                                    job.encryption_details,
+                                    key,
+                                    filesender.terasender.receiver.blobSink,
+                                    function() {
+                                        // callbackNext()
+                                    },
+                                    callbackDone, callbackError );
+                            };
+
+                            filesender.terasender.crypto_app = this;
+                            filesender.terasender.receiver = {
+                                chunkid: chunkid,
+                                link: link,
+                                progress: progress,
+                                encryption_details: encryption_details,
+                                key: key,
+                                blobSink: blobSink,
+                                onChunkSuccess: decryptCallback,
+                                onProgress: onProgressCallback,
+                                onError: callbackError
+                            };
+
+                            filesender.terasender.startReceiver( transfer );
+                            
+                        } else {
+                            $this.downloadAndDecryptChunk( chunkid, link, progress,
+                                                           encryption_details, key,
+                                                           blobSink,
+                                                           callbackDone, callbackProgress, callbackError );
+                        }
                     },
                     function (e) {
                         // error occured during obtainkey
@@ -1106,7 +1197,7 @@ window.filesender.crypto_app = function () {
                 );
  
         },
-        decryptDownload: function (link, mime, name, filesize, encrypted_filesize,
+        decryptDownload: function (link, transferid, mime, name, filesize, encrypted_filesize,
                                    key_version, salt,
                                    password_version, password_encoding, password_hash_iterations,
                                    client_entropy, fileiv, fileaead,
@@ -1122,6 +1213,12 @@ window.filesender.crypto_app = function () {
                     progress.html(window.filesender.config.language.file_encryption_wrong_password);
                 }
             };
+
+            // Should we use streamsaver for this download?
+            window.filesender.config.use_streamsaver = window.filesender.config.allow_streamsaver;
+            if( this.disable_streamsaver ) {
+                window.filesender.config.use_streamsaver = false;
+            }
             
             /*
              * This is a blob visitor that performs a legacy (as of mid 2020)
@@ -1143,6 +1240,7 @@ window.filesender.crypto_app = function () {
                 bytesProcessed: 0,
                 expected_size: filesize,
                 callbackError: callbackError,
+                name: function() { return "legacy"; },
                 error: function(error) {
                 },
                 visit: function(chunkid,decryptedData) {
@@ -1179,11 +1277,12 @@ window.filesender.crypto_app = function () {
                 blobSinkStreamed = window.filesender.streamsaver_sink( name, filesize, callbackError );
                 blobSink = blobSinkStreamed;
             }
-
+            window.filesender.log("Using blobSink " + blobSink.name());
+            
             var prompt = window.filesender.ui.prompt(window.filesender.config.language.file_encryption_enter_password, function (password) {
                 var pass = $(this).find('input').val();
             
-                $this.decryptDownloadToBlobSink( blobSink, pass,
+                $this.decryptDownloadToBlobSink( blobSink, pass, transferid,
                                                  link, mime, name, filesize, encrypted_filesize,
                                                  key_version, salt,
                                                  password_version, password_encoding, password_hash_iterations,
@@ -1219,7 +1318,7 @@ window.filesender.crypto_app = function () {
                 + "." + archiveFormat;
             return archiveName;
         },
-        decryptDownloadToZip: function(link,selectedFiles,progress,onFileOpen,onFileClose,onComplete) {
+        decryptDownloadToZip: function(link,transferid,selectedFiles,progress,onFileOpen,onFileClose,onComplete) {
 
             var $this = this;
 
@@ -1236,7 +1335,7 @@ window.filesender.crypto_app = function () {
                 var pass = $(this).find('input').val();
 
                 var archiveName = $this.getArchiveFileName(link,selectedFiles,"zip");
-                blobSinkStreamed = window.filesender.streamsaver_sink_zip64( $this, link, archiveName, pass, selectedFiles, callbackError );
+                blobSinkStreamed = window.filesender.streamsaver_sink_zip64( $this, link, transferid, archiveName, pass, selectedFiles, callbackError );
                 blobSink = blobSinkStreamed;
                 blobSink.init();
                 blobSink.progress = progress;

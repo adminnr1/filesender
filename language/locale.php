@@ -59,14 +59,17 @@ $locales  =  array(
     'it-it' => 'it_IT',
     'it-ch' => 'it_IT',
     'nl-nl'  => 'nl_NL',
+    'jp' => array('name' => 'Japanese', 'path' => 'ja_JP'),
     'nl' => 'nl_NL',
     'no-no' => 'no_NO',
     'no' => 'no_NO',
     'nb' => 'no_NO',
     'nb-no' => 'no_NO',
     'pl' => array('name' => 'Polski', 'path' => 'pl_PL'),
+    'pt-br' => array('name' => 'Português Brasileiro', 'path' => 'pt_BR'),
     'sl' => 'sl_SI',
     'sl-si' => 'sl_SI',
     'sr' => 'sr_RS',
-    'ru' => 'ru_RU'
+    'ru' => 'ru_RU',
+    'tr' => array('name' => 'Turkish', 'path' => 'tr_TR')
 );

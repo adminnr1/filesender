@@ -51,6 +51,14 @@ class RestEndpointTransfer extends RestEndpoint
      */
     public static function cast(Transfer $transfer, $files_cids = null, $creatingTransfer = false )
     {
+        $options = $transfer->options;
+
+        // The client never needs to know the bucket name used.
+        $v = Config::get('cloud_s3_bucket');
+        if( $v && $v != '' ) {
+            $options[TransferOptions::STORAGE_CLOUD_S3_BUCKET] = '';
+        }
+        
         return array(
             'id' => $transfer->id,
             'userid' => $transfer->userid,
@@ -60,7 +68,7 @@ class RestEndpointTransfer extends RestEndpoint
             'created' => RestUtilities::formatDate($transfer->created),
             'expires' => RestUtilities::formatDate($transfer->expires),
             'expiry_date_extension' => $transfer->expiry_date_extension,
-            'options' => $transfer->options,
+            'options' => $options,
             'salt' => $transfer->salt,
             'roundtriptoken' => $creatingTransfer ? $transfer->roundtriptoken : '',
             
@@ -193,7 +201,7 @@ class RestEndpointTransfer extends RestEndpoint
         
         // Get current user
         $user = Auth::user();
-        
+      
         if (is_numeric($id)) {
             // Getting data about a specific transfer
             $transfer = Transfer::fromId($id);
@@ -443,6 +451,7 @@ class RestEndpointTransfer extends RestEndpoint
                     }
                 }
             }
+
             
             // Must have files ...
             if (!count($data->files)) {
@@ -481,6 +490,20 @@ class RestEndpointTransfer extends RestEndpoint
             }
             
             $options['encryption'] = $data->encryption;
+
+            // check if encryption is mandatory but the user tried to disable it
+            if( Principal::isEncryptionMandatory()) {
+                if( !$data->encryption ) {
+                    throw new TransferMustBeEncryptedException();
+                }
+            }
+
+            if( Config::get('storage_type') == 'CloudS3' ) {
+                $v = Config::get('cloud_s3_bucket');
+                if( $v && $v != '' ) {
+                    $options[TransferOptions::STORAGE_CLOUD_S3_BUCKET] = $v;
+                }
+            }
 
             Logger::info($options);
             // Get_a_link transfers have no recipients so mail related options make no sense, remove them if set
@@ -586,10 +609,33 @@ class RestEndpointTransfer extends RestEndpoint
                     throw new TransferUserQuotaExceededException();
                 }
             }
+
+            // See if the user who invited this guest should be able to see
+            // this particular transfer from the guest.
+            $guest_transfer_shown_to_user_who_invited_guest = true;
+            if (Auth::isGuest()) {
+
+                $user_can_only_view_guest_transfers_shared_with_them = Config::get('user_can_only_view_guest_transfers_shared_with_them');
+                if( $user_can_only_view_guest_transfers_shared_with_them ) {
+                    if( !$guest->getOption(GuestOptions::CAN_ONLY_SEND_TO_ME)) {
+                        $user_who_invited_guest_in_recipients = false;
+                        foreach ($data->recipients as $email) {
+                            if( $email == $guest->user_email ) {
+                                $user_who_invited_guest_in_recipients = true;
+                                break;
+                            }
+                        }
+                        $guest_transfer_shown_to_user_who_invited_guest = $user_who_invited_guest_in_recipients;
+                    }
+                }
+            }
+            
             
             // Every check went well, create the transfer
             $expires = $data->expires ? $data->expires : Transfer::getDefaultExpire();
             $transfer = Transfer::create($expires, $guest ? $guest->email : $data->from);
+
+            $transfer->guest_transfer_shown_to_user_who_invited_guest = $guest_transfer_shown_to_user_who_invited_guest;
             
             // Set additional data
             if ($data->subject) {
@@ -656,6 +702,14 @@ class RestEndpointTransfer extends RestEndpoint
                 if (!is_null($banned_exts) && in_array($ext, $banned_exts)) {
                     throw new FileExtensionNotAllowedException($ext);
                 }
+
+                // trim off optional rfc2045 *(";" parameter) blocks
+                $filedata->mime_type = preg_replace('/^([^;]*).*/','$1',$filedata->mime_type);
+
+                $filedata->mime_type = Utilities::valuePassesConfigRegexOrDefault( $filedata->mime_type,
+                                                                                   'mime_type_regex',
+                                                                                   Config::get('mime_type_default'));
+                
 
                 $file = $transfer->addFile($filedata->name, $filedata->size, $filedata->mime_type,
                                            $filedata->iv, $filedata->aead );
@@ -759,6 +813,13 @@ class RestEndpointTransfer extends RestEndpoint
         if (($security == 'auth') && !Auth::isAuthenticated()) {
             throw new RestAuthenticationRequiredException();
         }
+
+        $data = $this->request->input;
+        if( $data->decryptfailed ) {
+            $transfer = Transfer::fromId($id);
+            Logger::logActivity(LogEventTypes::TRANSFER_DECRYPT_FAILED, $transfer, Auth::actor());
+            return array();
+        }
         
         // Get transfer to update and current user
         $transfer = Transfer::fromId($id);
@@ -808,7 +869,7 @@ class RestEndpointTransfer extends RestEndpoint
             
             // Need to extend expiry date
             if ($data->extend_expiry_date) {
-                $transfer->extendExpiryDate();
+                $transfer->extendObjectExpiryDate();
             }
             
             // Need to remind the transfer's availability to its recipients ?
@@ -825,6 +886,7 @@ class RestEndpointTransfer extends RestEndpoint
                     $transfer->save();
                 }
             }
+
         }
         
         // Need to make the transfer available (sends email to recipients) ?

@@ -27,10 +27,26 @@ A note about colours;
 * [site_logouturl](#site_logouturl)
 * [reports_show_ip_addr](#reports_show_ip_addr)
 * [admin_can_view_user_transfers_page](#admin_can_view_user_transfers_page)
+* [mime_type_regex](#mime_type_regex)
+* [mime_type_default](#mime_type_default)
+* [service_aup_min_required_version](#service_aup_min_required_version)
+* [tmp_path](#tmp_path)
 
 ## Security settings
+* [use_strict_csp](#use_strict_csp)
 * [header_x_frame_options](#header_x_frame_options)
+* [header_add_hsts_duration](#header_add_hsts_duration)
 * [owasp_csrf_protector_enabled](#owasp_csrf_protector_enabled)
+* [avprogram_list](#avprogram_list)
+* [avprogram_max_size_to_scan](#avprogram_max_size_to_scan)
+* [crypto_iv_len](#crypto_iv_len)
+* [crypto_gcm_max_file_size](#crypto_gcm_max_file_size)
+* [crypto_gcm_max_chunk_size](#crypto_gcm_max_chunk_size)
+* [crypto_gcm_max_chunk_count](#crypto_gcm_max_chunk_count)
+* [crypto_crypt_name](#crypto_crypt_name)
+* [upload_crypted_chunk_padding_size](#upload_crypted_chunk_padding_size)
+* [upload_crypted_chunk_size](#upload_crypted_chunk_size)
+
 
 ## Backend storage
 
@@ -42,6 +58,8 @@ A note about colours;
 * [storage_usage_warning](#storage_usage_warning)
 * [storage_filesystem_hashing](#storage_filesystem_hashing)
 * [storage_filesystem_ignore_disk_full_check](#storage_filesystem_ignore_disk_full_check)
+* [storage_filesystem_external_script](#storage_filesystem_external_script)
+* [cloud_s3_bucket](#cloud_s3_bucket)
 
 ## Shredding
 
@@ -58,6 +76,7 @@ A note about colours;
 * [db_password](#db_password)
 * [db_database](#db_database)
 * [db_table_prefix](#db_table_prefix)
+* [db_driver_options](#db_driver_options)
 
 ## Language and internationalisation
 
@@ -78,6 +97,7 @@ A note about colours;
 * [email_newline](#email_newline)
 * [email_headers](#email_headers)
 * [relay_unknown_feedbacks](#relay_unknown_feedbacks)
+* [translatable_emails_lifetime](#translatable_emails_lifetime)
 
 ## General UI
 
@@ -94,7 +114,7 @@ A note about colours;
 * [crypto_pbkdf2_expected_secure_to_year](#crypto_pbkdf2_expected_secure_to_year)
 * [crypto_pbkdf2_dialog_custom_webasm_delay](#crypto_pbkdf2_dialog_custom_webasm_delay)
 * [upload_page_password_can_not_be_part_of_message_handling](#upload_page_password_can_not_be_part_of_message_handling)
-
+* [user_page](#user_page)
 
 ## Transfers
 
@@ -119,11 +139,16 @@ A note about colours;
 * [max_transfer_file_size](#max_transfer_file_size)
 * [max_transfer_encrypted_file_size](#max_transfer_encrypted_file_size)
 * [encryption_enabled](#encryption_enabled)
+* [encryption_mandatory](#encryption_mandatory)
 * [encryption_min_password_length](#encryption_min_password_length)
-* [encryption_generated_password_length](#encryption_generated_password_length)
+* [encryption_password_must_have_upper_and_lower_case](#encryption_password_must_have_upper_and_lower_case)
+* [encryption_password_must_have_numbers](#encryption_password_must_have_numbers)
+* [encryption_password_must_have_special_characters](#encryption_password_must_have_special_characters)
+* [encryption_password_text_only_min_password_length](#encryption_password_text_only_min_password_length)
 * [encryption_key_version_new_files](#encryption_key_version_new_files)
 * [encryption_random_password_version_new_files](#encryption_random_password_version_new_files)
 * [encryption_password_hash_iterations_new_files](#encryption_password_hash_iterations_new_files)
+* [encryption_encode_encrypted_chunks_in_base64_during_upload](#encryption_encode_encrypted_chunks_in_base64_during_upload)
 * [automatic_resume_number_of_retries](#automatic_resume_number_of_retries)
 * [automatic_resume_delay_to_resume](#automatic_resume_delay_to_resume)
 * [transfer_options_not_available_to_export_to_client](#transfer_options_not_available_to_export_to_client)
@@ -135,7 +160,7 @@ A note about colours;
 * [streamsaver_on_chrome](#streamsaver_on_chrome)
 * [streamsaver_on_edge](#streamsaver_edge)
 * [streamsaver_on_safari](#streamsaver_safari)
-
+* [recipient_reminder_limit](#recipient_reminder_limit)
 
 ## Graphs
 
@@ -159,18 +184,27 @@ A note about colours;
 
 ## Guest use
 
+* [guest_support_enabled](#guest_support_enabled)
 * [guest_options](#guest_options)
 * [default_guest_days_valid](#default_guest_days_valid)
+* [min_guest_days_valid](#min_guest_days_valid)
 * [max_guest_days_valid](#max_guest_days_valid)
 * [max_guest_recipients](#max_guest_recipients)
 * [guest_upload_page_hide_unchangable_options](#guest_upload_page_hide_unchangable_options)
 * [user_can_only_view_guest_transfers_shared_with_them](#user_can_only_view_guest_transfers_shared_with_them)
 * [guest_create_limit_per_day](#guest_create_limit_per_day)
+* [guest_reminder_limit](#guest_reminder_limit)
 * [guest_reminder_limit_per_day](#guest_reminder_limit_per_day)
+* [allow_guest_expiry_date_extension](#allow_guest_expiry_date_extension)
+* [allow_guest_expiry_date_extension_admin](#allow_guest_expiry_date_extension_admin)
+* [guest_limit_per_user](#guest_limit_per_user)
+* [guests_expired_lifetime](#guests_expired_lifetime)
+* [guest_upload_page_hide_unchangable_options](#guest_upload_page_hide_unchangable_options)
 
 ## Authentication
 
 * [auth_sp_type](#auth_sp_type)
+* [auth_sp_force_session_start_first](#auth_sp_force_session_start_first)
 * __SimpleSAMLphp__
 	* [auth_sp_saml_authentication_source](#auth_sp_saml_authentication_source)
 	* [auth_sp_saml_simplesamlphp_url](#auth_sp_saml_simplesamlphp_url)
@@ -208,13 +242,14 @@ A note about colours;
 * [exception_additional_logging_regex](#exception_additional_logging_regex)
 * [clientlogs_stashsize](#clientlogs_stashsize)
 * [clientlogs_lifetime](#clientlogs_lifetime)
-
+* [logs_limit_messages_from_same_ip_address](#logs_limit_messages_from_same_ip_address)
+* [trackingevents_lifetime](#trackingevents_lifetime)
 
 ## Webservices API
 
 * [auth_remote_application_enabled](#auth_remote_application_enabled)
 * [auth_remote_signature_algorithm](#auth_remote_signature_algorithm)
-* [remote_applications](#remote_applications)
+* [auth_remote_applications](#auth_remote_applications)
 * [auth_remote_user_autogenerate_secret](#auth_remote_user_autogenerate_secret)
 * [rest_allow_jsonp](#rest_allow_jsonp)
 
@@ -233,7 +268,10 @@ A note about colours;
 ## Data Protection
 
 * [data_protection_user_frequent_email_address_disabled](#data_protection_user_frequent_email_address_disabled)
+* [data_protection_user_transfer_preferences_disabled](#data_protection_user_transfer_preferences_disabled)
 
+## Deprecated settings
+* [encryption_generated_password_length](#encryption_generated_password_length)
 
 ---
 
@@ -357,7 +395,57 @@ A note about colours;
 * __available:__ since version 2.18
 * __comment:__ This allows an admin to find a user with admin/users and click to see the "my transfers" page that the specific user would see. ie, the admin sees the user's transfers instead of seeing their own. The menu becomes red in this mode and "my transfers" is changed to "user transfers" to attempt to caution the administrator that they are dealing with user data rather than their own.
 
+### mime_type_regex
 
+* __description:__ A regular expression to match mime types against.
+* __mandatory:__ no
+* __type:__ string
+* __default:__ ^[-a-zA-Z0-9/; ]*$
+* __available:__ since version 2.29
+* __comment:__ This regular expression should describe "good" mime types. Note that optional parameters as shown in "Syntax of the Content-Type Header Field" of rfc2045 will have already been removed from the mime type before matching with this expression.The action taken if a string does not validate against this setting may be to refuse an action or to convert the mime type into application/octet-stream in order to ensure a known good mimetype rather than something unexpected. Failing mime types may be converted to mime_type_default instead of causing a halting error.
+
+
+### mime_type_default
+
+* __description:__ Default mime type to use if an invalid mimetype was sent by the client.
+* __mandatory:__ no
+* __type:__ string
+* __default:__ application/octet-stream
+* __available:__ since version 2.29
+* __comment:__ Some failures are worse than others. This is the default mimetype to use if a client presents an invalid value.
+
+
+### service_aup_min_required_version
+
+* __description:__ If the site uses a service level AUP this is the current minimum version a user must have accepted to continue to upload files.
+* __mandatory:__ no
+* __type:__ int
+* __default:__ 0
+* __available:__ since version 2.30
+* __comment:__ A setting of 0 disables the site wide AUP. Setting to 1 will enable AUP and force the user to accept the text from the language translation service_aup_text_version_1. If you were on level 1 and change service_aup_min_required_version=2 anyone who has not accepted or has only accepted service_aup_text_version_1 will be prompted to accept service_aup_text_version_2 after loading the next page. This continues onward allowing new AUP text and terms to be introduced and explicitly seeking user acceptance before they can continue to upload to the service.
+
+### tmp_path
+
+* __description:__ The location to store temporary scratch files
+* __mandatory:__ no
+* __type:__ string
+* __default:__ FILESENDER_BASE.'/tmp/',
+* __available:__ since before version 2.30
+* __comment:__ Only some code has been migrated to using this configuration setting. It is intended to be a location that files might be temporarily stored while processing is happening.
+
+
+
+
+
+
+### use_strict_csp
+
+* __description:__ Include a strict Content-Security-Policy (CSP) header in web page responses.
+* __mandatory:__ no
+* __type:__ boolean
+* __default:__ true
+* __available:__ since version 2.26
+* __comment:__ Default should be ok. This adds a rather strict Content-Security-Policy (CSP) header to pages to avoid inline and eval and loading resources from other sites.
 
 ### header_x_frame_options
 
@@ -368,8 +456,18 @@ A note about colours;
 * __available:__ since version 2.7
 * __comment:__ Default should be ok. Can be 'deny' to disallow frames if you do not use them or 'none' to disable the feature (not recommended). Note that this setting will not override a setting that is already in place in your web server. This setting is mainly here as a second catch and for sites that can not configure their web server to install a site wide nominated value for X-Frame-Options.
 
+### header_add_hsts_duration
 
-* [owasp_csrf_protector_enabled](#owasp_csrf_protector_enabled)
+* __description:__ Add Strict-Transport-Security header with the desired max-age
+* __mandatory:__ no
+* __type:__ int
+* __default:__ 63072000
+* __available:__ since version 2.26
+* __comment:__ Set to 0 to disable. Default is 63072000 which is two years in seconds.
+
+
+### owasp_csrf_protector_enabled
+
 * __description:__ Use the OWASP csrf protector as well as internal CSRF tokens
 * __mandatory:__ no
 * __type:__ boolean
@@ -379,6 +477,124 @@ A note about colours;
 * __comment:__ There is internal CSRF protection in FileSender. Turning this on by setting it to true enables usage of the
   [CSRF Protector php library](https://github.com/mebjas/CSRF-Protector-PHP/wiki) to also protect interactions from CSRF attack.
   Note that this option will definitely use cookies.
+
+### avprogram_list
+
+* __description:__ A list of anti virus and malware scanners to use.
+* __mandatory:__ no
+* __type:__ array (of array)
+* __default:__ ()
+* __available:__ since version 2.26
+* __comment:__ This is a list of the classes to use to check for bad content. They can only run on non encrypted files as the
+               server does not have access otherwise. The URL module accepts a parameter 'url' which is the url to send the
+               file content to for scanning. It is expected that the reply is JSON with a passes, error, and reason property.
+               The mime AV program takes an array of MIME types that the content MUST be in using the matchlist parameter.
+               The mime AV program defaults to using the first 8k of content to determine the MIME type, use bytesToConsider
+               to change this. Setting bytesToConsider to values below 8k will have no effect.
+
+```
+$config['avprogram_list'] = array( 'always_pass',
+                                   'mime' => array(
+                                       'name' => 'Check for valid MIME type',
+                                       'bytesToConsider' => 8*1024,
+                                       'matchlist' => array('image/jpeg', 'text/plain')
+                                   ),
+                                   'url' => array(
+                                       'name' => 'Foo',
+                                       'url' => 'http://localhost/foo/scanforfoo.php'
+                                   ));
+```
+
+### avprogram_max_size_to_scan
+* __description:__ Do not try to scan files larger than this with the avprogram_list
+* __mandatory:__ no
+* __type:__ int
+* __default:__ 100*1024*1024
+* __available:__ since version 2.26
+* __comment:__ 
+
+
+### crypto_iv_len
+* __description:__ Internal use only
+* __mandatory:__ no
+* __type:__ int
+* __default:__ 16
+* __available:__ since before version 2.30
+* __comment:__ This is an internal setting, please do not change it.
+
+
+### crypto_gcm_max_file_size
+* __description:__ This is the largest file that should be sent using GCM encryption with the default chunk size.
+* __mandatory:__ no
+* __type:__ int
+* __default:__ 4294967296 * 5 * 1024 * 1024
+* __available:__ since before version 2.30
+* __comment:__ The default is roughly 16384 tb so is more of a double check than anything. This is to protect
+     against wrap around of GCM cryptography using the same xor stream.
+     It is recommended that you leave this setting as the default value and do not change the
+     upload_chunk_size when using GCM cryptography. You may wish to lower this setting if you have to use
+     smaller upload_chunk_size values and will lower this setting commensurate with the chunk size being
+     smaller than the default.
+
+### crypto_gcm_max_file_size
+* __description:__ This is the largest file that should be sent using GCM encryption with the default chunk size.
+* __mandatory:__ no
+* __type:__ int
+* __default:__ 4294967296 * 5 * 1024 * 1024
+* __available:__ since before version 2.30
+* __comment:__ It is recommended that you leave this setting as the default value and do not change the
+     upload_chunk_size when using GCM cryptography. The default is roughly 16384 tb so is more of a double check than anything. This is to protect
+     against wrap around of GCM cryptography using the same xor stream.
+     You may wish to lower this setting if you have to use
+     smaller upload_chunk_size values and will lower this setting commensurate with the chunk size being
+     smaller than the default.
+
+### crypto_gcm_max_chunk_size
+* __description:__ This is the largest size of a single chunk that should be sent using GCM encryption.
+* __mandatory:__ no
+* __type:__ int
+* __default:__ 4294967295 * 16
+* __available:__ since before version 2.30
+* __comment:__ It is recommended that you leave this setting as the default value and do not change the
+     upload_chunk_size when using GCM cryptography. The default is 2^32-1 AES blocks of 16 bytes.
+
+
+### crypto_gcm_max_chunk_count
+* __description:__ This is the maximum total number of chunks that should be sent for a file when using GCM encryption.
+* __mandatory:__ no
+* __type:__ int
+* __default:__ 4294967295
+* __available:__ since before version 2.30
+* __comment:__ It is recommended that you leave this setting as the default value and do not change the
+     upload_chunk_size when using GCM cryptography. The default is 2^32-1.
+
+### crypto_crypt_name
+* __description:__ Internal use. The name of the cipher currently used. This is set from encryption_key_version_new_files for new transfers or the key version that was used for an existing transfer.
+* __mandatory:__ no
+* __type:__ string
+* __default:__ calculated
+* __available:__ since before version 2.30
+* __comment:__ This is an internal setting. It will be overridden in crypto_app based on the key version to be used for a transfer. The key version in that was set in encryption_key_version_new_files
+is stored as part of the metadata for each transfer when it is created. When a transfer is to be downloaded the key version used for that transfer will be used to set the crypto_crypt_name.
+This way the encryption_key_version_new_files can be updated and existing uploads will continue to be able to be downloaded.
+
+### upload_crypted_chunk_size
+* __description:__ Internal only setting. This is the entire size of an encrypted chunk, including any padding for per chunk IV
+* __mandatory:__ no
+* __type:__ int
+* __default:__ 5 * 1024 * 1024 + 16 + 16
+* __available:__ since before version 2.30
+* __comment:__ It is highly recommended that you leave this setting as the default value. This is the size, including any IV and padding
+           needed for an encrypted chunk that is uploaded.
+
+### upload_crypted_chunk_padding_size
+* __description:__ Internal only setting. This is the size of padding and IV for an encrypted chunk
+* __mandatory:__ no
+* __type:__ int
+* __default:__ 16 + 16
+* __available:__ since before version 2.30
+* __comment:__ It is highly recommended that you leave this setting as the default value. This is the size of just the IV and padding
+           needed for an encrypted chunk that is uploaded (not the encrypted content itself).
 
 
 
@@ -393,10 +609,11 @@ A note about colours;
 
 * __description:__  type of storage you used for storing files uploaded to FileSender.
 * __mandatory:__ no
-* __type:__ string.  Permissible values: **filesystem**.
+* __type:__ string
+* __permissible values__ filesystem, filesystemChunked, CloudAzure, CloudS3, filesystemExternal
 * __default:__ filesystem
 * __available:__ since version 2.0
-* __comment:__ each supported storage type will have a specific class defined in classes/storage.  Each is named Storage<Foo>.class.php, for example StorageFilesystem.class.php for the type filesystem.  The values for "Foo" are the permissible values for this directive. For now the only permissible value and supported storage types are filesystem and filesystemChunked. Note that you need to respect the non leading capital letters in the class name such as the "C" in filesystemChunked. Future storage types could include e.g. **object**, **amazon_s3** and others.
+* __comment:__ each supported storage type will have a specific class defined in classes/storage.  Each is named Storage<Foo>.class.php, for example StorageFilesystem.class.php for the type filesystem.  The values for "Foo" are the permissible values for this directive. The primary choices for value are filesystem and filesystemChunked. Note that you need to respect the non leading capital letters in the class name such as the "C" in filesystemChunked. Future storage types could include e.g. **object**, **amazon_s3** and others.
 
 ### storage_filesystem_path
 
@@ -466,6 +683,29 @@ A note about colours;
 * __default:__ false
 * __available:__ since version 2.0
 * __comment:__ If you are using FUSE to interface with some other storage such as EOS then you might like to set this to true to avoid having to do a distributed search to find out of there is storage for each upload
+
+
+### storage_filesystem_external_script
+
+* __description:__ When using the storage_type of filesystemExternal this is the path to the script that can read/write data to external storage.
+* __mandatory:__ no.  
+* __type:__ string
+* __default:__ FILESENDER_BASE.'/scripts/StorageFilesystemExternal/external.py'
+* __available:__ since before version 2.30
+* __comment:__ The script at the given path should perform similar read/write operations as the example external.py script to maintain the storage.
+
+
+### cloud_s3_bucket
+
+* __description:__ Optional name of a single bucket to use for storing all files in on S3.
+* __mandatory:__ no.  
+* __type:__ string
+* __default:__ ''
+* __available:__ since version 2.31
+* __comment:__ If you wish to store all files in a single bucket set it's name in this configuration option.
+Ensure that the named bucket already exists if you use this setting.
+
+
 
 
 ---
@@ -571,6 +811,23 @@ A note about colours;
 * __available:__ since version 2.0
 * __1.x name:__
 * __comment:__
+
+
+### db_driver_options
+
+* __description:__ Some options to pass to the constructor of DBI objects. This can be used to enable persistent connections.
+* __mandatory:__ no
+* __type:__ array
+* __default:__ array()
+* __available:__ since version 2.27
+* __comment:__
+  You might like to use the following in your config.php to enable persistent connections.
+
+$config['db_driver_options'] = array( PDO::ATTR_PERSISTENT => true );
+  
+  See https://www.php.net/manual/en/pdo.construct.php
+
+
 
 ---
 
@@ -745,6 +1002,25 @@ User language detection is done in the following order:
 * __1.x name:__
 * __comment:__ <span style="background-color:orange">this parameter will get a different name</span>
 
+
+### translatable_emails_lifetime
+
+* __description:__ This is the number of days to retain translatable emails in the database.
+* __mandatory:__ no
+* __type:__ int
+* __default:__ 30
+* __available:__ since before version 2.30
+
+
+### trackingevents_lifetime
+
+* __description:__ This is the number of days to retain tracking events in the database. 
+* __mandatory:__ no
+* __type:__ int
+* __default:__ 90
+* __available:__ since before version 2.30
+* __comment:__ See classes/constants/TrackingEventTypes.class.php for types of tracking events. As of 2.30 they are limited to email bounces.
+
 ## General UI
 
 ### theme
@@ -865,8 +1141,15 @@ User language detection is done in the following order:
 * __available:__ since version 2.22
 
 
+### user_page
+* __description:__ This is an array describing which features should be offered on the user "my profile" page.
+* __mandatory:__ no
+* __type:__ array
+* __default:__ array('lang'=>true,'auth_secret'=>true,'id'=>true,'created'=>true)
+* __available:__ since before version 2.30
+* __comment:__ To show an item set the value for the name of the item to true.
+     For more possible values to include in the array see the second level keys in $infos on the templates/user_page.php file.
 
-* [upload_page_password_can_not_be_part_of_message_handling](#upload_page_password_can_not_be_part_of_message_handling)
 
 
 
@@ -1050,7 +1333,7 @@ If you want to find out the expiry timer for your SAML Identity Provider install
 * __default:__
 * __available:__ since version 2.0
 * __1.x name:__
-* __comment:__
+* __comment:__ For current defaults see https://github.com/filesender/filesender/search?q=transfer_options+in%3Afile+path%3Aincludes
 * __*Standard parameters for all options:*__
 	* __available__(boolean): if set to true then this option shown in the upload form
 	* __advanced__ (boolean): if set to true the option is hidden under an "Advanced options" click-out.  The user must click "Advanced" to make the option visible.
@@ -1067,6 +1350,8 @@ If you want to find out the expiry timer for your SAML Identity Provider install
 	* __add\_me\_to\_recipients:__ include the sender as one of the recipients.
 	* __get\_a\_link:__ if checked it will not send any emails, only present the uploader with a download link once the upload is complete.  This is useful when sending files to mailinglists, newsletters etc.  When ticked the message subject and message text box disappear from the UI.  Under the hood it creates an anonymous recipient with a token for download.  You can se the download count, but not who downloaded it (obviously, as there are no recipients defined).
 	* __redirect_url_on_complete:__ When the transfer upload completes, instead of showing a success message, redirect the user to a URL. This interferes with __get\_a\_link__ in that the uploader will not see the link after the upload completes. Additionally, if the uploader is a guest, there is no way straightforward way for the uploader to learn the download link, although this must not be used as a security feature.
+        * __must_be_logged_in_to_download__ (boolean): To download the files the user must log in to the FileSender server. This allows people to send files to other people they know also use the same FileSender server.
+        * __web_notification_when_upload_is_complete__: Added in release 2.32. Options include available, advanced, and default. If you wish to use this feature you should set available=true to allow the user to see the option. Some browsers such as Firefox require the user to explicitly click a link to start the acceptance dialog so being able to see the option (available=true) on the web page is very useful. Using notifications will require the user to accept them for the site. Currently as of release 2.32 a notification can be sent when the upload is complete.
 
 * __*Configuration example:*__
 
@@ -1130,6 +1415,16 @@ If you want to find out the expiry timer for your SAML Identity Provider install
 * __available:__ since version 2.0
 * __comment:__
 
+### encryption_mandatory
+* __description:__ If set to true then every file uploaded must be encrypted.
+* __mandatory:__ no
+* __type:__ boolean
+* __default:__ false
+* __available:__ since version 2.23
+* __comment:__
+
+
+
 ### encryption_min_password_length
 * __description:__ set to 0 to disable. If set to a positive value it is the minimum number of characters needed in a password for encryption. Note that since the encryption is fully client side, this value could be ignored by a determined user, though they would do that at the loss of their own security not of others.
 * __mandatory:__ no 
@@ -1138,29 +1433,79 @@ If you want to find out the expiry timer for your SAML Identity Provider install
 * __available:__ since version 2.0
 * __comment:__ 
 
+### encryption_password_must_have_upper_and_lower_case
+* __description:__ set to true to force a user entered password to contain uPPer and LoWer case characters.
+* __mandatory:__ no 
+* __type:__ boolean
+* __default:__ false
+* __available:__ since version 2.23
+* __comment:__ 
+
+### encryption_password_must_have_numbers
+* __description:__ set to true to force a user entered password to contain numbers 453543.
+* __mandatory:__ no 
+* __type:__ boolean
+* __default:__ false
+* __available:__ since version 2.23
+* __comment:__ 
+
+### encryption_password_must_have_special_characters
+* __description:__ set to true to force a user entered password to contain special characters (%$^@ etc).
+* __mandatory:__ no 
+* __type:__ boolean
+* __default:__ false
+* __available:__ since version 2.23
+* __comment:__ 
+
+
+### encryption_password_text_only_min_password_length
+* __description:__ If this is set then a password can avoid the password_must_have checks if it is at least this long.
+* __mandatory:__ no 
+* __type:__ int
+* __default:__ 40
+* __available:__ since version 2.26
+* __comment:__ Set to 0 to disable. Using this setting allows a passphrase that might contain all human language words without numbers, special characters etc
+     but which is still difficult enough to guess by brute force due to it's length and thus combination of words. If this setting is set to say 40 then
+     a password that is 40+ characters long will be accepted even when the encryption_password_must_have directives are in use and the password does not have
+     the must_have constraints met.
+
+
+
+
 ### encryption_generated_password_encoding
-* __description:__ which encoding to use to encode generated passwords. Since the random information obtained during password generation is completely random it is useful to encode that into text characters, for example in the range a,b,c etc. By doing this one single byte of random data (0 to 255 inclusive) will likely be encoded to more than one character of output. The base64 encoding turns x bytes of input into 1.33 times as long output. Because ascii85 uses more possible characters it turns each 4 bytes into 5 bytes. This means that for the same length of encoded string the ascii85 will have more entropy. Note that the ascii85 used is the Z85 from ZeroMQ to avoid the use of the quote character in output.
+* __description:__ It is highly recommended to leave the default value (ie not set in your config.php). Which encoding to use to encode generated passwords. Since the random information obtained during password generation is completely random it is useful to encode that into text characters, for example in the range a,b,c etc. By doing this one single byte of random data (0 to 255 inclusive) will likely be encoded to more than one character of output. The base64 encoding turns x bytes of input into 1.33 times as long output. Because ascii85 uses more possible characters it turns each 4 bytes into 5 bytes. This means that for the same length of encoded string the ascii85 will have more entropy. Note that the ascii85 used is the Z85 from ZeroMQ to avoid the use of the quote character in output.
 * __mandatory:__ no 
 * __type:__ string
 * __default:__ base64
 * __available:__ since version 2.1
 * __comment:__ either base64 or ascii85 
 
-### encryption_generated_password_length
-* __description:__ The exact number of characters used in a generated password for encryption. This must be equal or greater than encryption_min_password_length.
-* __mandatory:__ no 
-* __type:__ int
-* __default:__ encryption_min_password_length
-* __available:__ since version 2.0
-* __comment:__
 
 
 ### encryption_key_version_new_files
-* __description:__ The way encryption keys are derived from the supplied or generated password may change over time. Generally this is done to improve security, though it may also exclude certain older web browsers due to some features being missing in the older browser. This setting is the default key version to use for new files. The key version used to encrypt a file is stored in the database for each transfer and sent to allow anybody downloading the file to use the correct key version to properly decrypt the file. This way, new improved code can be issued and existing files which use older key versions can still be downloaded and decrypted. This allows migration to newer code as new FileSender releeases are made while allowing users to still download older encyrpted content. It is expected that this configuration option may be ignored by a system administrator unless you wish to support older web browsers and thus force a specific older key version to be used for all files. You will want version 0 if you wish to support IE11 clients. As of late 2018 the default is version 1.
+* __description:__ Select which user password hashing is performed and which AES mode is used for encryption.
+    Some mores have versions with and without key hashing because some browsers do not support the key hashing.
+    The choices in order of newest to oldest are: 3 is v2019_gcm_importKey_deriveKey
+     which is AES-GCM mode for encryption and using PBKDF2 to derive a key from user supplied passwords.
+     A PBKDF2 related configuration setting is crypto_pbkdf2_expected_secure_to_year.
+     The setting 3 is the recommended setting unless you have to support older browsers which can not
+     work with this level of security.
+
+     The setting 2 is v2019_gcm_digest_importKey which uses AES-GCM for encryption but almost directly imports the user password without any key hashing.
+     The setting 1 is v2018_importKey_deriveKey which uses AES-CBC mode for encryption and PBKDF2 for hashing the password.
+     The setting 0 is v2017_digest_importKey which uses AES-CBC mode for encryption and directly imports the password without hashing.
+     Notice that version 0 is like 1 but without key hashing and version 2 is like 3 but without key hashing.
+
+     It is expected that this configuration option may be ignored by a system administrator unless you wish to support older web browsers and thus force a specific older key version to be used for all files. You will want version 0 if you wish to support IE11 clients. From late 2018 through to 2021 the default is version 1. It is likely that the default will be version 3 for FileSender 3.x.
+     
+     The way encryption keys are derived from the supplied or generated password may change over time. Generally this is done to improve security, though it may also exclude certain older web browsers due to some features being missing in the older browser.
+
+     This setting is the default key version to use for new files. The key version used to encrypt a file is stored in the database for each transfer and sent to allow anybody downloading the file to use the correct key version to properly decrypt the file. This way, new improved code can be issued and existing files which use older key versions can still be downloaded and decrypted. This allows migration to newer code as new FileSender releeases are made while allowing users to still download older encyrpted content. 
+
 * __recommend_leaving_at_default:__ true
 * __mandatory:__ no 
 * __type:__ int
-* __default:__ latest version that the code supports.
+* __default:__ 1
 * __available:__ since version 2.6
 * __comment:__
 
@@ -1210,6 +1555,15 @@ these iteration counts take to perform on your local machine.
 * __available:__ since version 2.9
 * __comment:__
 
+
+
+### encryption_encode_encrypted_chunks_in_base64_during_upload
+* __description:__ This allows fallback to the older base64 PUT that was used in version 2.22. The encoding is quite costly and if there are no issues this parameter together with the fallback to using base64 on the PUT contents will be removed in a future version. 
+* __mandatory:__ no 
+* __type:__ boolean
+* __default:__ false
+* __available:__ since version 2.23
+* __comment:__ This is to allow fallbacks to older code. The default should be left unless you experience issues. If this fallback is not needed it will be removed in a future release and the __default__ will become the only choice in the code.
 
 
 
@@ -1355,6 +1709,21 @@ This is only for old, existing transfers which have no roundtriptoken set.
 * __available:__ since version 2.19
 * __comment:__ 
 
+### recipient_reminder_limit
+
+* __description:__ The number of reminders that a user can send to a recipient
+* __mandatory:__ no
+* __type:__ int
+* __default:__ 50
+* __available:__ since before version 2.30
+* __comment:__ Each time a user sends a reminder to a recipient they use up one of these reminders for that recipient.
+    This option stops a user from flooding a recipient with an infinite supply of reminders.
+
+    Note: Before version 2.30 this was limited by guest_reminder_limit
+    instead of being limited by recipient_reminder_limit. Both
+    defaulted to 50 so the default configuration will effectively
+    remain the same as before 2.30 but now these settings can be
+    changed independently.
 
 
 
@@ -1502,6 +1871,19 @@ This is only for old, existing transfers which have no roundtriptoken set.
 
 ---
 
+
+### guest_support_enabled
+
+* __description:__ Allow users to create guests.
+* __mandatory:__ no
+* __type:__ boolean
+* __default:__ true
+* __available:__ since version 2.30
+* __1.x name:__
+* __comment:__ Setting this to false will disable the guest system and fail on attempts to create a guest if they are directly attempted.
+
+
+
 ### guest_options
 
 * __description:__ <span style="background-color:orange">are transfer options for guest invitations inherited from transfer_options?</span>this parameter controls which options a user has available in the Guest form to control the behaviour of guest invitations.  Options show up in the right hand side block in the Guest form. Options appear in the order they are specified in the config file. See below for details.
@@ -1550,15 +1932,26 @@ This is only for old, existing transfers which have no roundtriptoken set.
 * __1.x name:__
 * __comment:__
 
+### min_guest_days_valid
+
+* __description:__ specifies the minimum expiry date for a guest invitation.  This is the number of days from today (0). The default of 1 will result in an effective minimum expire time of tomorrow. You might like to make this something like 5 or 7 to ensure guest vouchers are not accidentally created with very short life spans.
+* __mandatory:__ no
+* __type:__ int
+* __default:__ 1
+* __available:__ since version 2.32
+* __1.x name:__
+* __comment:__
+
 ### max_guest_days_valid
 
 * __description:__ specifies the maximum expiry date for a guest invitation.  A user can not choose a larger value than this.
 * __mandatory:__ no
 * __type:__ int
-* __default:__ same as max_transfer_days_valid
+* __default:__ 20
 * __available:__ since version 2.0
 * __1.x name:__
 * __comment:__
+
 
 ### max_guest_recipients
 
@@ -1604,6 +1997,17 @@ This is only for old, existing transfers which have no roundtriptoken set.
   the action will be denied and logged. Note that this is an inclusive value, for example, a setting of 2
   will allow creation of 2 guests but not 3.
 
+### guest_reminder_limit
+
+* __description:__ The number of reminders that a user can send to a guest
+* __mandatory:__ no
+* __type:__ int
+* __default:__ 50
+* __available:__ since before version 2.0
+* __comment:__ Each time a user sends a reminder to a guest they use up one of these reminders for that guest.
+    This option stops a user from flooding a guest with an infinite supply of reminders.
+
+
 ### guest_reminder_limit_per_day
 
 * __description:__ The number of reminders to each guest that user can send per day
@@ -1617,6 +2021,56 @@ This is only for old, existing transfers which have no roundtriptoken set.
   will allow 5 reminders to be sent to a guest but not 6.
 
 
+### allow_guest_expiry_date_extension
+
+* __description:__ This is an untested matching config option to allow_guest_expiry_date_extension_admin. It is best to reserve this config keyword now to allow future versions to allow some users to extend their guests if desired. Extending guest expire time is only available via the admin page as at release 2.23.
+* __mandatory:__
+* __type:__ an array of integers containing possible extensions in days.
+* __default:__ - (= not activated)
+* __available:__ since version 2.23
+* __1.x name:__
+* __comment:__
+* __Examples:__
+
+
+### allow_guest_expiry_date_extension_admin
+
+* __description:__ allows an admin to extend the expiry date of a guest. This is only used if you are logged in as an admin on the system. If you are an admin this schedule will overwrite the allow_guest_expiry_date_extension for you. 
+* __mandatory:__
+* __type:__ an array of integers containing possible extensions in days.
+* __default:__ array(31, true)
+* __available:__ since version 2.23
+* __Examples:__
+
+        // Allows infinite extensions, the first is by 30 days then 90 days 
+	$config['allow_guest_expiry_date_extension_admin'] = array(30, 90, true); 
+
+
+### guest_limit_per_user
+
+* __description:__ The maximum number of active guests a user can have. Once a user has this many active guests they can not make a new guest until they delete an active guest.
+* __mandatory:__ no
+* __type:__ int
+* __default:__ 50
+* __available:__ since before version 2.0
+
+
+### guests_expired_lifetime
+
+* __description:__ For an expired guest, this is the number of days to retain information about the guest in the database before deleting it.
+* __mandatory:__ no
+* __type:__ int
+* __default:__ 0
+* __available:__ since before version 2.30
+
+
+### guest_upload_page_hide_unchangable_options
+
+* __description:__ When a guest is on the upload page any options that can not be changed will be hidden from view. This can reduce UI clutter.
+* __mandatory:__ no
+* __type:__ bool
+* __default:__ false
+* __available:__ since before version 2.30
 
 
 
@@ -1637,6 +2091,19 @@ This is only for old, existing transfers which have no roundtriptoken set.
 * __available:__ since version 2.0
 * __1.x name:__
 * __comment:__ <span style="background-color:orange">to use type "fake" you need ...</span>
+
+
+### auth_sp_force_session_start_first
+
+* __description:__ Call php session_start to setup the session cookie before attempting auth authentication with the auth_sp_type.
+* __mandatory:__ no
+* __type:__ boolean
+* __default:__ false
+* __cookies:__ depending on php env this might set PHPSESSID cookie
+* __available:__ since version 2.26
+* __comment:__ Some of the auth_sp methods may use _SESSION or perform other actions that might alter how session_start() will work. If that is the case you can set this configuration to true and session_start() will be called before authentication is performed.
+
+
 
 ### session_cookie_path
 
@@ -2096,6 +2563,23 @@ $config['log_facilities'] =
 * __comment:__ Number of days after which collected client logs are automatically deleted.
 
 
+### logs_limit_messages_from_same_ip_address
+
+* __description:__ An option to limit how frequently transfers from the same IP address are logged
+* __mandatory:__ no
+* __type:__ boolean
+* __default:__ false
+* __available:__ since version 2.30
+* __comment:__ In version 2.30 the default action of not logging frequent items from the same IP address was turned off.
+        This option allows that throttle limit to be turned back on again if not have it causes major problems. If this
+        setting with the default of false works ok for people then the option may be removed and the default of not
+        limiting logs will be the only option. So in short, you may not ever need to know about or set this option. It
+        is here as a fallback if there are issues with it being turned off.
+
+
+
+
+
 ---
 
 ## Webservices API
@@ -2120,7 +2604,7 @@ $config['log_facilities'] =
 * __default:__ "sha1"
 * __available:__ since version 2.0
 
-### remote_applications
+### auth_remote_applications
 
 * __description:__  list of remote applications.  This is an array where each entry includes an authentication secret, whether or not the application has admin rights and what methods the application is allowed to use:
 * __mandatory:__ no
@@ -2128,7 +2612,14 @@ $config['log_facilities'] =
 * __default:__
 * __available:__ since version 2.0
 * __1.x name:__
-* __comment:__ <span style="background-color:orange">needs more work.  Example: array (idApp => secret(string), isAdmin(bool), acl (array (endpoint(ou *) => boolean OU array (pair de nom de méthode et de valeurs d'accès.  ex: get => TRUE, post => FALSE      Explained in more detail in API documentation page.</span>
+* __comment:__ 
+Example:
+
+`$config['auth_remote_applications'] = array (
+    'appname' => array( 'secret' => 'appsecret', 'isAdmin' => true, 'acl' => array( 'get' => TRUE, 'post' => TRUE, 'info' => TRUE, 'transfer' => TRUE))
+);`
+The array above contains the remote_application name and all the information for that is in an array under the key. 
+In this example, the application `appname` with secret `secret` has admin rights and can access the endpoint `/info` and `/transfer` by get and post. If you want it to access another endpoint it's necessary to put it in `acl` array. Without it the `info` ACL the test example would fail with permission denied.
 
 ### auth_remote_user_autogenerate_secret
 
@@ -2257,6 +2748,17 @@ Changes are saved in config_overrides.json in the config directory.  The config.
 * __type:__ boolean
 * __default:__ false
 * __available:__ since version 2.22
+* __1.x name:__
+* __comment:__
+
+
+### data_protection_user_transfer_preferences_disabled
+
+* __description:__ if set to true then the options a user selects when creating an upload are not stored in the database to set the same options for the next upload.
+* __mandatory:__ no
+* __type:__ boolean
+* __default:__ false
+* __available:__ since version 2.23
 * __1.x name:__
 * __comment:__
 

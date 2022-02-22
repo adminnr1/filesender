@@ -110,7 +110,24 @@ class Guest extends DBObject
         'last_reminder' => array(
             'type' => 'datetime',
             'null' => true
-        )
+        ),
+        'expiry_extensions' => array(
+            'type' => 'uint',
+            'size' => 'small',
+            'default' => 0
+        ),
+
+        // Shared guest/user Principal options
+        'service_aup_accepted_version' => array(
+            'type' => 'uint',
+            'size' => 'medium',
+            'null' => false,
+            'default' => 0
+        ),
+        'service_aup_accepted_time' => array(
+            'type' => 'datetime',
+            'null' => true
+        ),
     );
 
     public static function getViewMap()
@@ -122,12 +139,18 @@ class Guest extends DBObject
                         . DBView::columnDefinition_age($dbtype, 'expires')
                         . DBView::columnDefinition_age($dbtype, 'last_activity', 'last_activity_days_ago')
                         . DBView::columnDefinition_age($dbtype, 'last_reminder', 'last_reminder_days_ago')
+                        . DBView::columnDefinition_age($dbtype, 'service_aup_accepted_time', 'service_aup_accepted_time_days_ago')
                         . ' , expires < now() as expired '
                         . " , status = 'available' as is_available "
                         . '  from ' . self::getDBTable();
         }
         return array( strtolower(self::getDBTable()) . 'view' => $a );
     }
+
+    /**
+     * Config variables
+     */
+    const OBJECT_EXPIRY_DATE_EXTENSION_CONFIGKEY = "allow_guest_expiry_date_extension";
 
     /**
      * Set selectors
@@ -160,6 +183,9 @@ class Guest extends DBObject
     protected $last_activity = 0;
     protected $reminder_count = 0;
     protected $last_reminder = 0;
+    protected $expiry_extensions = 0;
+    protected $service_aup_accepted_version = 0;
+    protected $service_aup_accepted_time = null;
 
     /**
      * Cache
@@ -277,13 +303,31 @@ class Guest extends DBObject
      *
      * @return int timestamp
      */
-    public static function getDefaultExpire()
+    public function getDefaultExpire()
     {
-        $days = Config::get('default_guest_days_valid');
+        $days = $this->owner->guest_expiry_default_days;
+        
+        if (!$days) {
+            $days = Config::get('default_guest_days_valid');
+        }
         if (!$days) {
             $days = Config::get('default_transfer_days_valid');
         }
         
+        return strtotime('+'.$days.' day');
+    }
+
+    /**
+     * Get min expire date. If a number of days is explicitly set then it is used
+     * otherwise we default to right now being the min value so that calling code
+     * can Utilities::clamp() using this min value without needing to check if 
+     * min_guest_days_valid is set.
+     *
+     * @return int timestamp
+     */
+    public static function getMinExpire()
+    {
+        $days = Config::get('min_guest_days_valid');
         return strtotime('+'.$days.' day');
     }
     
@@ -661,6 +705,7 @@ class Guest extends DBObject
         if (in_array($property, array(
             'id', 'user_email', 'token', 'email', 'transfer_count',
             'subject', 'message', 'options', 'transfer_options', 'status', 'created', 'expires', 'last_activity', 'userid'
+            , 'expiry_extensions', 'service_aup_accepted_version', 'service_aup_accepted_time'
         ))) {
             return $this->$property;
         }
@@ -713,6 +758,10 @@ class Guest extends DBObject
             return $identity[0];
         }
 
+        if ($property == 'expiry_date_extension') {
+            return $this->getObjectExpiryDateExtension(false);
+        } // No throw
+        
         //
         // Simple access to $this->options 
         //
@@ -801,13 +850,22 @@ class Guest extends DBObject
                 if (!preg_match('`^[0-9]+$`', $value)) {
                     throw new BadExpireException($value);
                 }
-                
                 $value = (int)$value;
-                if ($value < floor(time() / (24 * 3600)) || $value > self::getMaxExpire()) {
-                    throw new BadExpireException($value);
+
+                // The default could be set to very high if it is
+                // set on a per user basis for their new guests
+                // so if we are at the defualt then do not clamp.
+                if( $value != $this->getDefaultExpire()) {
+                    if ($value < floor(time() / (24 * 3600)) || $value > self::getMaxExpire()) {
+                        throw new BadExpireException($value);
+                    }
                 }
                 $this->$property = (string)$value;
             }
+        } elseif ($property == 'service_aup_accepted_version') {
+            $this->service_aup_accepted_version = $value;
+        } elseif ($property == 'service_aup_accepted_time') {
+            $this->service_aup_accepted_time = $value;
         } else {
             throw new PropertyAccessException($this, $property);
         }

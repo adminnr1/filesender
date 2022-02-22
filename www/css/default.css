@@ -184,6 +184,14 @@ abbr {
     background-color: rgb(151,51,51);
 }
 
+.must_login_message {
+    background-color: rgb(251,201,201);
+    border: 1px solid;
+    border-radius: 0.5em;
+    -moz-border-radius: 0.5em;
+    padding: 0.4em 0.4em 0.4em 32px;
+    margin: 2em 5em;
+}
 
 #menu ul li select {
     display: block;
@@ -830,7 +838,8 @@ table.list .date {
 
 #upload_form .uploading_actions .msg,
 #upload_form .uploading_actions .stats .uploaded,
-#upload_form .uploading_actions .stats .average_speed
+#upload_form .uploading_actions .stats .average_speed,
+#upload_form .uploading_actions .stats .estimated_completion
 {
     display: none;
 }
@@ -1253,6 +1262,7 @@ table.guests .guest .to .errors .details {
 
 .download_page .files .file .select,
 .download_page .files .file .name,
+.download_page .files .file .avresult,
 .download_page .files .file .size {
 }
 
@@ -1269,10 +1279,15 @@ table.guests .guest .to .errors .details {
     color: #777;
 }
 
+.download_page .files .file .avresult {
+    text-align: right;
+}
+
 .download_page .files .file .download {
     float: right;
     margin-top: -0.5em;
 }
+
 
 .download_page .archive {
     margin-top: 1em;
@@ -1539,6 +1554,10 @@ table.guests .guest .to .errors .details {
 /* Encryption */
 #encryption_password_container,
 #encryption_password_container_too_short_message,
+#encryption_password_container_must_have_numbers_message,
+#encryption_password_container_must_have_upper_and_lower_case_message,
+#encryption_password_container_must_have_special_characters_message,
+#encryption_password_container_can_have_text_only_min_password_length_message,
 #encryption_password_container_generate,
 #encryption_password_container_generate_again,
 #encryption_password_show_container,
@@ -1550,13 +1569,21 @@ table.guests .guest .to .errors .details {
     display: none;
 }
 
+
 .adminaction {
     background: #ffeeee;
 }
 
-#encryption_password_container_too_short_message {
+#encryption_password_container_too_short_message,
+#encryption_password_container_must_have_numbers_message,
+#encryption_password_container_must_have_upper_and_lower_case_message,
+#encryption_password_container_must_have_special_characters_message {
     color: #f00;
 }
+#encryption_password_container_can_have_text_only_min_password_length_message {
+    color: #0a0;
+}
+
 
 table.paginator .pageprev0 {
     width: 2em;
@@ -1649,3 +1676,73 @@ div.not_displayed {
     font-weight: bold;
 }
 
+.hidden {
+    display: none;
+}
+
+
+
+#senderemail_full_match_label {
+    cursor: pointer;
+}
+
+#message_can_not_contain_urls {
+    display:none;
+}
+
+#marg3 {
+    margin:3px;
+}
+
+#password_can_not_be_part_of_message_error,
+#password_can_not_be_part_of_message_warning,
+#message_can_not_contain_urls {
+    display:none
+}
+
+#graphDiv {
+    width:400px;
+    height:200px;
+    margin:0 auto
+}
+
+.cursor {
+    cursor: pointer;
+}
+
+.colorffaa00 {
+    color: #FFAA00;
+}
+
+             
+                              
+.avresulterror,
+.avresultfailed {
+    color: #AA0000;
+}
+.avresultsucceeded {
+    color: #00AA00;
+}
+.avfile {
+    padding-top: 1em;
+}
+.avfile .name {
+    font-size:1.5em;    
+    padding-bottom: 1em;
+}
+
+.avheader1 {
+    color: #00AA00;
+}
+.avheader0 {
+    color: #AA0000;
+}
+
+.serviceaup ul {
+    margin-bottom: 2em;
+}
+
+.serviceaup ul li {
+    margin-bottom: 0.3em;
+    line-height: 1.1em;
+}

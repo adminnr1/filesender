@@ -64,6 +64,12 @@ function delayAndCallOnlyOnce(callback, ms) {
     };
 }
 
+function useWebNotifications()
+{
+    var ret = ('web_notification_when_upload_is_complete' in filesender.ui.nodes.options) ? filesender.ui.nodes.options.web_notification_when_upload_is_complete.is(':checked') : false;
+    return ret;
+}
+
 
 /**
  * apply a 'bad' class to the obj if b==true
@@ -100,6 +106,7 @@ function pause( changeTextElements )
     if( changeTextElements ) {
         filesender.ui.nodes.seconds_since_data_sent_info.text('');
         filesender.ui.nodes.stats.average_speed.find('.value').text(lang.tr('paused'));
+        filesender.ui.nodes.stats.estimated_completion.find('.value').text('');
         filesender.ui.setTimeSinceDataWasLastSentMessage(lang.tr('paused'));
     }
 }
@@ -137,6 +144,49 @@ function resume( force, resetResumeCount )
  */
 var checkEncryptionPassword_slideToggleDelay = 200;
 var checkEncryptionPassword_delay = 300;
+
+if(!('filesender' in window)) window.filesender = {};
+if(!('ui'         in window.filesender)) window.filesender.ui = {};
+if(!('elements'   in window.filesender.ui)) window.filesender.ui.elements = {};
+
+/**
+ * Update the UI element at uielement only once every delayMS time interval.
+ * While the first delayMS interval is passing show the string initString.
+ */
+filesender.ui.elements.nonBusyUpdater = function( uielement, delayMS, initString ) {
+    return {
+        e: uielement,
+        lastUpdate: null,
+        update: function( v ) {
+            var $this = this;
+            t = (new Date()).getTime();
+            if( $this.lastUpdate && ($this.lastUpdate + delayMS < t )) {
+                $this.e.text( v );
+            }
+            if( !$this.lastUpdate ) {
+                $this.e.text( initString );
+            }
+            if( !$this.lastUpdate || ($this.lastUpdate + delayMS < t )) {
+                $this.lastUpdate = t;
+            }
+        }
+    }
+};
+
+
+// prevent the element from having an empty string.
+filesender.ui.elements.preventEmpty = function(el) {
+    var originalValue = '';
+    el.on( 'focus', function(e) { originalValue = e.target.value; } );
+    el.on( 'blur',  function(e) {
+        if( e.target.value == '' ) {
+            e.target.value = originalValue;
+        }
+    });
+    return this;
+}
+
+
 
 // Manage files
 filesender.ui.files = {
@@ -246,7 +296,11 @@ filesender.ui.files = {
                     node.addClass('invalid');
                     node.addClass(error.message);
                     $('<span class="invalid fa fa-exclamation-circle fa-lg" />').prependTo(node.find('.info'))
-                    $('<div class="invalid_reason" />').text(lang.tr(error.message)).appendTo(node);
+                    var invalidreason = lang.tr(error.message);
+                    if(error.message == 'invalid_file_name') {
+                        invalidreason += ' ' + lang.tr('starting_at') + ' ' + error.details.badEnding;
+                    }
+                    $('<div class="invalid_reason" />').text( invalidreason ).appendTo(node);
                 }, source_node);
                 
                 filesender.ui.nodes.files.clear.button('enable');
@@ -265,7 +319,12 @@ filesender.ui.files = {
                 change: function() {
                     var bar = $(this);
                     var v = bar.progressbar('value');
-                    bar.find('.progress-label').text((v / 10).toFixed(1) + '%');
+                    if (v === false) {
+                        // stop progress showing 0.0% when the value is false
+                        bar.find('.progress-label').text('');
+                    } else {
+                        bar.find('.progress-label').text((v / 10).toFixed(1) + '%');
+                    }
                 },
                 complete: function() {
                     var bar = $(this);
@@ -462,6 +521,14 @@ filesender.ui.files = {
         }
         
         var speed = uploaded / (time / 1000);
+
+        var remaining = size - uploaded;
+        var eta = 0;
+        if( remaining && speed ) {
+            eta = remaining / speed;
+        }
+        filesender.ui.nodes.stats.estimated_completion_updater.update( filesender.ui.formatETA(eta));
+
         
         if (filesender.config.upload_display_bits_per_sec)
             speed *= 8;
@@ -472,7 +539,16 @@ filesender.ui.files = {
             filesender.ui.nodes.stats.average_speed.find('.value').text(filesender.ui.formatSpeed(speed));
         
         var bar = filesender.ui.nodes.files.list.find('[data-cid="' + file.cid + '"] .progressbar');
-        bar.progressbar('value', Math.floor(1000 * (file.fine_progress ? file.fine_progress : file.uploaded) / file.size)); 
+        upload_progress = Math.floor(1000 * (file.fine_progress ? file.fine_progress : file.uploaded) / file.size);
+        // check to see if upload_progress is 100% or complete is true
+        // so that we don't mark it as complete before the
+        // upload is validated
+        if (upload_progress < 1000 || complete === true) {
+            bar.progressbar('value', upload_progress);
+        } else {
+            // Go stripey for validation
+            bar.progressbar('value', false);
+        }
     },
     
     // Clear the file box
@@ -491,37 +567,143 @@ filesender.ui.files = {
         filesender.ui.evalUploadEnabled();
     },
 
-    checkEncryptionPassword: function(input,slideMessage) {
-        input = $(input);
-        var crypto = window.filesender.crypto_app();
-
-        
-        var invalid = false;
-        if( filesender.ui.transfer.encryption_password_version == 
-            crypto.crypto_password_version_constants.v2018_text_password )
-        {
-        
-            var pass = input.val();
-            var minLength = filesender.config.encryption_min_password_length;
-            if( minLength > 0 ) {
-                if( !pass || pass.length < minLength ) {
-                    invalid = true;
-                }
-            }
-        }
+    updatePasswordMustHaveMessage: function(slideMessage,invalid,msg) {
 
         if( slideMessage ) {
-            var msg = $('#encryption_password_container_too_short_message');
+            
             if(invalid) {
-                input.addClass('invalid');
                 if( msg.css('display')=='none') {
                     msg.slideToggle( checkEncryptionPassword_slideToggleDelay );
                 }
             }else{
-                input.removeClass('invalid');
                 if( msg.css('display')!='none') {
                     msg.slideToggle( checkEncryptionPassword_slideToggleDelay );
                 }
+            }
+        }
+        
+    },
+    
+    checkEncryptionPassword: function(input,slideMessage) {
+        input = $(input);
+        var crypto = window.filesender.crypto_app();
+        var pass = input.val();
+        var invalid = false;
+        var msg = null;
+
+        var use_encryption = filesender.ui.nodes.encryption.toggle.is(':checked');
+        if( !use_encryption ) {
+            $('.passwordvalidation').each(function( index ) {
+                $((this)).hide();
+            });
+            return true;
+        }
+        
+        
+        if( filesender.ui.transfer.encryption_password_version == 
+            crypto.crypto_password_version_constants.v2018_text_password )
+        {
+            var minLength = filesender.config.encryption_min_password_length;
+            if( minLength > 0 ) {
+                var testInvalid = false;
+                if( !pass || pass.length < minLength ) {
+                    testInvalid = true;
+                    msg = $('#encryption_password_container_too_short_message');
+                    invalid = true;
+                }
+                filesender.ui.files.updatePasswordMustHaveMessage(
+                    slideMessage, testInvalid,
+                    $('#encryption_password_container_too_short_message'));
+            }
+        }
+
+        var v = filesender.ui.nodes.encryption.use_generated.is(':checked');
+        if( v ) {
+            $('.passwordvalidation').each(function( index ) {
+                $((this)).hide();
+            });
+            return true;
+        }
+  
+        //
+        // Very long text passwords might be allowed by sys admin.
+        //
+        var phrasePass = false;
+        if( filesender.config.encryption_password_text_only_min_password_length > 0 ) {
+            var phraseLen = filesender.config.encryption_password_text_only_min_password_length;
+            if( pass ) {
+                var passNonRepeating = !(/^(.)\1+$/.test(pass));
+                
+                if( passNonRepeating && pass.length >= phraseLen ) {
+                    phrasePass = true;
+
+                    filesender.ui.files.updatePasswordMustHaveMessage(
+                        slideMessage, false,
+                        $('#encryption_password_container_can_have_text_only_min_password_length_message'));
+                    
+                    testInvalid = false;
+                    filesender.ui.files.updatePasswordMustHaveMessage(
+                        slideMessage, testInvalid,
+                        $('#encryption_password_container_must_have_upper_and_lower_case_message'));
+                    filesender.ui.files.updatePasswordMustHaveMessage(
+                        slideMessage, testInvalid,
+                        $('#encryption_password_container_must_have_numbers_message'));
+                    filesender.ui.files.updatePasswordMustHaveMessage(
+                        slideMessage, testInvalid,
+                        $('#encryption_password_container_must_have_special_characters_message'));
+                } else {
+                    filesender.ui.files.updatePasswordMustHaveMessage(
+                        slideMessage, true,
+                        $('#encryption_password_container_can_have_text_only_min_password_length_message'));
+                }
+            } else {
+                filesender.ui.files.updatePasswordMustHaveMessage(
+                    slideMessage, true,
+                    $('#encryption_password_container_can_have_text_only_min_password_length_message'));
+            }
+        }
+
+        if( !phrasePass ) {
+            
+            if( filesender.config.encryption_password_must_have_upper_and_lower_case ) {
+                var testInvalid = false;
+                if(!pass.match(/[A-Z]/g) || !pass.match(/[a-z]/g)) {
+                    testInvalid = true;
+                    invalid = true;
+                }
+                filesender.ui.files.updatePasswordMustHaveMessage(
+                    slideMessage, testInvalid,
+                    $('#encryption_password_container_must_have_upper_and_lower_case_message'));
+                
+            }
+            if( filesender.config.encryption_password_must_have_numbers ) {
+                var testInvalid = false;
+                if(!pass.match(/[0-9]/g)) {
+                    testInvalid = true;
+                    invalid = true;
+                }
+                filesender.ui.files.updatePasswordMustHaveMessage(
+                    slideMessage, testInvalid,
+                    $('#encryption_password_container_must_have_numbers_message'));
+            }
+            if( filesender.config.encryption_password_must_have_special_characters ) {
+                var testInvalid = false;
+                if(!pass.match(/[@#!$%^&*()\[\]<>?\/\\]/g)) {
+                    testInvalid = true;
+                    invalid = true;
+                }
+                filesender.ui.files.updatePasswordMustHaveMessage(
+                    slideMessage, testInvalid,
+                    $('#encryption_password_container_must_have_special_characters_message'));
+            }
+        }
+        
+        if( slideMessage ) {
+            
+            if(invalid) {
+                input.addClass('invalid');
+            }else{
+                input.removeClass('invalid');
             }
         }
         return !invalid;
@@ -951,6 +1133,7 @@ filesender.ui.startUpload = function() {
     this.transfer.oncomplete = function(time) {
 
         filesender.ui.files.clear_crust_meter_all();
+        window.filesender.pbkdf2dialog.ensure_onPBKDF2AllEnded();
         
         var redirect_url = filesender.ui.transfer.options.redirect_url_on_complete;
         if(redirect_url) {
@@ -965,6 +1148,7 @@ filesender.ui.startUpload = function() {
         }
         
         var close = function() {
+            window.filesender.notification.clear();
             filesender.ui.goToPage(
                 filesender.ui.transfer.guest_token ? 'home' : 'transfers',
                 null,
@@ -986,8 +1170,16 @@ filesender.ui.startUpload = function() {
         }
         
         if(t) t.on('click', function() {
+            window.filesender.notification.clear();
             $(this).focus().select();
         });
+
+        if( useWebNotifications()) {
+            window.filesender.notification.notify(lang.tr('web_notification_upload_complete_title'),
+                                                  lang.tr('web_notification_upload_complete'),
+                                                  window.filesender.notification.image_success);
+        }
+        
     };
     
     var errorHandler = function(error) {
@@ -1087,7 +1279,8 @@ filesender.ui.startUpload = function() {
     filesender.ui.nodes.stats.size.hide();
     filesender.ui.nodes.stats.uploaded.show();
     filesender.ui.nodes.stats.average_speed.show();
-    
+    filesender.ui.nodes.stats.estimated_completion.show();
+
     filesender.ui.nodes.form.find(':input:not(.file input[type="file"])').prop('disabled', true);
 
     // Report and possibly resume the upload
@@ -1254,7 +1447,8 @@ $(function() {
             number_of_files: form.find('.files_actions .stats .number_of_files'),
             size: form.find('.files_actions .stats .size'),
             uploaded: form.find('.uploading_actions .stats .uploaded'),
-            average_speed: form.find('.uploading_actions .stats .average_speed')
+            average_speed: form.find('.uploading_actions .stats .average_speed'),
+            estimated_completion: form.find('.uploading_actions .stats .estimated_completion')
         },
         need_recipients: form.attr('data-need-recipients') == '1'
     };
@@ -1266,6 +1460,11 @@ $(function() {
         var i = $(this);
         filesender.ui.nodes.options[i.attr('name')] = i;
     });
+    
+    filesender.ui.nodes.stats.estimated_completion_updater = filesender.ui.elements.nonBusyUpdater(
+        filesender.ui.nodes.stats.estimated_completion.find('.value'),
+        2000,
+        lang.tr('initializing'));
 
     
     // Bind file list clear button
@@ -1384,26 +1583,26 @@ $(function() {
     if( filesender.config.upload_page_password_can_not_be_part_of_message_handling == 'warning'
         || filesender.config.upload_page_password_can_not_be_part_of_message_handling == 'error' )
     {
-        filesender.ui.nodes.message.on(
-            'keyup',
-            function(e) {
-                if( filesender.ui.doesUploadMessageContainPassword()) {
-                    if( filesender.config.upload_page_password_can_not_be_part_of_message_handling == 'warning' ) {
-                        filesender.ui.nodes.message_contains_password_warning.show();
-                    }
-                    if( filesender.config.upload_page_password_can_not_be_part_of_message_handling == 'error' ) {
-                        filesender.ui.nodes.message_contains_password_error.show();
-                    }
-                    filesender.ui.evalUploadEnabled();
-                    messageContainedPassword = true;
-                } else if( messageContainedPassword ) {
-                    messageContainedPassword = false;
-                    filesender.ui.nodes.message_contains_password_warning.hide();
-                    filesender.ui.nodes.message_contains_password_error.hide();
-                    filesender.ui.evalUploadEnabled();
+        var checkThatPasswordIsNotInMessage = function(e) {
+            if( filesender.ui.doesUploadMessageContainPassword()) {
+                if( filesender.config.upload_page_password_can_not_be_part_of_message_handling == 'warning' ) {
+                    filesender.ui.nodes.message_contains_password_warning.show();
                 }
+                if( filesender.config.upload_page_password_can_not_be_part_of_message_handling == 'error' ) {
+                    filesender.ui.nodes.message_contains_password_error.show();
+                }
+                filesender.ui.evalUploadEnabled();
+                messageContainedPassword = true;
+            } else if( messageContainedPassword ) {
+                messageContainedPassword = false;
+                filesender.ui.nodes.message_contains_password_warning.hide();
+                filesender.ui.nodes.message_contains_password_error.hide();
+                filesender.ui.evalUploadEnabled();
             }
-        );
+        }
+
+        filesender.ui.nodes.message.on(             'keyup', checkThatPasswordIsNotInMessage );
+        filesender.ui.nodes.encryption.password.on( 'keyup', checkThatPasswordIsNotInMessage );        
     }
     
     
@@ -1439,6 +1638,11 @@ $(function() {
     filesender.ui.nodes.expires.on('change', function() {
         filesender.ui.nodes.expires.datepicker('setDate', $(this).val());
     });
+
+    // prevent the datepicker from having an empty string.
+    filesender.ui.nodes.expires.preventEmpty = filesender.ui.elements.preventEmpty(
+        filesender.ui.nodes.expires);
+    
 
     
     // Bind advanced options display toggle
@@ -1476,6 +1680,31 @@ $(function() {
         filesender.ui.evalUploadEnabled();
     });
 
+
+    if('web_notification_when_upload_is_complete' in filesender.ui.nodes.options) {
+        filesender.ui.nodes.options.web_notification_when_upload_is_complete.on('change', function() {
+            var v = filesender.ui.nodes.options.web_notification_when_upload_is_complete.is(':checked');
+            if(v) {
+                window.filesender.notification.ask();
+            }
+        });
+        if(filesender.ui.nodes.options.web_notification_when_upload_is_complete.is(':checked')) {
+            window.filesender.notification.ask();
+        }
+        form.find('.enable_web_notifications').on('click', function() {
+            window.filesender.notification.ask( true );
+        });
+    }
+    
+    if(filesender.ui.nodes.encryption.toggle.is(':checked')) {
+        $('#encryption_password_container').slideToggle();
+        $('#encryption_password_container_generate').slideToggle();
+        $('#encryption_password_show_container').slideToggle();
+        $('#encryption_description_container').slideToggle();
+        filesender.ui.transfer.encryption = filesender.ui.nodes.encryption.toggle.is(':checked');
+        filesender.ui.files.checkEncryptionPassword(filesender.ui.nodes.encryption.password, true );
+    }
+
     // Bind encryption
     filesender.ui.nodes.encryption.toggle.on('change', function() {
         $('#encryption_password_container').slideToggle();
@@ -1484,12 +1713,7 @@ $(function() {
         $('#encryption_description_container').slideToggle();
         filesender.ui.transfer.encryption = filesender.ui.nodes.encryption.toggle.is(':checked');
         
-        if( filesender.ui.transfer.encryption ) {
-            filesender.ui.files.checkEncryptionPassword(filesender.ui.nodes.encryption.password, true );
-        } else {
-            var msg = $('#encryption_password_container_too_short_message');
-            msg.hide();
-        }
+        filesender.ui.files.checkEncryptionPassword(filesender.ui.nodes.encryption.password, true );
         
         for(var i=0; i<filesender.ui.transfer.files.length; i++) {
             var file = filesender.ui.transfer.files[i];
@@ -1533,8 +1757,8 @@ $(function() {
             // so we must reset that here if the user starts modifying the password.
             filesender.ui.transfer.encryption_password_version = crypto.crypto_password_version_constants.v2018_text_password;
             filesender.ui.transfer.encryption_password_encoding = 'none';            
+            filesender.ui.files.checkEncryptionPassword(filesender.ui.nodes.encryption.password, true );
         }
-       
     });
     
     filesender.ui.nodes.encryption.generate.on('click', function() {
@@ -1588,6 +1812,7 @@ $(function() {
 
             pause( true );
             filesender.ui.nodes.stats.average_speed.find('.value').text(lang.tr('paused'));
+            filesender.ui.nodes.stats.estimated_completion.find('.value').text('');
             filesender.ui.setTimeSinceDataWasLastSentMessage(lang.tr('paused'));
             return false;
         }).button();
@@ -1658,7 +1883,6 @@ $(function() {
     };
 
     filesender.ui.nodes.auto_resume_timer_top.hide();
-
     
     if(!filesender.supports.reader) {
         // Legacy uploader

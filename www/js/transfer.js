@@ -229,6 +229,12 @@ window.filesender.transfer = function() {
         enable &= !this.disable_terasender;
         return enable;
     };
+    this.canUseTeraReceiver = function() {
+        var enable = filesender.config.terareceiver_enabled && filesender.supports.workers;
+        enable &= !this.encryption || filesender.supports.workerCrypto;
+        enable &= !this.disable_terasender;
+        return enable;
+    }
 
     this.getExtention = function(file) {
         var fileSplit = file.name.split('.');
@@ -358,7 +364,7 @@ window.filesender.transfer = function() {
             node: source_node,
             transfer: this
         };
-        
+
         // Look for dup
         for (var i = 0; i < this.files.length; i++) {
             if (this.files[i].name == file.name && this.files[i].size == file.size) {
@@ -367,7 +373,8 @@ window.filesender.transfer = function() {
             }
         }
         
-        if (this.files.length >= filesender.config.max_transfer_files) {
+        if (filesender.config.max_transfer_files > 0 &&
+            this.files.length >= filesender.config.max_transfer_files) {
             errorhandler({message: 'transfer_too_many_files', details: {max: filesender.config.max_transfer_files}});
             return false;
         }
@@ -407,9 +414,17 @@ window.filesender.transfer = function() {
 
         if (typeof filesender.config.valid_filename_regex == 'string') {
             var regexstr = filesender.config.valid_filename_regex;
-            if (!XRegExp(regexstr).test(file.name)) {
+            var r = XRegExp(regexstr,'g');
+            var testResult = r.test(file.name);
+            var lastIndex = r.lastIndex;
+            if (lastIndex != file.name.length) {
+                var badEnding = file.name.substring(lastIndex);
+                window.filesender.log("invalid_file_name error raised for file name " + file.name
+                                      + " with len " + file.name.length
+                                      + " got lastIndex of " + r.lastIndex 
+                                      + " badEnding will be " + badEnding );
                 errorhandler({ message: 'invalid_file_name',
-                               details: { filename: file.name }});
+                               details: { filename: file.name, badoffset: lastIndex, badEnding: badEnding }});
                 
                 return false;
             }
@@ -1070,6 +1085,20 @@ window.filesender.transfer = function() {
                         transfer.onprogress.call(transfer, file, true);
                     
                     complete();
+                }, function(error) {
+                    window.filesender.log("transfer encountered an error: " + JSON.stringify(error));
+                    if (error.message === 'file_integrity_check_failed') {
+                        // reset the file progress to make it retry the whole file
+                        file.fine_progress = 0;
+                        file.fine_progress_done = 0;
+                        file.progress_reported = 0;
+                        file.uploaded = 0;
+                        file.status = '';
+                        file.complete = false;
+                        file.min_uploaded_offset = 0;
+                        transfer.updateFileInRestartTracker(file);
+                        transfer.reportError(error);
+                    }
                 });
             }, 100);//750);
         } else if (this.onprogress) {
@@ -1130,7 +1159,8 @@ window.filesender.transfer = function() {
         }
         
         // Redo sanity checks
-        if (this.files.length > filesender.config.max_transfer_files) {
+        if (filesender.config.max_transfer_files > 0 &&
+            this.files.length > filesender.config.max_transfer_files) {
             return errorhandler({message: 'transfer_too_many_files', details: {max: filesender.config.max_transfer_files}});
         }
         for (var i = 0; i < this.files.length; i++) {

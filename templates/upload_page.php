@@ -1,6 +1,9 @@
 <?php
 
 $guest_can_only_send_to_creator = false;
+$encryption_mandatory = Principal::isEncryptionMandatory();
+$encryption_checkbox_checked = '';
+$encryption_checkbox_classes = '';
 
 $files_actions_div_extra_class = "div3";
 $upload_directory_button_enabled = false;
@@ -49,6 +52,11 @@ if(Auth::isGuest()) {
     if($guest->getOption(GuestOptions::CAN_ONLY_SEND_TO_ME)) {
         $guest_can_only_send_to_creator = true;
     }
+}
+
+if( $encryption_mandatory ) {
+    $encryption_checkbox_checked = ' checked="checked"  disabled="disabled" ';
+    $encryption_checkbox_classes = '';
 }
 
 ?>
@@ -136,6 +144,7 @@ if(Auth::isGuest()) {
                 <div class="stats">
                     <div class="uploaded">{tr:uploaded} : <span class="value"></span></div>
                     <div class="average_speed">{tr:average_speed} : <span class="value"></span></div>
+                    <div class="estimated_completion">{tr:estimated_completion} : <span class="value"></span></div>
                 </div>
             </div>
             
@@ -181,30 +190,43 @@ if(Auth::isGuest()) {
                     
                     <div class="fieldcontainer" data-related-to="message">
                         <label for="message">{tr:message} ({tr:optional}) : </label>
-                        <label class="invalid" id="message_can_not_contain_urls" style="display:none;">{tr:message_can_not_contain_urls}</label>                        
-                        <label class="invalid" id="password_can_not_be_part_of_message_warning" style="display:none;">
+                        <label class="invalid" id="message_can_not_contain_urls">{tr:message_can_not_contain_urls}</label>                        
+                        <label class="invalid" id="password_can_not_be_part_of_message_warning">
                             {tr:password_can_not_be_part_of_message_warning}</label>                        
-                        <label class="invalid" id="password_can_not_be_part_of_message_error" style="display:none;">
+                        <label class="invalid" id="password_can_not_be_part_of_message_error">
                             {tr:password_can_not_be_part_of_message_error}</label>                        
                         <textarea id="message" name="message" rows="4"></textarea>
                     </div>
                     <?php } ?> <!-- closing if($allow_recipients) -->
                     
-                    <?php if(Config::get('encryption_enabled')) {  ?>
-                        <div class="fieldcontainer" id="encrypt_checkbox" data-related-to="encryption">
-                            <input id="encryption" name="encryption" type="checkbox">
-                            <label for="encryption" style="cursor: pointer;">{tr:file_encryption}</label>
+                    <?php if(Config::get('encryption_enabled')) { ?>
+                        <div class="fieldcontainer <?php echo $encryption_checkbox_classes ?>" id="encrypt_checkbox" data-related-to="encryption">
+                            <input id="encryption" name="encryption" type="checkbox" <?php echo $encryption_checkbox_checked ?> >
+                            <label for="encryption" class="cursor" >{tr:file_encryption}</label>
                         </div>
                         <div class="fieldcontainer" id="encryption_password_container">  
-                            <label for="encryption_password" style="cursor: pointer;">{tr:file_encryption_password} : </label>
+                            <label for="encryption_password" class="cursor" >{tr:file_encryption_password} : </label>
                             <input class="encryption_password" id="encryption_password" name="encryption_password" type="password" autocomplete="new-password" readonly />
                         </div>
-                        <div class="fieldcontainer" id="encryption_password_container_too_short_message">
+                        <div class="fieldcontainer passwordvalidation" id="encryption_password_container_too_short_message">
                             {tr:file_encryption_password_too_short}
                         </div>
+                        <div class="fieldcontainer passwordvalidation" id="encryption_password_container_must_have_numbers_message">
+                            {tr:file_encryption_password_must_have_numbers}
+                        </div>
+                        <div class="fieldcontainer passwordvalidation" id="encryption_password_container_must_have_upper_and_lower_case_message">
+                            {tr:file_encryption_password_must_have_upper_and_lower_case}
+                        </div>
+                        <div class="fieldcontainer passwordvalidation" id="encryption_password_container_must_have_special_characters_message">
+                            {tr:file_encryption_password_must_have_special_characters}
+                        </div>
+                        <div class="fieldcontainer passwordvalidation" id="encryption_password_container_can_have_text_only_min_password_length_message">
+                            {tr:encryption_password_container_can_have_text_only_min_password_length_message}
+                        </div>
+                        
                         <div class="fieldcontainer" id="encryption_password_container_generate">
                             <input id="encryption_use_generated_password"  name="encryption_use_generated_password" type="checkbox">  
-                            <label for="encryption_use_generated_password" style="cursor: pointer;">{tr:file_encryption_generate_password}</label>
+                            <label for="encryption_use_generated_password" class="cursor" >{tr:file_encryption_generate_password}</label>
                             
                         </div>
                         <div class="fieldcontainer" id="encryption_password_container_generate_again">
@@ -214,7 +236,7 @@ if(Auth::isGuest()) {
                         </div>
                         <div class="fieldcontainer" id="encryption_password_show_container">  
                             <input id="encryption_show_password" name="encryption_show_password" type="checkbox">  
-                            <label for="encryption_show_password" style="cursor: pointer;">{tr:file_encryption_show_password}</label>
+                            <label class="cursor" for="encryption_show_password">{tr:file_encryption_show_password}</label>
                         </div>
                         <div class="fieldcontainer" id="encryption_description_container">
                             {tr:file_encryption_description}
@@ -276,6 +298,8 @@ if(Auth::isGuest()) {
                             
                             if($name == TransferOptions::ENABLE_RECIPIENT_EMAIL_DOWNLOAD_COMPLETE)
                                 echo '<div class="info message">'.Lang::tr('enable_recipient_email_download_complete_warning').'</div>';
+                            if($name == TransferOptions::WEB_NOTIFICATION_WHEN_UPLOAD_IS_COMPLETE && Browser::instance()->isFirefox)
+                                echo '<div class="info message"><a class="enable_web_notifications" href="#">'.Lang::tr('click_to_enable_web_notifications').'</a></div>';
                             
                             echo '</div>';
                         };
@@ -385,9 +409,9 @@ if(Auth::isGuest()) {
     </form>
 
     <?php if (Config::get('upload_graph_bulk_display')) { ?>
-        <div id="graph" class="uploadbulkgraph"><div id="graphDiv" style="width:400px; height:200px; margin:0 auto"><canvas id="speedChart"></canvas></div></div>
+        <div id="graph" class="uploadbulkgraph"><div id="graphDiv"><canvas id="speedChart"></canvas></div></div>
 
-        <script type="text/javascript" src="{path:lib/chart.js/Chart.bundle.min.js}"></script>
+        <script type="text/javascript" src="{path:lib/chart.js/chart.min.js}"></script>
         <script type="text/javascript" src="{path:js/graph.js}"></script>
     <?php } ?>
     

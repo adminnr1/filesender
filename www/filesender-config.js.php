@@ -81,6 +81,7 @@ window.filesender.config = {
     
     max_transfer_days_valid: <?php echo Config::get('max_transfer_days_valid') ?>,
     default_transfer_days_valid: <?php echo Config::get('default_transfer_days_valid') ?>,
+    min_guest_days_valid: <?php echo Config::get('min_guest_days_valid') ?>,
     max_guest_days_valid: <?php echo Config::get('max_guest_days_valid') ?>,
     default_guest_days_valid: <?php echo Config::get('default_guest_days_valid') ?>,
     
@@ -88,11 +89,13 @@ window.filesender.config = {
     
     encryption_enabled: '<?php echo Config::get('encryption_enabled') ?>',
     encryption_min_password_length: '<?php echo Config::get('encryption_min_password_length') ?>',
+    encryption_password_text_only_min_password_length: '<?php echo Config::get('encryption_password_text_only_min_password_length') ?>',
     encryption_generated_password_length: '<?php echo Config::get('encryption_generated_password_length') ?>',
     encryption_generated_password_encoding: '<?php echo Config::get('encryption_generated_password_encoding') ?>',
     encryption_key_version_new_files: '<?php echo Config::get('encryption_key_version_new_files') ?>',
     encryption_random_password_version_new_files: '<?php echo Config::get('encryption_random_password_version_new_files') ?>',
     encryption_password_hash_iterations_new_files: '<?php echo Config::get('encryption_password_hash_iterations_new_files') ?>',
+    encryption_encode_encrypted_chunks_in_base64_during_upload: <?php  echo value_to_TF(Config::get('encryption_encode_encrypted_chunks_in_base64_during_upload')) ?>,
     crypto_gcm_max_file_size: '<?php echo Config::get('crypto_gcm_max_file_size') ?>',
     crypto_gcm_max_chunk_size: '<?php echo Config::get('crypto_gcm_max_chunk_size') ?>',
     crypto_gcm_max_chunk_count: '<?php echo Config::get('crypto_gcm_max_chunk_count') ?>',
@@ -105,6 +108,7 @@ window.filesender.config = {
     crypto_use_custom_password_code: '<?php echo GUI::use_webasm_pbkdf2_implementation() ?>',
 
     terasender_enabled: <?php  echo value_to_TF(Config::get('terasender_enabled')) ?>,
+    terareceiver_enabled: <?php  echo value_to_TF(Config::get('terareceiver_enabled')) ?>,
     terasender_advanced: <?php echo value_to_TF(Config::get('terasender_advanced')) ?>,
     terasender_worker_count: <?php echo Config::get('terasender_worker_count') ?>,
     terasender_start_mode: '<?php echo Config::get('terasender_start_mode') ?>',
@@ -164,6 +168,7 @@ window.filesender.config = {
                 , user_hit_guest_rate_limit : "<?php echo Lang::tr('user_hit_guest_rate_limit')->out(); ?>"
                 , download_complete:       "<?php echo Lang::tr('download_complete')->out(); ?>"
 /**/            , download_chunk_progress: "<?php echo Lang::tr('download_chunk_progress')->out(); ?>"
+                , file_not_found:          "<?php echo Lang::tr('file_not_found')->out(); ?>"
 	},
     
     clientlogs: {
@@ -185,6 +190,12 @@ window.filesender.config = {
     allow_streamsaver: <?php echo value_to_TF(Browser::instance()->allowStreamSaver) ?>,
 
     upload_page_password_can_not_be_part_of_message_handling: "<?php echo Config::get('upload_page_password_can_not_be_part_of_message_handling') ?>",
+
+    encryption_password_must_have_upper_and_lower_case: <?php echo value_to_TF(Config::get('encryption_password_must_have_upper_and_lower_case')) ?>,
+    encryption_password_must_have_numbers: <?php echo value_to_TF(Config::get('encryption_password_must_have_numbers')) ?>,
+    encryption_password_must_have_special_characters: <?php echo value_to_TF(Config::get('encryption_password_must_have_special_characters')) ?>,
+
+
 };
 
 <?php if(Config::get('force_legacy_mode')) { ?>

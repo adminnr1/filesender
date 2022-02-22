@@ -297,9 +297,9 @@ class RestEndpointFile extends RestEndpoint
     {
         if (Utilities::isTrue(Config::get('testsuite_run_locally'))) {
             include_once(FILESENDER_BASE . "/vendor/autoload.php");
-            include_once(FILESENDER_BASE . "/unittests/selenium_tests/SeleniumTest.php");
-            include_once(FILESENDER_BASE . "/unittests/selenium_tests/tests/UploadAutoResumeTest.php");
-            eval(Config::get("PUT_PERFORM_TESTSUITE"));
+            include_once(FILESENDER_BASE . "/unittests/selenium/SeleniumTest.php");
+            include_once(FILESENDER_BASE . "/unittests/selenium/tests/UploadAutoResumeTest.php");
+            TestSuiteSupport::evalOverride("PUT_PERFORM_TESTSUITE");
         }
     }
 
@@ -392,8 +392,11 @@ class RestEndpointFile extends RestEndpoint
             }
 
             if ($file->transfer->options['encryption']) {
+
                 // get rid of the base64
-                $data = base64_decode($data);
+                if(Utilities::isTrue(Config::get('encryption_encode_encrypted_chunks_in_base64_during_upload'))) {
+                    $data = base64_decode($data);
+                }
                 // Calculate the correct length
                 $chunkLength = strlen($data);
 

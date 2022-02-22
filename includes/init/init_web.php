@@ -45,24 +45,20 @@ if(!session_id()) {
     $session_cookie_path = Config::get('session_cookie_path');
     if(!$session_cookie_path) $session_cookie_path = $site_url_parts['path'];
     
-    session_set_cookie_params(
-        0,                                                      // Cookie lives as long as browser isn't closed
-        $session_cookie_path,                                   // It is only valid for the filesender app
-        $site_url_parts['host'],                                // and only for the precise domain
-        Config::get('force_ssl') || Utilities::httpsInUse(),    // It uses secure mode if ssl forced or in use
-        true                                                    // and is httpOnly (not reachable through javascript)
-    );
+    $isSecure = Config::get('force_ssl') || Utilities::httpsInUse();
+    session_set_cookie_params( array(
+        'lifetime' => 0,                            // Cookie lives as long as browser isn't closed
+        'path'     => $session_cookie_path,         // It is only valid for the filesender app
+        'domain'   => $site_url_parts['host'],      // and only for the precise domain
+        'secure'   => $isSecure,                    // It uses secure mode if ssl forced or in use
+        'httponly' => true,                         // not reachable through javascript
+        'samesite' => 'Strict'                      // strict cookie settings
+    ));
 }
 
 
 // Ensure HTTPS if needed
 GUI::forceHTTPS();
-
-// Handle magic quoting (TODO maybe deprecated now ?)
-if(get_magic_quotes_gpc()) {
-    $_POST = array_map('stripslashes', $_POST);
-    $_GET = array_map('stripslashes', $_GET);
-};
 
 // Sanitize all input variables
 $_GET = Utilities::sanitizeInput($_GET);

@@ -339,8 +339,13 @@ window.filesender.ui = {
      */
     error: function(error,callback) {
         this.log('[error] ' + error.message);
-        
-        var d = this.alert('error', lang.tr(error.message),callback);
+        this.log(error);
+
+        var msg = lang.tr(error.message);
+        if( error.messageTranslated ) {
+            msg = error.messageTranslated;
+        }
+        var d = this.alert('error', msg, callback);
         
         if(error.details) {
             var i = $('<div class="details" />').appendTo(d);
@@ -428,6 +433,35 @@ window.filesender.ui = {
         bytes /= Math.pow(1024, pow);
         
         return bytes.toFixed(precision).replace(/\.0+$/g, '') + ' ' + multipliers[pow];
+    },
+
+
+    /**
+     * Format a number of seconds in the future to a readable string
+     * 
+     * @param int v
+     * 
+     * @return string
+     */
+    formatETA : function (v) {
+        if( v==-1 ) {
+            return lang.tr('no_estimate');
+        }
+        if( !v ) {
+            return lang.tr('soon');
+        }
+        if( v > 3600 ) {
+            v = v / 3600; // epoch_hours
+            return (v).toFixed(1) + ' ' + lang.tr('epoch_hours');
+        }
+        if( v > 5*60 ) {
+            v = v / 60;
+            return (v).toFixed(0) + ' ' + lang.tr('epoch_minutes');
+        }
+        if( v < 5 ) {
+            return lang.tr('soon');
+        }
+        return ''+ (v).toFixed(0) + ' ' + lang.tr('epoch_seconds');
     },
     
     /**
@@ -551,6 +585,57 @@ window.filesender.ui = {
      */
     setDateFromEpochData: function( w ) {
         w.datepicker('setDate', new Date(w.attr('data-epoch') * 1000 ));
+    },
+
+
+    extendExpires: function(self,className)
+    {
+        if(self.hasClass('disabled')) return;
+        
+        var t = self.closest('.objectholder');
+        var id = t.attr('data-id');
+        if(!id || isNaN(id)) return;
+        
+        var duration = parseInt(t.attr('data-expiry-extension'));
+        
+        var extend = function(remind) {
+            filesender.client.extendObject(className,id, remind, function(t) {
+                $('.objectholder[data-id="' + id + '"]').attr('data-expiry-extension', t.expiry_date_extension);
+                if( !t.expiry_date_extension ) {
+                    self.addClass('disabled');
+                }
+                $('.objectholder[data-id="' + id + '"] [data-rel="expires"]').text(t.expires.formatted);
+                
+                if(!t.expiry_date_extension) {
+                    $('.objectholder[data-id="' + id + '"] [data-action="extend"]').addClass('disabled').attr({
+                        title: lang.tr('expiry_extension_count_exceeded')
+                    });
+                    
+                } else {
+                    $('.objectholder[data-id="' + id + '"] [data-action="extend"]').attr({
+                        title: lang.tr('extend_expiry_date').r({
+                            days: self.closest('.objectholder').attr('data-expiry-extension')
+                        })
+                    });
+                }
+                
+                filesender.ui.notify('success', lang.tr(remind ? 'extended_reminded' : 'extended').r({expires: t.expires.formatted}));
+            });
+        };
+        
+        var buttons = {};
+        
+        buttons.extend = function() {
+            extend(false);
+        };
+        
+        if(t.attr('data-recipients-enabled')) buttons.extend_and_remind = function() {
+            extend(true);
+        };
+        
+        buttons.cancel = false;
+        
+        filesender.ui.popup(lang.tr('confirm_dialog'), buttons).html(lang.tr('confirm_extend_expiry').r({days: duration}).out());
     },
     
 };
