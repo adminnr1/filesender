@@ -172,3 +172,9 @@ AuditLog::cleanup();
 // If we are configured to send aggregate (anonymous) statistics
 // to a central server then we should check if it is time to do that.
 AggregateStatistic::maybeSendReport();
+
+Logger::info('Session expiry started');
+session_start();
+num_sessions = session_gc();
+session_destroy();
+Logger::info('Session expiry ended. '.$num_sessions.' sessions removed');
