@@ -9,6 +9,7 @@ $lang['file_encryption_description'] = '<i class="fa fa-exclamation-triangle" st
 $lang['file_encryption_on'] = '';
 $lang['undergoing_maintenance'] = 'Deze dienst is op dit moment in onderhoud. Probeert u het later alstublieft nogmaals.';
 $lang['service_aup_body_version_1'] = '<a href="https://www.surf.nl/huisregels-surffilesender" target="_blank">Ik ga akkoord met de huisregels wanneer ik deze dienst gebruik.</a><p>';
+$lang['service_aup_body_version_20220628'] = '<a href="https://www.surf.nl/huisregels-surffilesender" target="_blank">Ik ga akkoord met de huisregels wanneer ik deze dienst gebruik.</a><p>';
 $lang['must_be_logged_in_to_download'] = 'Gebruiker moet aanmelden om te downloaden';
 $lang['service_aup_header'] = '{cfg:site_name} huisregels';
 $lang['upload_all_terasender_workers_completed_pbkdf2'] = 'Klaarmaken voor upload';
