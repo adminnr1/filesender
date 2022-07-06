@@ -90,7 +90,10 @@ $default = array(
     'transfer_recipients_lang_selector_enabled' => false,
     'max_transfer_file_size' => 0,
     'max_transfer_encrypted_file_size' => 0,
-    
+
+    'default_guest_days_valid' => 20,
+    'min_guest_days_valid' =>  1,
+    'max_guest_days_valid' => 20,
     'max_guest_recipients' => 50,
     
     'max_legacy_file_size' => 2147483648,
@@ -123,6 +126,7 @@ $default = array(
     'crypto_gcm_max_chunk_count' => 4294967295,                   // 2^32-1
 
     'terasender_enabled' => true,
+    'terareceiver_enabled' => false,
     'terasender_advanced' => false,
     'terasender_disableable' => true,
     'terasender_start_mode' => 'multiple',
@@ -224,6 +228,7 @@ $default = array(
     'cloud_s3_use_path_style_endpoint' => true,
     'cloud_s3_key'    => 'accessKey1',
     'cloud_s3_secret' => 'verySecretKey1',
+    'cloud_s3_bucket' => '',
 
     'disable_directory_upload' => true,
     'directory_upload_button_enabled' => true,

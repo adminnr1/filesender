@@ -255,6 +255,9 @@ class Config
         if (!self::get('max_guest_days_valid')) {
             self::$parameters['max_guest_days_valid'] = self::get('max_transfer_days_valid');
         }
+        if (!self::get('min_guest_days_valid') || self::get('min_guest_days_valid') < 0) {
+            self::$parameters['min_guest_days_valid'] = 1;
+        }
         
         if (!self::get('default_guest_days_valid')) {
             self::$parameters['default_guest_days_valid'] = self::get('max_guest_days_valid');
@@ -338,6 +341,18 @@ class Config
         self::$parameters['data_protection_user_frequent_email_address_disabled'] = $v;
 
         self::forceLoadedToBool('guest_support_enabled');
+
+        $kv = self::get('encryption_key_version_new_files');
+        // these are crypto_app.js / crypto_key_version_constants
+        //   v2019_gcm_importKey_deriveKey: 3, // AES-GCM otherwise same as v2018_importKey_deriveKey
+        //   v2019_gcm_digest_importKey:    2, // AES-GCM otherwise same as v2017_digest_importKey
+        //   v2018_importKey_deriveKey:     1, // AES-CBC
+        //   v2017_digest_importKey:        0  // AES-CBC
+        if( $kv == 2 || $kv == 3 ) {
+            self::$parameters['crypto_crypt_name'] = "AES-GCM";
+        } else {
+            self::$parameters['crypto_crypt_name'] = "AES-CBC";
+        }
 
         
         // verify classes are happy

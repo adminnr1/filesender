@@ -43,6 +43,7 @@ A note about colours;
 * [crypto_gcm_max_file_size](#crypto_gcm_max_file_size)
 * [crypto_gcm_max_chunk_size](#crypto_gcm_max_chunk_size)
 * [crypto_gcm_max_chunk_count](#crypto_gcm_max_chunk_count)
+* [crypto_crypt_name](#crypto_crypt_name)
 * [upload_crypted_chunk_padding_size](#upload_crypted_chunk_padding_size)
 * [upload_crypted_chunk_size](#upload_crypted_chunk_size)
 
@@ -58,6 +59,7 @@ A note about colours;
 * [storage_filesystem_hashing](#storage_filesystem_hashing)
 * [storage_filesystem_ignore_disk_full_check](#storage_filesystem_ignore_disk_full_check)
 * [storage_filesystem_external_script](#storage_filesystem_external_script)
+* [cloud_s3_bucket](#cloud_s3_bucket)
 
 ## Shredding
 
@@ -185,6 +187,7 @@ A note about colours;
 * [guest_support_enabled](#guest_support_enabled)
 * [guest_options](#guest_options)
 * [default_guest_days_valid](#default_guest_days_valid)
+* [min_guest_days_valid](#min_guest_days_valid)
 * [max_guest_days_valid](#max_guest_days_valid)
 * [max_guest_recipients](#max_guest_recipients)
 * [guest_upload_page_hide_unchangable_options](#guest_upload_page_hide_unchangable_options)
@@ -565,6 +568,15 @@ $config['avprogram_list'] = array( 'always_pass',
 * __comment:__ It is recommended that you leave this setting as the default value and do not change the
      upload_chunk_size when using GCM cryptography. The default is 2^32-1.
 
+### crypto_crypt_name
+* __description:__ Internal use. The name of the cipher currently used. This is set from encryption_key_version_new_files for new transfers or the key version that was used for an existing transfer.
+* __mandatory:__ no
+* __type:__ string
+* __default:__ calculated
+* __available:__ since before version 2.30
+* __comment:__ This is an internal setting. It will be overridden in crypto_app based on the key version to be used for a transfer. The key version in that was set in encryption_key_version_new_files
+is stored as part of the metadata for each transfer when it is created. When a transfer is to be downloaded the key version used for that transfer will be used to set the crypto_crypt_name.
+This way the encryption_key_version_new_files can be updated and existing uploads will continue to be able to be downloaded.
 
 ### upload_crypted_chunk_size
 * __description:__ Internal only setting. This is the entire size of an encrypted chunk, including any padding for per chunk IV
@@ -681,6 +693,17 @@ $config['avprogram_list'] = array( 'always_pass',
 * __default:__ FILESENDER_BASE.'/scripts/StorageFilesystemExternal/external.py'
 * __available:__ since before version 2.30
 * __comment:__ The script at the given path should perform similar read/write operations as the example external.py script to maintain the storage.
+
+
+### cloud_s3_bucket
+
+* __description:__ Optional name of a single bucket to use for storing all files in on S3.
+* __mandatory:__ no.  
+* __type:__ string
+* __default:__ ''
+* __available:__ since version 2.31
+* __comment:__ If you wish to store all files in a single bucket set it's name in this configuration option.
+Ensure that the named bucket already exists if you use this setting.
 
 
 
@@ -1328,6 +1351,7 @@ If you want to find out the expiry timer for your SAML Identity Provider install
 	* __get\_a\_link:__ if checked it will not send any emails, only present the uploader with a download link once the upload is complete.  This is useful when sending files to mailinglists, newsletters etc.  When ticked the message subject and message text box disappear from the UI.  Under the hood it creates an anonymous recipient with a token for download.  You can se the download count, but not who downloaded it (obviously, as there are no recipients defined).
 	* __redirect_url_on_complete:__ When the transfer upload completes, instead of showing a success message, redirect the user to a URL. This interferes with __get\_a\_link__ in that the uploader will not see the link after the upload completes. Additionally, if the uploader is a guest, there is no way straightforward way for the uploader to learn the download link, although this must not be used as a security feature.
         * __must_be_logged_in_to_download__ (boolean): To download the files the user must log in to the FileSender server. This allows people to send files to other people they know also use the same FileSender server.
+        * __web_notification_when_upload_is_complete__: Added in release 2.32. Options include available, advanced, and default. If you wish to use this feature you should set available=true to allow the user to see the option. Some browsers such as Firefox require the user to explicitly click a link to start the acceptance dialog so being able to see the option (available=true) on the web page is very useful. Using notifications will require the user to accept them for the site. Currently as of release 2.32 a notification can be sent when the upload is complete.
 
 * __*Configuration example:*__
 
@@ -1908,15 +1932,26 @@ This is only for old, existing transfers which have no roundtriptoken set.
 * __1.x name:__
 * __comment:__
 
+### min_guest_days_valid
+
+* __description:__ specifies the minimum expiry date for a guest invitation.  This is the number of days from today (0). The default of 1 will result in an effective minimum expire time of tomorrow. You might like to make this something like 5 or 7 to ensure guest vouchers are not accidentally created with very short life spans.
+* __mandatory:__ no
+* __type:__ int
+* __default:__ 1
+* __available:__ since version 2.32
+* __1.x name:__
+* __comment:__
+
 ### max_guest_days_valid
 
 * __description:__ specifies the maximum expiry date for a guest invitation.  A user can not choose a larger value than this.
 * __mandatory:__ no
 * __type:__ int
-* __default:__ same as max_transfer_days_valid
+* __default:__ 20
 * __available:__ since version 2.0
 * __1.x name:__
 * __comment:__
+
 
 ### max_guest_recipients
 
