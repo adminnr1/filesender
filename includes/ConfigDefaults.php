@@ -307,6 +307,8 @@ $default = array(
 
 
     'service_aup_min_required_version' => 0,
+
+    'cookie_domain' => '',
     
     'transfer_options' => array(
         'email_me_copies' => array(
@@ -415,4 +417,18 @@ $default = array(
             'default' => true
         ),
     ),
+
+
+    'rate_limits' => array(
+        'email' => array(
+            'guest_created'      => array( 'day' => 100 ),
+            'report_inline'      => array( 'day' => 100 ),
+            'transfer_reminder'  => array( 'day' => 100 ),
+            'download_complete'  => array( 'day' => 500 ),
+            'files_downloaded'   => array( 'day' => 500 ),
+            'guest_upload_start' => array( 'day' => 100 ),
+            'transfer_available' => array( 'day' => 500 ),
+        ),
+    ),
+
 );
