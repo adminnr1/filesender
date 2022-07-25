@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <?php
-    $headerclass = "header";
+include_once "vidattr.php";
+
+$headerclass = "header";
 
     try {
         if (Auth::isAuthenticated()) {
@@ -19,6 +21,9 @@
         // nothing to do on failure
     }
 
+
+
+
 ?>
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="<?php echo Lang::getCode() ?>" xml:lang="<?php echo Lang::getCode() ?>">
@@ -35,7 +40,7 @@
         
         <script type="text/javascript" src="{path:filesender-config.js.php}"></script>
         
-        <script type="text/javascript" src="{path:rest.php/lang?callback=lang.setTranslations}"></script>
+        <script type="text/javascript" src="{path:rest.php/lang?callback=lang.setTranslations<?php echo $vidattr ?>}"></script>
         
         <meta name="robots" content="noindex, nofollow" />
         
@@ -68,7 +73,7 @@
                                 $opts[] = '<option value="'.$id.'" '.$selected.'>'.Utilities::sanitizeOutput($dfn['name']).'</option>';
                             }
                         
-                            echo '<li><label>'.Lang::tr('user_lang').'</label><select id="language_selector">'.implode('', $opts).'</select></li>';
+                            echo '<li><label>'.Lang::tr('user_lang').' </label><select id="language_selector">'.implode('', $opts).'</select></li>';
                             echo '</ul></div></div>';
                         }
                         ?>
