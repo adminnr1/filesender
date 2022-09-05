@@ -15,20 +15,18 @@
     {cfg:site_name} is een webgebaseerde applicatie waarmee 
     geauthenticeerde gebruikers veilig en gemakkelijk willekeurig 
     grote bestanden naar andere gebruikers kunnen verzenden. 
+    {cfg:site_name} ontstond uit het project Filesender (<a rel="nofollow" href="http://filesender.org/" target="_blank">filesender.org</a>). 
+    We ontwikkelden {cfg:site_name} naar de behoefte van Nederlands onderwijs en onderzoek
 </p>
 <p>
-    Verificatie van gebruikers vindt plaats via <a rel="nofollow" href="http://simplesamlphp.org/" target="_blank">
-    SimpleSAMLphp</a>, en ondersteunt SAML2, LDAP en RADIUS en meer. 
-    Gebruikers zonder account kunnen een gastvoucher ontvangen van een 
-    geverifieerde gebruiker. 
-    {cfg:site_name} is ontwikkeld volgens de wensen en eisen van 
-    onderwijs en onderzoek.
+    Met {cfg:site_name}:
+    -	verstuur je grote bestanden.
+    -   kun je bestanden versleuteld versturen.
+    -	bepaal je een totaal aantal downloads.
+    -	stel je bestanden beschikbaar voor een bepaalde tijd. Daarna worden ze automatisch verwijderd. 
 </p>
 <p>
-    Het doel van de software is om een ​​groot bestand naar iemand te versturen, 
-    dat bestand beschikbaar te stellen voor download voor een bepaald 
-    aantal downloads en / of een bepaalde hoeveelheid tijd, en daarna het 
-    bestand automatisch te verwijderen. De software is niet bedoeld als een 
-    permanent platform voor het ter beschikking stellen van bestanden.
+    Let op: SURFfilesender is niet geschikt als platform voor permanente opslag.
+    Heb je geen account? Vraag of iemand met een SURFfilesender-account je een uitnodigingslink wil sturen voor gastgebruik.
 </p>
 </div>
