@@ -1164,7 +1164,7 @@ filesender.ui.startUpload = function() {
             window.filesender.notification.clear();
             filesender.ui.goToPage(
                 filesender.ui.transfer.guest_token ? 'home' : 'transfers',
-                reditectargs,
+                filesender.ui.transfer.guest_token ? null : reditectargs,
                 filesender.ui.transfer.guest_token ? null : 'transfer_' + filesender.ui.transfer.id
             );
         };
