@@ -64,6 +64,12 @@ function delayAndCallOnlyOnce(callback, ms) {
     };
 }
 
+function useWebNotifications()
+{
+    var ret = ('web_notification_when_upload_is_complete' in filesender.ui.nodes.options) ? filesender.ui.nodes.options.web_notification_when_upload_is_complete.is(':checked') : false;
+    return ret;
+}
+
 
 /**
  * apply a 'bad' class to the obj if b==true
@@ -100,6 +106,7 @@ function pause( changeTextElements )
     if( changeTextElements ) {
         filesender.ui.nodes.seconds_since_data_sent_info.text('');
         filesender.ui.nodes.stats.average_speed.find('.value').text(lang.tr('paused'));
+        filesender.ui.nodes.stats.estimated_completion.find('.value').text('');
         filesender.ui.setTimeSinceDataWasLastSentMessage(lang.tr('paused'));
     }
 }
@@ -138,6 +145,49 @@ function resume( force, resetResumeCount )
 var checkEncryptionPassword_slideToggleDelay = 200;
 var checkEncryptionPassword_delay = 300;
 
+if(!('filesender' in window)) window.filesender = {};
+if(!('ui'         in window.filesender)) window.filesender.ui = {};
+if(!('elements'   in window.filesender.ui)) window.filesender.ui.elements = {};
+
+/**
+ * Update the UI element at uielement only once every delayMS time interval.
+ * While the first delayMS interval is passing show the string initString.
+ */
+filesender.ui.elements.nonBusyUpdater = function( uielement, delayMS, initString ) {
+    return {
+        e: uielement,
+        lastUpdate: null,
+        update: function( v ) {
+            var $this = this;
+            t = (new Date()).getTime();
+            if( $this.lastUpdate && ($this.lastUpdate + delayMS < t )) {
+                $this.e.text( v );
+            }
+            if( !$this.lastUpdate ) {
+                $this.e.text( initString );
+            }
+            if( !$this.lastUpdate || ($this.lastUpdate + delayMS < t )) {
+                $this.lastUpdate = t;
+            }
+        }
+    }
+};
+
+
+// prevent the element from having an empty string.
+filesender.ui.elements.preventEmpty = function(el) {
+    var originalValue = '';
+    el.on( 'focus', function(e) { originalValue = e.target.value; } );
+    el.on( 'blur',  function(e) {
+        if( e.target.value == '' ) {
+            filesender.ui.setDateFromEpochData( filesender.ui.nodes.expires );
+        }
+    });
+    return this;
+}
+
+
+
 // Manage files
 filesender.ui.files = {
     invalidFiles: [],
@@ -166,7 +216,14 @@ filesender.ui.files = {
     addList: function(files, source_node) {
         var node = null;
         for(var i=0; i<files.length; i++) {
-            var latest_node = filesender.ui.files.addFile(files[i].name, files[i], source_node);
+            var file_name = files[i].name;
+            if(typeof files[i].webkitRelativePath === "string"
+               && files[i].webkitRelativePath != "" )
+            {
+                file_name = files[i].webkitRelativePath;
+            }
+            
+            var latest_node = filesender.ui.files.addFile(file_name, files[i], source_node);
             if (latest_node) {
                 node = latest_node;
             }
@@ -471,6 +528,14 @@ filesender.ui.files = {
         }
         
         var speed = uploaded / (time / 1000);
+
+        var remaining = size - uploaded;
+        var eta = 0;
+        if( remaining && speed ) {
+            eta = remaining / speed;
+        }
+        filesender.ui.nodes.stats.estimated_completion_updater.update( filesender.ui.formatETA(eta));
+
         
         if (filesender.config.upload_display_bits_per_sec)
             speed *= 8;
@@ -1011,7 +1076,7 @@ filesender.ui.startUpload = function() {
     }
     window.filesender.pbkdf2dialog.setup(!can_use_terasender);
     window.filesender.pbkdf2dialog.reset();
-    
+
     if(!filesender.ui.nodes.required_files) {
         this.transfer.expires = filesender.ui.nodes.expires.datepicker('getDate').getTime() / 1000;
         
@@ -1076,13 +1141,19 @@ filesender.ui.startUpload = function() {
 
         filesender.ui.files.clear_crust_meter_all();
         window.filesender.pbkdf2dialog.ensure_onPBKDF2AllEnded();
-        
+
+        var usp = new URLSearchParams(window.location.search);
+        var reditectargs = [];
+        if( usp.has('vid')) {
+            reditectargs['vid'] = usp.get('vid');
+        }
         var redirect_url = filesender.ui.transfer.options.redirect_url_on_complete;
+        
         if(redirect_url) {
-            filesender.ui.redirect(redirect_url);
+            filesender.ui.redirect(redirect_url,reditectargs);
             
             window.setTimeout(function(f) {
-                filesender.ui.redirect(redirect_url);
+                filesender.ui.redirect(redirect_url,reditectargs);
                 filesender.ui.alert('success', lang.tr('done_uploading_redirect').replace({url: redirect_url}));
             }, 5000);
                     
@@ -1090,9 +1161,10 @@ filesender.ui.startUpload = function() {
         }
         
         var close = function() {
+            window.filesender.notification.clear();
             filesender.ui.goToPage(
                 filesender.ui.transfer.guest_token ? 'home' : 'transfers',
-                null,
+                filesender.ui.transfer.guest_token ? null : reditectargs,
                 filesender.ui.transfer.guest_token ? null : 'transfer_' + filesender.ui.transfer.id
             );
         };
@@ -1111,8 +1183,16 @@ filesender.ui.startUpload = function() {
         }
         
         if(t) t.on('click', function() {
+            window.filesender.notification.clear();
             $(this).focus().select();
         });
+
+        if( useWebNotifications()) {
+            window.filesender.notification.notify(lang.tr('web_notification_upload_complete_title'),
+                                                  lang.tr('web_notification_upload_complete'),
+                                                  window.filesender.notification.image_success);
+        }
+        
     };
     
     var errorHandler = function(error) {
@@ -1212,7 +1292,8 @@ filesender.ui.startUpload = function() {
     filesender.ui.nodes.stats.size.hide();
     filesender.ui.nodes.stats.uploaded.show();
     filesender.ui.nodes.stats.average_speed.show();
-    
+    filesender.ui.nodes.stats.estimated_completion.show();
+
     filesender.ui.nodes.form.find(':input:not(.file input[type="file"])').prop('disabled', true);
 
     // Report and possibly resume the upload
@@ -1379,7 +1460,8 @@ $(function() {
             number_of_files: form.find('.files_actions .stats .number_of_files'),
             size: form.find('.files_actions .stats .size'),
             uploaded: form.find('.uploading_actions .stats .uploaded'),
-            average_speed: form.find('.uploading_actions .stats .average_speed')
+            average_speed: form.find('.uploading_actions .stats .average_speed'),
+            estimated_completion: form.find('.uploading_actions .stats .estimated_completion')
         },
         need_recipients: form.attr('data-need-recipients') == '1'
     };
@@ -1391,6 +1473,11 @@ $(function() {
         var i = $(this);
         filesender.ui.nodes.options[i.attr('name')] = i;
     });
+    
+    filesender.ui.nodes.stats.estimated_completion_updater = filesender.ui.elements.nonBusyUpdater(
+        filesender.ui.nodes.stats.estimated_completion.find('.value'),
+        2000,
+        lang.tr('initializing'));
 
     
     // Bind file list clear button
@@ -1509,26 +1596,26 @@ $(function() {
     if( filesender.config.upload_page_password_can_not_be_part_of_message_handling == 'warning'
         || filesender.config.upload_page_password_can_not_be_part_of_message_handling == 'error' )
     {
-        filesender.ui.nodes.message.on(
-            'keyup',
-            function(e) {
-                if( filesender.ui.doesUploadMessageContainPassword()) {
-                    if( filesender.config.upload_page_password_can_not_be_part_of_message_handling == 'warning' ) {
-                        filesender.ui.nodes.message_contains_password_warning.show();
-                    }
-                    if( filesender.config.upload_page_password_can_not_be_part_of_message_handling == 'error' ) {
-                        filesender.ui.nodes.message_contains_password_error.show();
-                    }
-                    filesender.ui.evalUploadEnabled();
-                    messageContainedPassword = true;
-                } else if( messageContainedPassword ) {
-                    messageContainedPassword = false;
-                    filesender.ui.nodes.message_contains_password_warning.hide();
-                    filesender.ui.nodes.message_contains_password_error.hide();
-                    filesender.ui.evalUploadEnabled();
+        var checkThatPasswordIsNotInMessage = function(e) {
+            if( filesender.ui.doesUploadMessageContainPassword()) {
+                if( filesender.config.upload_page_password_can_not_be_part_of_message_handling == 'warning' ) {
+                    filesender.ui.nodes.message_contains_password_warning.show();
                 }
+                if( filesender.config.upload_page_password_can_not_be_part_of_message_handling == 'error' ) {
+                    filesender.ui.nodes.message_contains_password_error.show();
+                }
+                filesender.ui.evalUploadEnabled();
+                messageContainedPassword = true;
+            } else if( messageContainedPassword ) {
+                messageContainedPassword = false;
+                filesender.ui.nodes.message_contains_password_warning.hide();
+                filesender.ui.nodes.message_contains_password_error.hide();
+                filesender.ui.evalUploadEnabled();
             }
-        );
+        }
+
+        filesender.ui.nodes.message.on(             'keyup', checkThatPasswordIsNotInMessage );
+        filesender.ui.nodes.encryption.password.on( 'keyup', checkThatPasswordIsNotInMessage );        
     }
     
     
@@ -1564,6 +1651,11 @@ $(function() {
     filesender.ui.nodes.expires.on('change', function() {
         filesender.ui.nodes.expires.datepicker('setDate', $(this).val());
     });
+
+    // prevent the datepicker from having an empty string.
+    filesender.ui.nodes.expires.preventEmpty = filesender.ui.elements.preventEmpty(
+        filesender.ui.nodes.expires);
+    
 
     
     // Bind advanced options display toggle
@@ -1601,6 +1693,22 @@ $(function() {
         filesender.ui.evalUploadEnabled();
     });
 
+
+    if('web_notification_when_upload_is_complete' in filesender.ui.nodes.options) {
+        filesender.ui.nodes.options.web_notification_when_upload_is_complete.on('change', function() {
+            var v = filesender.ui.nodes.options.web_notification_when_upload_is_complete.is(':checked');
+            if(v) {
+                window.filesender.notification.ask();
+            }
+        });
+        if(filesender.ui.nodes.options.web_notification_when_upload_is_complete.is(':checked')) {
+            window.filesender.notification.ask();
+        }
+        form.find('.enable_web_notifications').on('click', function() {
+            window.filesender.notification.ask( true );
+        });
+    }
+    
     if(filesender.ui.nodes.encryption.toggle.is(':checked')) {
         $('#encryption_password_container').slideToggle();
         $('#encryption_password_container_generate').slideToggle();
@@ -1717,6 +1825,7 @@ $(function() {
 
             pause( true );
             filesender.ui.nodes.stats.average_speed.find('.value').text(lang.tr('paused'));
+            filesender.ui.nodes.stats.estimated_completion.find('.value').text('');
             filesender.ui.setTimeSinceDataWasLastSentMessage(lang.tr('paused'));
             return false;
         }).button();
@@ -1787,7 +1896,6 @@ $(function() {
     };
 
     filesender.ui.nodes.auto_resume_timer_top.hide();
-
     
     if(!filesender.supports.reader) {
         // Legacy uploader

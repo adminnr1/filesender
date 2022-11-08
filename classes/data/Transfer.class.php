@@ -50,7 +50,7 @@ class Transfer extends DBObject
     protected static $dataMap = array(
         'id' => array(
             'type' => 'uint',
-            'size' => 'medium',
+            'size' => 'big',
             'primary' => true,
             'autoinc' => true
         ),
@@ -64,7 +64,7 @@ class Transfer extends DBObject
         ),
         'guest_id' => array(
             'type' => 'uint',
-            'size' => 'medium',
+            'size' => 'big',
             'null' => true
         ),
         'lang' => array(
@@ -555,7 +555,7 @@ class Transfer extends DBObject
         $transfer->created = time();
         $transfer->status = TransferStatuses::CREATED;
         $transfer->lang = Lang::getCode();
-        
+
         return $transfer;
     }
     
@@ -787,6 +787,8 @@ class Transfer extends DBObject
     /**
      * Check that the user has read/write permission 
      * for this transfer.
+     *
+     * If the user is a guest then a valid 'vid' must be provided.
      * 
      * @return true if they are allowed or false if access should be forbidden
      */
@@ -800,6 +802,7 @@ class Transfer extends DBObject
         }
         
         if (Auth::isGuest()) {
+            // this will throw if there is no vid
             $guest = AuthGuest::getGuest();
             if( !$guest ) {
                 return FALSE;
@@ -972,6 +975,8 @@ class Transfer extends DBObject
                 } else {
                     $value = null;
                 }
+            } elseif ($name == TransferOptions::STORAGE_CLOUD_S3_BUCKET) {
+                // no validation as this is only set server side.
             } else {
                 $value = (bool)$value;
             }

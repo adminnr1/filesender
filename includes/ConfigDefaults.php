@@ -90,7 +90,10 @@ $default = array(
     'transfer_recipients_lang_selector_enabled' => false,
     'max_transfer_file_size' => 0,
     'max_transfer_encrypted_file_size' => 0,
-    
+
+    'default_guest_days_valid' => 20,
+    'min_guest_days_valid' =>  1,
+    'max_guest_days_valid' => 20,
     'max_guest_recipients' => 50,
     
     'max_legacy_file_size' => 2147483648,
@@ -123,6 +126,7 @@ $default = array(
     'crypto_gcm_max_chunk_count' => 4294967295,                   // 2^32-1
 
     'terasender_enabled' => true,
+    'terareceiver_enabled' => false,
     'terasender_advanced' => false,
     'terasender_disableable' => true,
     'terasender_start_mode' => 'multiple',
@@ -224,6 +228,7 @@ $default = array(
     'cloud_s3_use_path_style_endpoint' => true,
     'cloud_s3_key'    => 'accessKey1',
     'cloud_s3_secret' => 'verySecretKey1',
+    'cloud_s3_bucket' => '',
 
     'disable_directory_upload' => true,
     'directory_upload_button_enabled' => true,
@@ -302,6 +307,26 @@ $default = array(
 
 
     'service_aup_min_required_version' => 0,
+
+    'cookie_domain' => '',
+
+    'allow_pages_core' => array(
+        GUIPages::DOWNLOAD, GUIPages::TRANSLATE_EMAIL,
+        GUIPages::LOGOUT, GUIPages::EXCEPTION,
+        GUIPages::HELP, GUIPages::ABOUT, GUIPages::PRIVACY ),
+
+    'allow_pages_add_for_guest' => array( GUIPages::HOME,
+                                          GUIPages::UPLOAD,
+                                          GUIPages::APISECRETAUP ),
+    'allow_pages_add_for_user' => array( GUIPages::HOME,
+                                         GUIPages::USER,
+                                         GUIPages::UPLOAD,
+                                         GUIPages::TRANSFERS,
+                                         GUIPages::GUESTS,
+                                         GUIPages::DOWNLOAD,
+                                         GUIPages::APISECRETAUP ),
+    'allow_pages_add_for_admin' => array( GUIPages::ADMIN ),
+    
     
     'transfer_options' => array(
         'email_me_copies' => array(
@@ -410,4 +435,18 @@ $default = array(
             'default' => true
         ),
     ),
+
+
+    'rate_limits' => array(
+        'email' => array(
+            'guest_created'      => array( 'day' => 100 ),
+            'report_inline'      => array( 'day' => 100 ),
+            'transfer_reminder'  => array( 'day' => 100 ),
+            'download_complete'  => array( 'day' => 500 ),
+            'files_downloaded'   => array( 'day' => 500 ),
+            'guest_upload_start' => array( 'day' => 100 ),
+            'transfer_available' => array( 'day' => 500 ),
+        ),
+    ),
+
 );

@@ -185,9 +185,12 @@ class RestEndpointGuest extends RestEndpoint
                                         'guest_create_limit_per_day',
                                         LogEventTypes::GUEST_CREATED_RATE, $user );
 
+        
         // Create new guest object
         $guest = Guest::create($data->recipient, $data->from);
 
+        // Check rate limit
+        TranslatableEmail::rateLimit( false, 'guest_created', $guest );
         
         // Set provided metadata
         if ($data->subject) {
@@ -251,8 +254,9 @@ class RestEndpointGuest extends RestEndpoint
         // Set expiry date
         $expires = $guest->getDefaultExpire();
         if( $data->expires ) {
-            $expires = max( $expires, $data->expires );
+            $expires = $data->expires;
         }
+        $expires = Utilities::clamp( $expires, $guest->getMinExpire(), $guest->getMaxExpire());
         $guest->expires = $expires;
 
         if($guest->does_not_expire) {
@@ -319,7 +323,9 @@ class RestEndpointGuest extends RestEndpoint
         // Need to extend expiry date
         if ($data->extend_expiry_date) {
             if( !Auth::isAdmin()) {
-                throw new RestAdminRequiredException();
+                if( Config::get("allow_guest_expiry_date_extension") == 0 ) {
+                    throw new RestAdminRequiredException();
+                }
             }
             $guest->extendObjectExpiryDate();
             return self::cast($guest);
@@ -366,7 +372,7 @@ class RestEndpointGuest extends RestEndpoint
         if (!$guest->isOwner($user) && !Auth::isAdmin()) {
             throw new RestOwnershipRequiredException($user->id, 'guest = '.$guest->id);
         }
-        
+
         // Remove guest access rights
         $guest->close();
     }

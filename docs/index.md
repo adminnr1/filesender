@@ -8,7 +8,7 @@ FileSender is a web based application that allows authenticated users
 to securely and easily send arbitrarily large files to other users.
 Authentication of users is provided through [SimpleSAMLphp, supporting
 SAML2, LDAP and RADIUS and
-more](http://simplesamlphp.org/docs/stable/simplesamlphp-idp#section_2).
+more](https://simplesamlphp.org/).
 Users without an account can be sent an upload voucher by an
 authenticated user. FileSender is developed to the requirements of the
 higher education and research community.
@@ -20,13 +20,30 @@ the file. The software is not intended as a permanent file publishing
 platform.
 
 This is the home for Filesender documentation. For more information
-about the project [please visit our homepage](http://filesender.org).
+about the project [please visit our homepage](https://filesender.org).
 
 ### Which version should you choose
 
-The version 2.x series is the recommended choice. The latest version
-can be obtained from the [github releases
-page](https://github.com/filesender/filesender/releases). 
+There are 3 releases, of which 2 are maintained:
+
+- Version 1 is an archived, older version of FileSender which is not maintained
+- Version 2 is the current mainstream version with active feature developmet
+- Version 3 is in development, with alpha releases. This version features a new UI
+
+Version 3 and Version 2 should have the same functionality but version
+3 uses Bootstrap to present a more modern UI. The uploaded files
+storage handling is the same in version 2 and version 3. The database
+schema is very similar between the two and should be identical at
+specific release. For example, version 3.0alpha2 [explicitly
+mentions](https://github.com/filesender/filesender/releases/tag/master3-filesender-3.0alpha2)
+that it is feature compatible with 2.30. So you should be able to
+direct 3.0alpha2 at the same uploaded files and database and have the
+system function.
+
+The version 2.x series is the recommended choice in late 2021. Perhaps
+in 2022 version 3.x will become the recommended choice. The latest
+version can be obtained from the [github releases
+page](https://github.com/filesender/filesender/releases).
 
 The release numbering for the 2.x series follows the
 pattern 2.1, 2.2, 2.30 etc. Each of these releases builds on
@@ -36,17 +53,28 @@ release in the 2.x series will describe if database updates are needed
 updated in case you customize those on your site. If is intended that
 you can migrate an active site to new releases with very minimal downtime.
 
-The 1.6.x series is considered deprecated. It is still available
-for those who have not upgraded to a 2.x installation: [1.6.1, released on December 30th 2015](https://downloads.filesender.org/filesender-1.6.1.tar.gz).
+The 1.6.x series (with its latest release `1.6.1` from 2015 CE) is considered deprecated. It is still
+[available](https://github.com/filesender/filesender/releases/tag/1.6.1)
+(see "Assets" at the very end of that page for source code download links).
 
 ### Documentation
 
-Please see the [documentation for versions 2.x](http://docs.filesender.org/v2.0/).
+As of late 2021 the documentation for FileSender 3.x is the same as
+that of the 2.x series. The same options are available in both
+versions of FileSender and setup and configuration is the same. Both
+FileSender 2.x and 3.x also share the same database schema and you
+should be able to migrate a version from 2.x to 3.x retaining active
+file uploads and all the information in the database.
+
+Perhaps in 2022 FileSender 3.x will become the major release at which
+point the documentation for 2.x will be cloned to a 3.x series.
+
+Please see the [documentation for versions 2.x](v2.0/).
 
 ### License
 
 FileSender is released under the [BSD
-license](http://opensource.org/licenses/BSD-3-Clause). It is open
+license](https://opensource.org/licenses/BSD-3-Clause). It is open
 source software and available for free.
 
 ### Availability and download
@@ -63,6 +91,8 @@ page if you have a feature you would like to see added to FileSender.
 ### Features
 
 For a more detailed list of version 2.x features see the [v2.0 features page](v2.0/features/).
+The functionality of the 3.x alpha release are the same as the 2.x features but a new Bootstrap
+UI is used to present the site.
 
 * light-weight server footprint, optimized for least possible dependencies
 * share arbitrarily large files from standard desktop environments, no client-side deployment required

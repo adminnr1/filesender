@@ -317,8 +317,21 @@ window.filesender.ui = {
      * Redirect user to url
      * 
      * @param string url
+     * @param object args optional cgi key=value settings to send as args to the server
      */
-    redirect: function(url) {
+    redirect: function(url,args) {
+        if(args) {
+            var current_args = {};
+            for(var k in args) {
+                current_args[k] = args[k];
+            }
+            args = [];
+            for(var k in current_args) {
+                args.push(k + '=' + current_args[k]);
+            }
+            url = url + '&' + args.join('&');
+        }
+        
         window.location.href = url;
     },
     
@@ -339,8 +352,13 @@ window.filesender.ui = {
      */
     error: function(error,callback) {
         this.log('[error] ' + error.message);
-        
-        var d = this.alert('error', lang.tr(error.message),callback);
+        this.log(error);
+
+        var msg = lang.tr(error.message);
+        if( error.messageTranslated ) {
+            msg = error.messageTranslated;
+        }
+        var d = this.alert('error', msg, callback);
         
         if(error.details) {
             var i = $('<div class="details" />').appendTo(d);
@@ -428,6 +446,35 @@ window.filesender.ui = {
         bytes /= Math.pow(1024, pow);
         
         return bytes.toFixed(precision).replace(/\.0+$/g, '') + ' ' + multipliers[pow];
+    },
+
+
+    /**
+     * Format a number of seconds in the future to a readable string
+     * 
+     * @param int v
+     * 
+     * @return string
+     */
+    formatETA : function (v) {
+        if( v==-1 ) {
+            return lang.tr('no_estimate');
+        }
+        if( !v ) {
+            return lang.tr('soon');
+        }
+        if( v > 3600 ) {
+            v = v / 3600; // epoch_hours
+            return (v).toFixed(1) + ' ' + lang.tr('epoch_hours');
+        }
+        if( v > 5*60 ) {
+            v = v / 60;
+            return (v).toFixed(0) + ' ' + lang.tr('epoch_minutes');
+        }
+        if( v < 5 ) {
+            return lang.tr('soon');
+        }
+        return ''+ (v).toFixed(0) + ' ' + lang.tr('epoch_seconds');
     },
     
     /**
@@ -563,7 +610,7 @@ window.filesender.ui = {
         if(!id || isNaN(id)) return;
         
         var duration = parseInt(t.attr('data-expiry-extension'));
-        
+
         var extend = function(remind) {
             filesender.client.extendObject(className,id, remind, function(t) {
                 $('.objectholder[data-id="' + id + '"]').attr('data-expiry-extension', t.expiry_date_extension);

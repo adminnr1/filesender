@@ -51,6 +51,14 @@ class RestEndpointTransfer extends RestEndpoint
      */
     public static function cast(Transfer $transfer, $files_cids = null, $creatingTransfer = false )
     {
+        $options = $transfer->options;
+
+        // The client never needs to know the bucket name used.
+        $v = Config::get('cloud_s3_bucket');
+        if( $v && $v != '' ) {
+            $options[TransferOptions::STORAGE_CLOUD_S3_BUCKET] = '';
+        }
+        
         return array(
             'id' => $transfer->id,
             'userid' => $transfer->userid,
@@ -60,7 +68,7 @@ class RestEndpointTransfer extends RestEndpoint
             'created' => RestUtilities::formatDate($transfer->created),
             'expires' => RestUtilities::formatDate($transfer->expires),
             'expiry_date_extension' => $transfer->expiry_date_extension,
-            'options' => $transfer->options,
+            'options' => $options,
             'salt' => $transfer->salt,
             'roundtriptoken' => $creatingTransfer ? $transfer->roundtriptoken : '',
             
@@ -215,8 +223,18 @@ class RestEndpointTransfer extends RestEndpoint
 
             // Want auditlog data ...
             if ($property == 'auditlog') {
+
+                // ... to be sent by email
                 if ($property_id == 'mail') {
-                    // ... to be sent by email
+                    // Check rate limit
+                    $format = Config::get('report_format');
+                    if (!$format) {
+                        $format = ReportFormats::INLINE;
+                    }
+                    $lid = ($format == ReportFormats::INLINE) ? 'inline' : 'attached';
+                    TranslatableEmail::rateLimit( false, 'report_'.$lid, $transfer );
+
+                    
                     $report = new Report($transfer);
                     if( $filtertype && $filterid ) {
                         $files = $transfer->files;
@@ -490,6 +508,12 @@ class RestEndpointTransfer extends RestEndpoint
                 }
             }
 
+            if( Config::get('storage_type') == 'CloudS3' ) {
+                $v = Config::get('cloud_s3_bucket');
+                if( $v && $v != '' ) {
+                    $options[TransferOptions::STORAGE_CLOUD_S3_BUCKET] = $v;
+                }
+            }
 
             Logger::info($options);
             // Get_a_link transfers have no recipients so mail related options make no sense, remove them if set

@@ -40,6 +40,11 @@ if (!('onPBKDF2AllEnded' in window.filesender)) {
 
 window.filesender.crypto_app_downloading = false;
 
+// list of fileid for this encrypted download
+window.filesender.crypto_encrypted_archive_download_fileidlist = '';
+
+
+
 /*
  * Main entry points
  *   decryptDownload()
@@ -678,7 +683,15 @@ window.filesender.crypto_app = function () {
             var key_version = encryption_details.key_version;
             var blobArray = [];
 	    var wrongPassword = false;
+            var nonStreamed = false;
 
+            if( chunkid==0 ) {
+                if( !window.filesender.config.use_streamsaver ) {
+                    window.filesender.log("decryptBlob() first chunk of non streamed download");
+                    nonStreamed = true;
+                }
+            }
+            
             try {
                     
                 var value = encryptedChunk;
@@ -692,7 +705,7 @@ window.filesender.crypto_app = function () {
                                                             decryptParams,
                                                             callbackError );
 
-                window.filesender.log("decryptBlob()" );
+                window.filesender.log("decryptBlob() about to really decrypt() nonStreamed " + nonStreamed );
                 
                 crypto.subtle.decrypt(decryptParams, key, value.data).then(
                     function (result) {
@@ -713,10 +726,15 @@ window.filesender.crypto_app = function () {
                         }
                     },
                     function (e) {
-                        window.filesender.log("decrypt(e)");
+                        window.filesender.log("decrypt(e) nonStreamed " + nonStreamed );
                         window.filesender.log(e);
+                        if(nonStreamed) {
+                            e = new Error();
+                        }
                         if (!wrongPassword) {
                             wrongPassword=true;
+                            window.filesender.log("decrypt(e5) nonStreamed " + nonStreamed );
+                            window.filesender.log("decrypt(e5) msg " + e.message );
                             filesender.client.decryptionFailedForTransfer( encryption_details.transferid );
                             callbackError(e);
                         }
@@ -755,7 +773,9 @@ window.filesender.crypto_app = function () {
             var startoffset = 1 * (chunkid * chunksz);
             var endoffset   = 1 * (chunkid * chunksz + (1*$this.upload_crypted_chunk_size)-1);
             var legacyChunkPadding = 0;
+            oReq.setRequestHeader('X-FileSender-Encrypted-Archive-Download', filesender.terasender.crypto_encrypted_archive_download );
 
+            
             //
             // There are some extra things to do for streaming legacy type files
             //
@@ -808,6 +828,10 @@ window.filesender.crypto_app = function () {
                 window.filesender.log("downloadAndDecryptChunk(adjustments done) "
                                       + " eoffset " + endoffset
                                       + " padding " + padding );
+
+                oReq.setRequestHeader('X-FileSender-Encrypted-Archive-Contents', window.filesender.crypto_encrypted_archive_download_fileidlist );
+                window.filesender.crypto_encrypted_archive_download_fileidlist = '';
+                
             }
             
             var brange = 'bytes=' + startoffset + '-' + endoffset;
@@ -894,6 +918,15 @@ window.filesender.crypto_app = function () {
             // start downloading this chunk
             oReq.send();
         },
+
+        /**
+         * Some functions like handleXHRError() want to call alert()
+         * but that can not happen from a web worker. By making this
+         * alert() a callback function it allows such an alert() call
+         * to be sent back to the main thread by an error() type message
+         * channel. The callback must match the alert() function signature.
+         */
+        alertcb: window.alert,
         
         /**
          * Display an error message to the user in has the XHR error
@@ -903,11 +936,13 @@ window.filesender.crypto_app = function () {
          */
         handleXHRError: function( xhr, link, defaultMsg )
         {
+            $this = this;
+            
             if(xhr.responseURL && xhr.responseURL.includes("/?s=exception&"))
             {
-                window.filesender.log("handleXHRError() XHR ERROR DETECTED");
-                window.filesender.log("link " + link );
-                window.filesender.log("got  " + xhr.responseURL );
+                window.filesender.log("handleXHRError(XHR ERROR DETECTED)");
+                window.filesender.log("handleXHRError link " + link );
+                window.filesender.log("handleXHRError got  " + xhr.responseURL );
 
                 var message = defaultMsg;
                 var url = new URL(xhr.responseURL);
@@ -915,6 +950,8 @@ window.filesender.crypto_app = function () {
                 if( c ) {
                     try {
                         var jc = JSON.parse(atob(c));
+                        window.filesender.log("handleXHRError jc " + jc );
+                        
                         if( jc ) {
                             message = jc.message;
                             window.filesender.log("have untranslated message: " + message );
@@ -923,11 +960,11 @@ window.filesender.crypto_app = function () {
                         // use default message if base64 decode failed.
                     }
                 }
-                
+
                 if( window.filesender.config.language[message] ) {
-                    alert( window.filesender.config.language[message] );
+                    $this.alertcb.call( window, window.filesender.config.language[message] );
                 } else {
-                    alert( window.filesender.config.language[defaultMsg] );
+                    $this.alertcb.call( window, window.filesender.config.language[defaultMsg] );
                 }                            
                 return true;
             }
@@ -1066,15 +1103,34 @@ window.filesender.crypto_app = function () {
             // to assumed password failures.
             //
             callbackError = function (error) {
+                window.filesender.log("decryptDownloadToBlobSink() explicit error " + error);
                 window.filesender.log(error);
                 window.filesender.crypto_app_downloading = false;
-                alert( window.filesender.config.language.file_encryption_wrong_password );
+                var msg = window.filesender.config.language.file_encryption_wrong_password;
+                
+                if( error && error.message && error.message != "" ) {
+                    msg = error.message;
+                } 
+                alert( msg );
                 if (progress){
-                    progress.html(window.filesender.config.language.file_encryption_wrong_password);
+                    progress.html( msg );
+                }
+                if( msg == window.filesender.config.language.file_encryption_wrong_password ) {
+                    filesender.terasender.stop();
                 }
                 blobSink.error( error );
             };
 
+            onProgressCallback = function( ts, chunkid, totalrecv, percentComplete, percentOfFileComplete ) {
+
+                var msg = lang.tr('download_chunk_progress').r({chunkid: chunkid,
+                                                                chunkcount: encryption_details.chunkcount,
+                                                                percentofchunkcomplete: percentComplete.toFixed(2),
+                                                                percentOffilecomplete:  percentOfFileComplete.toFixed(2)
+                                                               }).out();
+                progress.html(msg);
+            }
+            
                 encryption_details.password = pass;
 
                 $this.obtainKey(
@@ -1102,11 +1158,48 @@ window.filesender.crypto_app = function () {
                             }
                         };
 
-                        window.filesender.crypto_app_downloading = true;                        
-                        $this.downloadAndDecryptChunk( chunkid, link, progress,
-                                                       encryption_details, key,
-                                                       blobSink,
-                                                       callbackDone, callbackProgress, callbackError );
+                        window.filesender.crypto_app_downloading = true;
+
+                        var transfer = new filesender.transfer();
+                        if (transfer.canUseTeraReceiver()) {
+
+                            transfer.id = transferid;
+                            transfer.encryption = 1;
+
+                            var decryptCallback = function( job ) {
+                                $this.decryptBlob(
+                                    job.chunkid,
+                                    job.encryptedChunk,
+                                    job.encryption_details,
+                                    key,
+                                    filesender.terasender.receiver.blobSink,
+                                    function() {
+                                        // callbackNext()
+                                    },
+                                    callbackDone, callbackError );
+                            };
+
+                            filesender.terasender.crypto_app = this;
+                            filesender.terasender.receiver = {
+                                chunkid: chunkid,
+                                link: link,
+                                progress: progress,
+                                encryption_details: encryption_details,
+                                key: key,
+                                blobSink: blobSink,
+                                onChunkSuccess: decryptCallback,
+                                onProgress: onProgressCallback,
+                                onError: callbackError
+                            };
+
+                            filesender.terasender.startReceiver( transfer );
+                            
+                        } else {
+                            $this.downloadAndDecryptChunk( chunkid, link, progress,
+                                                           encryption_details, key,
+                                                           blobSink,
+                                                           callbackDone, callbackProgress, callbackError );
+                        }
                     },
                     function (e) {
                         // error occured during obtainkey
@@ -1123,6 +1216,8 @@ window.filesender.crypto_app = function () {
         {
             var $this = this;
 
+            filesender.terasender.crypto_encrypted_archive_download = false;
+            
             callbackError = function (error) {
                 window.filesender.log(error);
                 window.filesender.crypto_app_downloading = false;
@@ -1236,6 +1331,15 @@ window.filesender.crypto_app = function () {
                 + "." + archiveFormat;
             return archiveName;
         },
+        setDownloadFileidlist: function( selectedFiles ) {
+            var fileidlist = '';
+            for(var i=0; i<selectedFiles.length; i++) {
+                var f = selectedFiles[i];
+                fileidlist += f.fileid;
+                fileidlist += ',';
+            }
+            window.filesender.crypto_encrypted_archive_download_fileidlist = fileidlist;
+        },
         decryptDownloadToZip: function(link,transferid,selectedFiles,progress,onFileOpen,onFileClose,onComplete) {
 
             var $this = this;
@@ -1248,7 +1352,8 @@ window.filesender.crypto_app = function () {
                     progress.html(window.filesender.config.language.file_encryption_wrong_password);
                 }
             };
-            
+            filesender.terasender.crypto_encrypted_archive_download = true;
+
             var prompt = window.filesender.ui.prompt(window.filesender.config.language.file_encryption_enter_password, function (password) {
                 var pass = $(this).find('input').val();
 

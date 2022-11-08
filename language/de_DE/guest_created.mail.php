@@ -23,7 +23,7 @@ Die Einladung ist bis zum {date:guest.expires} gültig, nach Ablauf des Datums w
 
 {if:guest.message} Persönliche Nachricht von {guest.user_email}: {guest.message}{endif}
 
-Mit freundlichen Grüßen,
+Mit freundlichen Grüßen
 {cfg:site_name}
 
 {alternative:html}
@@ -33,7 +33,7 @@ Mit freundlichen Grüßen,
 </p>
 
 <p>
-   unterhalb finden Sie eine Einladung, die den Zugang auf <a href="{cfg:site_url}">{cfg:site_name}</a> gewährt. Sie können die Einladung verwenden um, einen Satz von Dateien hochzuladen und anschließend einer Gruppe von Personen zum Download zur Verfügung stellen.
+   unterhalb finden Sie eine Einladung, die den Zugang auf <a href="{cfg:site_url}">{cfg:site_name}</a> gewährt. Sie können die Einladung verwenden, um einen Satz von Dateien hochzuladen und anschließend einer Gruppe von Personen zum Download zur Verfügung stellen.
 </p>
 
 <table rules="rows">
@@ -68,6 +68,6 @@ Mit freundlichen Grüßen,
 {endif}
 
 <p>
-    Mit freundlichen Grüßen,<br />
+    Mit freundlichen Grüßen<br />
     {cfg:site_name}
 </p>

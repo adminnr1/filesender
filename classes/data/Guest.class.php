@@ -46,7 +46,7 @@ class Guest extends DBObject
     protected static $dataMap = array(
         'id' => array(
             'type' => 'uint',
-            'size' => 'medium',
+            'size' => 'big',
             'primary' => true,
             'autoinc' => true
         ),
@@ -314,6 +314,20 @@ class Guest extends DBObject
             $days = Config::get('default_transfer_days_valid');
         }
         
+        return strtotime('+'.$days.' day');
+    }
+
+    /**
+     * Get min expire date. If a number of days is explicitly set then it is used
+     * otherwise we default to right now being the min value so that calling code
+     * can Utilities::clamp() using this min value without needing to check if 
+     * min_guest_days_valid is set.
+     *
+     * @return int timestamp
+     */
+    public static function getMinExpire()
+    {
+        $days = Config::get('min_guest_days_valid');
         return strtotime('+'.$days.' day');
     }
     

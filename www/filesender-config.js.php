@@ -81,6 +81,7 @@ window.filesender.config = {
     
     max_transfer_days_valid: <?php echo Config::get('max_transfer_days_valid') ?>,
     default_transfer_days_valid: <?php echo Config::get('default_transfer_days_valid') ?>,
+    min_guest_days_valid: <?php echo Config::get('min_guest_days_valid') ?>,
     max_guest_days_valid: <?php echo Config::get('max_guest_days_valid') ?>,
     default_guest_days_valid: <?php echo Config::get('default_guest_days_valid') ?>,
     
@@ -107,6 +108,7 @@ window.filesender.config = {
     crypto_use_custom_password_code: '<?php echo GUI::use_webasm_pbkdf2_implementation() ?>',
 
     terasender_enabled: <?php  echo value_to_TF(Config::get('terasender_enabled')) ?>,
+    terareceiver_enabled: <?php  echo value_to_TF(Config::get('terareceiver_enabled')) ?>,
     terasender_advanced: <?php echo value_to_TF(Config::get('terasender_advanced')) ?>,
     terasender_worker_count: <?php echo Config::get('terasender_worker_count') ?>,
     terasender_start_mode: '<?php echo Config::get('terasender_start_mode') ?>',
@@ -166,6 +168,7 @@ window.filesender.config = {
                 , user_hit_guest_rate_limit : "<?php echo Lang::tr('user_hit_guest_rate_limit')->out(); ?>"
                 , download_complete:       "<?php echo Lang::tr('download_complete')->out(); ?>"
 /**/            , download_chunk_progress: "<?php echo Lang::tr('download_chunk_progress')->out(); ?>"
+                , file_not_found:          "<?php echo Lang::tr('file_not_found')->out(); ?>"
 	},
     
     clientlogs: {
