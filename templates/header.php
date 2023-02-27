@@ -79,7 +79,7 @@ $headerclass = "header";
                                 $prevname = $dfn['name'];
                             }
                         
-                            echo '<li><label>'.Lang::tr('user_lang').'</label><select id="language_selector">'.implode('', $opts).'</select></li>';
+                            echo '<li><label>'.Lang::tr('user_lang').' </label><select id="language_selector">'.implode('', $opts).'</select></li>';
                             echo '</ul></div></div>';
                         }
                         ?>

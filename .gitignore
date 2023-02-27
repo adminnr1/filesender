@@ -1,8 +1,6 @@
 /tmp
 /files
 /config/config.php
-/config/templates
-/config/language
 /docs/_book
 /docs/_site
 /log
