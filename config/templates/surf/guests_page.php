@@ -212,14 +212,13 @@ use ( $new_guests_can_only_send_to_creator,
 
 <!-- <div class="box">
     <h1>{tr:guests_transfers}</h1>
-    
-    <?php
 
+    <?php
     // $user_can_only_view_guest_transfers_shared_with_them = Config::get('user_can_only_view_guest_transfers_shared_with_them');
     // $transfers = Transfer::fromGuestsOf(Auth::user(), $user_can_only_view_guest_transfers_shared_with_them);
     // Template::display('transfers_table',
-    //                  array('transfers' => $transfers,
-    //                        'show_guest' => true));
+    //                   array('transfers' => $transfers,
+    //                         'show_guest' => true));
     ?>
 -->
 </div>

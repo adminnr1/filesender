@@ -15,3 +15,4 @@ $lang['service_aup_header'] = '{cfg:site_name} huisregels';
 $lang['upload_all_terasender_workers_completed_pbkdf2'] = 'Klaarmaken voor upload';
 $lang['crypto_pbkdf2_dialog_with_expected'] = '{cfg:site_name} genereert een sleutel uit uw wachtwoord, dit dialoogvenster zal automatisch sluiten wanneer de sleutel wordt gemaakt. Het genereren van een sleutel is een computationeel dure operatie om mensen af te schrikken van het proberen om wachtwoorden te raden. <br/>De verwachte vertraging is {seconds} seconden.';
 $lang['terms_accepted'] = 'Voorwaarden geaccepteerd';
+$lang['guest_expired'] = 'Voucher voor gastgebruik verlopen.';
