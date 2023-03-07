@@ -61,9 +61,11 @@ Hoogachtend,
             <td colspan="2">Deze voucher verloopt niet.</td>
 {else}
             <td>Geldig tot</td>
+{if:guest.does_not_expire}
+            <td>Nooit</td>
+{else}
             <td>{date:guest.expires}</td>
 {endif}
-
         </tr>
     </tbody>
 </table>
