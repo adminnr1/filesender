@@ -1,6 +1,7 @@
 <?php
 
 include_once "pagemenuitem.php";
+include_once "vidattr.php";
 
 $maybe_display_aggregate_statistics_menu = false;
 
