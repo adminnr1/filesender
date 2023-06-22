@@ -10,7 +10,7 @@ Ben je ingelogd? Je kunt nu:
 </ul>
 
 <h3>Upload</h3>
-<p>Is je upload onderbroken? Upload dan simpelweg hetzelfde bestand nog eens. De voortgangsbalk zal verer gaan waar de onderbroken upload stopte.
+<p>Is je upload onderbroken? Upload dan simpelweg hetzelfde bestand nog eens. De voortgangsbalk zal verder gaan waar de onderbroken upload stopte.
 </p>
 
 <p>Is je bestand in de tussentijd veranderd? Hernoem dan het bestand voordat je het upload. Het uploaden start dan opnieuw. 
@@ -19,8 +19,8 @@ Ben je ingelogd? Je kunt nu:
 <p>Heb je een uitnodigingslink gekregen, terwijl je die niet verwachtte? 
 	Controleer voor je aan de slag gaat of alle koppelingen hierin daadwerkelijk naar {cfg:site_name} verwijzen. 
 	De uitnodiging is mogelijk niet legitiem.
+	Verwachtte je wel een uitnodiging? Upload nu eenvoudig bestanden met de informatie uit de ontvangen e-mail en deel de downloadlink. 
 	</p>
-Verwachtte je wel een uitnodiging? Upload nu eenvoudig bestanden met de informatie uit de ontvangen e-mail en deel de downloadlink. 
 	<p>
 Geen downloadlink gekregen? Geef dan e-mailadressen op van degenen die je wil laten downloaden.
 	</p>
