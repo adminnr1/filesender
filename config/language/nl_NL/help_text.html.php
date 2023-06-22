@@ -8,12 +8,6 @@ Ben je ingelogd? Je kunt nu:
     <li><i class="fa-li fa fa-caret-right"></i>een downloadlink krijgen.</li>
     <li><i class="fa-li fa fa-caret-right"></i>gastgebruikers uitnodigen.</li>
 </ul>
-<h3>Upload</h3>
-<p>Is je upload onderbroken? Upload dan simpelweg hetzelfde bestand nog eens. De voortgangsbalk zal verder gaan waar de onderbroken upload stopte.
-</p>
-
-<p>Is je bestand in de tussentijd veranderd? Hernoem dan het bestand voordat je het upload. Het uploaden start dan opnieuw. 
-</p>
 <h3>Gastgebruikers</h3>
 <p>Heb je een uitnodigingslink gekregen, terwijl je die niet verwachtte? 
 	Controleer voor je aan de slag gaat of alle koppelingen hierin daadwerkelijk naar {cfg:site_name} verwijzen. 
@@ -23,6 +17,13 @@ Ben je ingelogd? Je kunt nu:
 	<p>
 Geen downloadlink gekregen? Geef dan e-mailadressen op van degenen die je wil laten downloaden.
 	</p>
+
+<h3>Upload</h3>
+<p>Is je upload onderbroken? Upload dan simpelweg hetzelfde bestand nog eens. De voortgangsbalk zal verder gaan waar de onderbroken upload stopte.
+</p>
+
+<p>Is je bestand in de tussentijd veranderd? Hernoem dan het bestand voordat je het upload. Het uploaden start dan opnieuw. 
+</p>
 
 <p>
 <h3>Meer informatie over de dienst</h3>
