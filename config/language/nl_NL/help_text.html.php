@@ -8,7 +8,6 @@ Ben je ingelogd? Je kunt nu:
     <li><i class="fa-li fa fa-caret-right"></i>een downloadlink krijgen.</li>
     <li><i class="fa-li fa fa-caret-right"></i>gastgebruikers uitnodigen.</li>
 </ul>
-
 <h3>Upload</h3>
 <p>Is je upload onderbroken? Upload dan simpelweg hetzelfde bestand nog eens. De voortgangsbalk zal verder gaan waar de onderbroken upload stopte.
 </p>
